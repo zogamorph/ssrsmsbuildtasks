@@ -1,0 +1,1307 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="NativeDeploymentManger.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   Delegate to handle sending message between.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace ssrsmsbuildtasks.DeploymentManger
+{
+    #region Directives
+
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Net;
+    using System.Text;
+
+    using ssrsmsbuildtasks.MSReportService2005;
+
+    #endregion
+
+    /// <summary>
+    /// Delegate to handle sending message between.
+    /// </summary>
+    /// <param name="sender">
+    /// The sender object.
+    /// </param>
+    /// <param name="eventArgs">
+    /// The report server message event argumnets.
+    /// </param>
+    public delegate void ReportServerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs);
+
+    /// <summary>
+    /// Report Server class.
+    /// </summary>
+    public class NativeDeploymentManger
+    {
+        #region Constants and Fields
+
+        /// <summary>
+        /// MS Reporting Services Web Services Class
+        /// </summary>
+        private readonly ReportingService2005 reportingService2005;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the NativeDeploymentManger class.
+        /// </summary>
+        /// <param name="reportServerURL">
+        /// The report server URL.
+        /// </param>
+        public NativeDeploymentManger(string reportServerURL)
+        {
+            reportServerURL = DeploymentMangerHelper.SetAddWebServiceToUrl(reportServerURL);
+            this.reportingService2005 = new ReportingService2005(reportServerURL)
+                {
+                    Credentials = CredentialCache.DefaultCredentials 
+                };
+        }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// Occurs when [reporting services message].
+        /// </summary>
+        public event ReportServerMessages ReportingServicesMessage;
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Gets the report itemtype.
+        /// </summary>
+        /// <param name="itemTypeName">
+        /// Name of the item type.
+        /// </param>
+        /// <returns>
+        /// The enum type of the type name.
+        /// </returns>
+        public static ItemTypeEnum GetReportItemtype(string itemTypeName)
+        {
+            return (ItemTypeEnum)Enum.Parse(typeof(ItemTypeEnum), itemTypeName, true);
+        }
+
+        /// <summary>
+        /// Adds the report user.
+        /// </summary>
+        /// <param name="reportUserName">
+        /// Name of the report user.
+        /// </param>
+        /// <param name="reportingRoles">
+        /// The reporting roles.
+        /// </param>
+        /// <param name="reportFolder">
+        /// The report folder.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool AddReportUser(string reportUserName, string[] reportingRoles, string reportFolder)
+        {
+            int index;
+            bool inheritParent, policyExists;
+            Policy[] oldPolicy, newPolicy;
+
+            try
+            {
+                // formats the folder name.
+                reportFolder = DeploymentMangerHelper.FormatFolderPath(reportFolder);
+
+                // Get the access policies of the folder.
+                oldPolicy = this.reportingService2005.GetPolicies(reportFolder, out inheritParent);
+
+                // Check to see if the user exists.
+                policyExists = this.DoesPolicyExists(oldPolicy, reportUserName);
+
+                // Create a new list Policy for the folder.  if the current user exists then it
+                // will be list of the same length else the list will have a one new policy added
+                newPolicy = new Policy[policyExists ? oldPolicy.Length : oldPolicy.Length + 1];
+
+                // Copys the old policy to the new list.  If the policy already exists then copy
+                // is not a straight forward.
+                index = policyExists
+                            ? this.RemovePolicy(reportUserName, oldPolicy, newPolicy)
+                            : this.CopyOldPolicy(oldPolicy, newPolicy);
+
+                // Adding the new user.
+                newPolicy[index] = new Policy();
+                newPolicy[index].GroupUserName = reportUserName;
+
+                // Assgining the new roles to the user.
+                newPolicy[index].Roles = new Role[reportingRoles.Length];
+                this.AddReportingRoles(index, newPolicy, reportingRoles);
+
+                // Updating the policies of the folder.
+                this.reportingService2005.SetPolicies(reportFolder, newPolicy);
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Information, 
+                    "AddReportUser", 
+                    this.CreateCompleteMessage(reportUserName, reportingRoles, reportFolder));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Information, "AddReportUser", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Creates the data source.
+        /// </summary>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool CreateDataSource(ReportServerDataSource[] dataSources)
+        {
+            bool success = false;
+            foreach (ReportServerDataSource dataSource in dataSources)
+            {
+                success = this.CreateReportDataSource(dataSource);
+                if (!success)
+                {
+                    break;
+                }
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// Creates the folder.
+        /// </summary>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <param name="reportFolderProperites">
+        /// The report Folder Properites.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool CreateFolder(string folderName, Dictionary<string, string> reportFolderProperites)
+        {
+            CatalogItem[] items;
+            SearchCondition[] conditions = new SearchCondition[1];
+            Property[] folderProperites = new Property[0];
+
+            // Connecting to the reporting server
+            try
+            {
+                // Remove the root path
+                folderName = folderName.StartsWith("/") ? folderName.Substring(1) : folderName;
+
+                // split the folder path into units
+                string[] folderNames = folderName.Split(new[] { '/' });
+                string folderPath = "/";
+
+                // loop the units of the path to see if exists.
+                for (int index = 0; index < folderNames.Length; index++)
+                {
+                    // Create the search condition
+                    conditions[0] = new SearchCondition
+                        {
+                            Condition = ConditionEnum.Equals, 
+                            ConditionSpecified = true, 
+                            Name = "Name", 
+                            Value = folderNames[index]
+                        };
+
+                    // Find Items in current folder
+                    items = this.reportingService2005.FindItems(folderPath, BooleanOperatorEnum.And, conditions);
+
+                    // if the folder name is not found then create the folder.
+                    if (!DeploymentMangerHelper.FindFolder(items, folderNames[index]))
+                    {
+                        if (index != (folderNames.Length - 1) && reportFolderProperites != null)
+                        {
+                            folderProperites = new Property[reportFolderProperites.Count];
+                            int folderProperiteIndex = 0;
+                            foreach (KeyValuePair<string, string> folderProperite in reportFolderProperites)
+                            {
+                                folderProperites[folderProperiteIndex] = new Property()
+                                    {
+                                        Name = folderProperite.Key, Value = folderProperite.Value 
+                                    };
+                                folderProperiteIndex++;
+                            }
+                        }
+
+                        this.reportingService2005.CreateFolder(folderNames[index], folderPath, folderProperites);
+                        this.OnReportServerMessage(
+                            DeploymentMangerMessageType.Information, 
+                            "CreateFolder", 
+                            string.Format(
+                                "Created Report Folder: {0}/{1}", 
+                                folderPath != "/" ? folderPath : string.Empty, 
+                                folderNames[index]));
+                    }
+
+                    // build move the path to the newly created or existing path. 
+                    folderPath = string.Format(
+                        "{0}/{1}", folderPath != "/" ? folderPath : string.Empty, folderNames[index]);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "CreateFolder", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the model.
+        /// </summary>
+        /// <param name="modelName">
+        /// Name of the model.
+        /// </param>
+        /// <returns>
+        /// The delete model.
+        /// </returns>
+        public bool DeleteModel(string modelName)
+        {
+            // Create the item and format the items
+            ItemTypeEnum currentItemType;
+            modelName = DeploymentMangerHelper.FormatFolderPath(modelName);
+            try
+            {
+                // get the item type.
+                currentItemType = this.reportingService2005.GetItemType(modelName);
+                if (currentItemType == ItemTypeEnum.Model)
+                {
+                    // Delete the folder
+                    this.reportingService2005.DeleteItem(modelName);
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "DeleteModel", 
+                        string.Format("Deleted Report Item Source: {0}", modelName));
+                    return true;
+                }
+
+                // raise a error because the item was not a folder.
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Warning, "DeleteModel", string.Format("Item not a Report: {0}", modelName));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the report.
+        /// </summary>
+        /// <param name="reportName">
+        /// Name of the report.
+        /// </param>
+        /// <returns>
+        /// The delete report.
+        /// </returns>
+        public bool DeleteReport(string reportName)
+        {
+            // Create the item and format the items
+            ItemTypeEnum currentItemType;
+            reportName = DeploymentMangerHelper.FormatFolderPath(reportName);
+            try
+            {
+                // get the item type.
+                currentItemType = this.reportingService2005.GetItemType(reportName);
+                if (currentItemType == ItemTypeEnum.Report || currentItemType == ItemTypeEnum.LinkedReport)
+                {
+                    // Delete the folder
+                    this.reportingService2005.DeleteItem(reportName);
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "DeleteReport", 
+                        string.Format("Deleted Report Item Source: {0}", reportName));
+                    return true;
+                }
+
+                // raise a error because the item was not a folder.
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Warning, "DeleteReport", string.Format("Item not a Report: {0}", reportName));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the report data source.
+        /// </summary>
+        /// <param name="dataSourceName">
+        /// Name of the data source.
+        /// </param>
+        /// <param name="dataSourceFolder">
+        /// The data source folder.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
+        {
+            ItemTypeEnum currentItemType;
+
+            // make sure the item path is formated.
+            dataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSourceFolder);
+            try
+            {
+                // get the item type of the item check if datasource
+                currentItemType =
+                    this.reportingService2005.GetItemType(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
+
+                // If not a data source then send a warning
+                if (currentItemType != ItemTypeEnum.DataSource)
+                {
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Warning, 
+                        "DeleteReportDataSource", 
+                        string.Format("Report Item is not a data source:{0}/{1}", dataSourceFolder, dataSourceName));
+                    return false;
+                }
+
+                // else Delete the data source
+                this.reportingService2005.DeleteItem(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Information, 
+                    "DeleteReportDataSource", 
+                    string.Format("Deleted Data Source {1}/{0}", dataSourceName, dataSourceFolder));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportDataSource", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the report folder.
+        /// </summary>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool DeleteReportFolder(string folderName)
+        {
+            // Create the item and format the items
+            ItemTypeEnum currentItemType;
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            try
+            {
+                // get the item type.
+                currentItemType = this.reportingService2005.GetItemType(folderName);
+                if (currentItemType == ItemTypeEnum.Folder)
+                {
+                    // Delete the folder
+                    this.reportingService2005.DeleteItem(folderName);
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "DeleteReportFolder", 
+                        string.Format("Deleted Report Folder Source: {0}", folderName));
+                    return true;
+                }
+
+                // raise a error because the item was not a folder.
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Warning, 
+                    "DeleteReportFolder", 
+                    string.Format("Item not a folder: {0}", folderName));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the resource.
+        /// </summary>
+        /// <param name="resourceName">
+        /// Name of the resource.
+        /// </param>
+        /// <returns>
+        /// The delete resource.
+        /// </returns>
+        public bool DeleteResource(string resourceName)
+        {
+            // Create the item and format the items
+            ItemTypeEnum currentItemType;
+            resourceName = DeploymentMangerHelper.FormatFolderPath(resourceName);
+            try
+            {
+                // get the item type.
+                currentItemType = this.reportingService2005.GetItemType(resourceName);
+                if (currentItemType == ItemTypeEnum.Resource)
+                {
+                    // Delete the folder
+                    this.reportingService2005.DeleteItem(resourceName);
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "DeleteResource", 
+                        string.Format("Deleted Report Item Source: {0}", resourceName));
+                    return true;
+                }
+
+                // raise a error because the item was not a folder.
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Warning, 
+                    "DeleteResource", 
+                    string.Format("Item not a Resource: {0}", resourceName));
+                return false;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Moves the report item.
+        /// </summary>
+        /// <param name="reportItem">
+        /// The report item.
+        /// </param>
+        /// <param name="destinationItem">
+        /// The destination of the Item.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool MoveReportItem(string reportItem, string destinationItem)
+        {
+            try
+            {
+                // Fromat the item paths to make sure they are vaild
+                reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
+                destinationItem = DeploymentMangerHelper.FormatItemPath(destinationItem);
+
+                // Call the move item method 
+                this.reportingService2005.MoveItem(reportItem, destinationItem);
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Information, 
+                    "MoveReportItem", 
+                    string.Format("Moved {0} to {1}", reportItem, destinationItem));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "MoveReportItem", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Reports the item exists.
+        /// </summary>
+        /// <param name="reportItemName">
+        /// The report item.
+        /// </param>
+        /// <param name="reportItemType">
+        /// Type of the report item.
+        /// </param>
+        /// <returns>
+        /// True if the item of that type exists.
+        /// </returns>
+        public bool ReportItemExists(string reportItemName, ItemTypeEnum reportItemType)
+        {
+            return this.ReportItemExists(reportItemName, reportItemType, string.Empty);
+        }
+
+        /// <summary>
+        /// Reports the item exists.
+        /// </summary>
+        /// <param name="reportItemName">
+        /// The report item name.
+        /// </param>
+        /// <param name="reportItemType">
+        /// Type of the report item.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <returns>
+        /// True if the item of that type exists.
+        /// </returns>
+        public bool ReportItemExists(string reportItemName, ItemTypeEnum reportItemType, string folderName)
+        {
+            // Create the search condition
+            SearchCondition[] conditions = new[] { new SearchCondition() };
+
+            // Get formats the folder name
+            folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
+
+            try
+            {
+                // Set the search paramter
+                conditions[0].Condition = ConditionEnum.Equals;
+                conditions[0].ConditionSpecified = true;
+                conditions[0].Name = "Name";
+                conditions[0].Value = reportItemName;
+
+                // all the items that equal to the search parameter
+                CatalogItem[] items = this.reportingService2005.FindItems(
+                    folderName, BooleanOperatorEnum.And, conditions);
+
+                // Find the item of the that type
+                return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
+            }
+            catch (Exception exception)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets the report data source.
+        /// </summary>
+        /// <param name="reportItem">
+        /// The report item.
+        /// </param>
+        /// <param name="recursive">
+        /// If set to. <c>True.</c> [recursive].
+        /// </param>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool SetReportDataSource(
+            string reportItem, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
+        {
+            try
+            {
+                // Create hashtable 
+                Hashtable reportDataSources = new Hashtable(dataSources.Length);
+
+                // format the Item path and get the item type
+                reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
+                ItemTypeEnum currentItemType = this.reportingService2005.GetItemType(reportItem);
+
+                // build table if there was error then stop
+                if (!this.BuildReportDataSourceTable(dataSources, reportDataSources, useMatchCase))
+                {
+                    return false;
+                }
+
+                // depending on the type call the correct assgin function
+                switch (currentItemType)
+                {
+                        // if folder then loop through the items to assgin the data source.
+                    case ItemTypeEnum.Folder:
+                        this.AssginDataSourceToReports(reportItem, recursive, reportDataSources, useMatchCase);
+                        break;
+
+                        // assgin the data source item to the report it self.
+                    case ItemTypeEnum.Report:
+                        this.AssignReportDataSource(reportItem, reportDataSources, useMatchCase);
+                        break;
+
+                    default:
+                        this.OnReportServerMessage(
+                            DeploymentMangerMessageType.Warning, 
+                            "SetReportDataSource", 
+                            string.Format("Report Item:{0} is not support for the method", reportItem));
+                        break;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "SetReportDataSource", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uploads the model.
+        /// </summary>
+        /// <param name="reportModelsFiles">
+        /// The reporting services models.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName)
+        {
+            Warning[] warnings;
+            Property[] properties;
+
+            // Make sure the folder name is formated correctly
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            try
+            {
+                // loop through all the models create the properties which
+                // need to be set and display any warnings
+                foreach (ReportModelFiles model in reportModelsFiles)
+                {
+                    properties = this.CreateProperties(model.ReportServerProperties);
+                    warnings = this.reportingService2005.CreateModel(
+                        model.ModelName, folderName, model.GetBytes(), properties);
+                    this.SendWarningsMessage(model.ModelName, warnings);
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "UploadModel", 
+                        string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
+                }
+
+                // report true
+                return true;
+            }
+            catch (Exception exception)
+            {
+                // Send message and set report fales
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Ups the load reports.
+        /// </summary>
+        /// <param name="reportFiles">
+        /// The report files.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <returns>
+        /// Ture if the reports are uploaded.
+        /// </returns>
+        public bool UpLoadReports(ReportFile[] reportFiles, string folderName)
+        {
+            Warning[] warnings;
+            Property[] properties;
+
+            // make sure the folder the name correct.
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            try
+            {
+                // loop through the array of reports.
+                for (int index = 0; index < reportFiles.Length; index++)
+                {
+                    // Create any reports properties that need to be set.
+                    properties = this.CreateProperties(reportFiles[index].ReportServerProperties);
+
+                    // uploads reports then outputs that reports was uploaded.
+                    warnings = this.reportingService2005.CreateReport(
+                        reportFiles[index].ReportName, folderName, true, reportFiles[index].GetBytes(), properties);
+
+                    if (warnings.Length > 0)
+                    {
+                        this.SendWarningsMessage(reportFiles[index].ReportName, warnings);
+                    }
+
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "UpLoadReports", 
+                        string.Format("Upload report: {0} to folder: {1}", reportFiles[index].ReportName, folderName));
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Display any errors
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uploads the resoucre.
+        /// </summary>
+        /// <param name="resourceFileFiles">
+        /// The resoucre files.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName)
+        {
+            // make sure the folder the name correct.
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            Property[] properties;
+            try
+            {
+                // Upload each of the reportServerResoucre
+                foreach (ReportResourceFile reportServerResoucre in resourceFileFiles)
+                {
+                    // Get the bytes and properties 
+                    byte[] artefactBytes = reportServerResoucre.GetBytes();
+                    properties = this.CreateProperties(reportServerResoucre.ReportServerProperties);
+
+                    // If there are bytes then upload the resouce
+                    if (artefactBytes != null)
+                    {
+                        this.reportingService2005.CreateResource(
+                            reportServerResoucre.Name, 
+                            folderName, 
+                            true, 
+                            artefactBytes, 
+                            reportServerResoucre.MineType, 
+                            properties);
+                        this.OnReportServerMessage(
+                            DeploymentMangerMessageType.Information, 
+                            "UploadResource", 
+                            string.Format("Upload artefact: {0} to folder: {1}", reportServerResoucre.Name, folderName));
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // catches the error and then reports out via msbuild.
+                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "UploadResource", ex.Message);
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Adds the reporting roles.
+        /// </summary>
+        /// <param name="index">
+        /// The index.
+        /// </param>
+        /// <param name="newPolicy">
+        /// The new policy.
+        /// </param>
+        /// <param name="reportingRoles">
+        /// The reporting roles.
+        /// </param>
+        private void AddReportingRoles(int index, Policy[] newPolicy, string[] reportingRoles)
+        {
+            // looping through the roles and assgin them.
+            for (int roleIndex = 0; roleIndex < reportingRoles.Length; roleIndex++)
+            {
+                newPolicy[index].Roles[roleIndex] = new Role();
+                newPolicy[index].Roles[roleIndex].Name = reportingRoles[roleIndex];
+                newPolicy[index].Roles[roleIndex].Description = string.Format(
+                    "Reporting {0} User / Group", reportingRoles[roleIndex]);
+            }
+        }
+
+        /// <summary>
+        /// Assgins the data source to reports.
+        /// </summary>
+        /// <param name="folder">
+        /// The folder.
+        /// </param>
+        /// <param name="recursive">
+        /// If set to. <c>True.</c> [recursive].
+        /// </param>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        private void AssginDataSourceToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
+        {
+            // get list of all the items under the folder
+            CatalogItem[] reportFolderItems = this.reportingService2005.ListChildren(folder, recursive);
+
+            // loop through all items if they are a report then assgin the data source 
+            // to the item.
+            for (int index = 0; index < reportFolderItems.Length; index++)
+            {
+                if (reportFolderItems[index].Type == ItemTypeEnum.Report)
+                {
+                    this.AssignReportDataSource(reportFolderItems[index].Path, dataSources, useMatchCase);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Assigns the report data source.
+        /// </summary>
+        /// <param name="report">
+        /// The report.
+        /// </param>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        private void AssignReportDataSource(string report, Hashtable dataSources, bool useMatchCase)
+        {
+            // get the list of data source & creat a source reference
+            DataSource[] reportDataSources = this.reportingService2005.GetItemDataSources(report);
+            DataSourceReference dataSourceRef;
+
+            // check with method is used. list data of data soruce to match or straight 
+            // assginment.
+            StringBuilder dataSourceUpdates = new StringBuilder();
+
+            // loop through the report data sources
+            for (int index = 0; index < reportDataSources.Length; index++)
+            {
+                // look for match in the list of data sources 
+                if (
+                    dataSources.ContainsKey(
+                        useMatchCase ? reportDataSources[index].Name : reportDataSources[index].Name.ToLower()))
+                {
+                    // assgin the matched data source reference to the report.
+                    dataSourceRef = new DataSourceReference
+                        {
+                            Reference =
+                                dataSources[
+                                    useMatchCase
+                                        ? reportDataSources[index].Name
+                                        : reportDataSources[index].Name.ToLower()] as string
+                        };
+                    reportDataSources[index].Item = dataSourceRef;
+                    dataSourceUpdates.Append(
+                        string.Format("{0}:{1};", reportDataSources[index].Name, dataSourceRef.Reference));
+                }
+            }
+
+            // update the report with the new data sources.
+            this.reportingService2005.SetItemDataSources(report, reportDataSources);
+            this.OnReportServerMessage(
+                DeploymentMangerMessageType.Warning, 
+                "SetReportDataSource", 
+                string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
+        }
+
+        /// <summary>
+        /// Builds the report data source table.
+        /// </summary>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="reportDataSources">
+        /// The report data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        /// <returns>
+        /// True if table was built.
+        /// </returns>
+        private bool BuildReportDataSourceTable(
+            ReportServerDataSource[] dataSources, Hashtable reportDataSources, bool useMatchCase)
+        {
+            bool sucess = true;
+            foreach (ReportServerDataSource dataSource in dataSources)
+            {
+                // make sure that no duplicates reporting data source names 
+                if (reportDataSources.ContainsKey(dataSource.ReportName))
+                {
+                    this.OnReportServerMessage(
+                        DeploymentMangerMessageType.Error, 
+                        "SetReportDataSource", 
+                        string.Format("Duplicate Data Source Name: {0}", dataSource.ReportName));
+                    sucess = false;
+                }
+
+                reportDataSources.Add(
+                    useMatchCase ? dataSource.ReportName : dataSource.ReportName.ToLower(), 
+                    DeploymentMangerHelper.FormatItemPath(string.Concat(dataSource.DataSourceFolder, "/", dataSource.Name)));
+            }
+
+            return sucess;
+        }
+
+        /// <summary>
+        /// Copies the old policy.
+        /// </summary>
+        /// <param name="oldPolicy">
+        /// The old policy.
+        /// </param>
+        /// <param name="newPolicy">
+        /// The new policy.
+        /// </param>
+        /// <returns>
+        /// Position of the free new policy which needs to be added.
+        /// </returns>
+        private int CopyOldPolicy(Policy[] oldPolicy, Policy[] newPolicy)
+        {
+            int index;
+
+            // loop the old policy moving them from the old to the new list.
+            for (index = 0; index < oldPolicy.Length; index++)
+            {
+                newPolicy[index] = new Policy();
+                newPolicy[index] = oldPolicy[index];
+            }
+
+            return index;
+        }
+
+        /// <summary>
+        /// Creates the complete message.
+        /// </summary>
+        /// <param name="reportUserName">
+        /// Name of the report user.
+        /// </param>
+        /// <param name="reportingRoles">
+        /// The reporting roles.
+        /// </param>
+        /// <param name="reportFolder">
+        /// The report folder.
+        /// </param>
+        /// <returns>
+        /// A complete string message.
+        /// </returns>
+        private string CreateCompleteMessage(string reportUserName, string[] reportingRoles, string reportFolder)
+        {
+            StringBuilder completeMessage = new StringBuilder();
+
+            // Build the starting string by add the report user name
+            // and the folder 
+            completeMessage.Append("Add report user: ");
+            completeMessage.Append(reportUserName);
+            completeMessage.Append(" to folder: ");
+            completeMessage.Append(reportFolder);
+            completeMessage.Append(" with roles: ");
+
+            // loop throught all the roles addd to the string
+            for (int index = 0; index < reportingRoles.Length; index++)
+            {
+                completeMessage.Append(reportingRoles[index]);
+                completeMessage.Append(", ");
+            }
+
+            completeMessage.Remove(completeMessage.Length - 2, 2);
+            return completeMessage.ToString();
+        }
+
+        /// <summary>
+        /// Creates the report server properties.
+        /// </summary>
+        /// <param name="itemProperties">
+        /// The report properties.
+        /// </param>
+        /// <returns>
+        /// A array report server properties.
+        /// </returns>
+        private Property[] CreateProperties(Dictionary<string, string> itemProperties)
+        {
+            // if no properties then return null
+            if (itemProperties.Count <= 0)
+            {
+                return null;
+            }
+
+            // create array of properties to number of report properties
+            // loop through the report properties and the key and value
+            Property[] properties = new Property[itemProperties.Count];
+            int index = 0;
+            foreach (KeyValuePair<string, string> property in itemProperties)
+            {
+                properties[index] = new Property { Value = property.Value, Name = property.Key };
+                index++;
+            }
+
+            return properties;
+        }
+
+        /// <summary>
+        /// Creates the report data source.
+        /// </summary>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
+        /// <returns>
+        /// Flag is the operation was successfully.
+        /// </returns>
+        private bool CreateReportDataSource(ReportServerDataSource dataSource)
+        {
+            try
+            {
+                // formating the data source folder.
+                dataSource.DataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSource.DataSourceFolder);
+
+                // check to see if the properties are define if then create the default which are needed
+                if (dataSource.ReportServerProperties.Count == 0)
+                {
+                    dataSource.CreateDefaultProperties();
+                }
+
+                Property[] properties = this.CreateProperties(dataSource.ReportServerProperties);
+
+                // use SQL Connection String Build to break the connection string
+                SqlConnectionStringBuilder sqlConStringBuilder =
+                    new SqlConnectionStringBuilder(dataSource.ConnectionString);
+
+                // create the objects.
+                DataSourceDefinition definition = this.GetDataSourceDefinition(dataSource, sqlConStringBuilder);
+
+                // create the data source
+                this.reportingService2005.CreateDataSource(
+                    dataSource.Name, dataSource.DataSourceFolder, dataSource.OverWrite, definition, properties);
+
+                // message the data source was created
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Information, 
+                    "CreateDataSource", 
+                    string.Format(
+                        "Created Data Source {0}/{1} Connecting to Server:{2}, Database:{3}", 
+                        new[]
+                            {
+                                dataSource.DataSourceFolder, dataSource.Name, sqlConStringBuilder.DataSource, 
+                                sqlConStringBuilder.InitialCatalog
+                            }));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnReportServerMessage(DeploymentMangerMessageType.Information, "CreateDataSource", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Does the policy exists.
+        /// </summary>
+        /// <param name="oldPolicy">
+        /// The old policy.
+        /// </param>
+        /// <param name="reportUserName">
+        /// Name of the report user.
+        /// </param>
+        /// <returns>
+        /// Flag if the policy does exists.
+        /// </returns>
+        private bool DoesPolicyExists(Policy[] oldPolicy, string reportUserName)
+        {
+            bool returnValue = false;
+
+            // loop through all the old Policy see if the policy is already created
+            for (int index = 0; index < oldPolicy.Length && !returnValue; index++)
+            {
+                if (oldPolicy[index].GroupUserName == reportUserName)
+                {
+                    returnValue = true;
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Gets the data source definition.
+        /// </summary>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
+        /// <param name="sqlConStringBuilder">
+        /// The SQL con string builder.
+        /// </param>
+        /// <returns>
+        /// DataSourceDefinition with default setting created.
+        /// </returns>
+        private DataSourceDefinition GetDataSourceDefinition(
+            ReportServerDataSource dataSource, SqlConnectionStringBuilder sqlConStringBuilder)
+        {
+            // create a data source definition and apply default settings
+            DataSourceDefinition definition = new DataSourceDefinition();
+            this.SetDefaultDefinition(definition);
+
+            // setting the conection string bas up the type
+            switch (dataSource.Provider)
+            {
+                case DataProviderEnum.SQL:
+                    definition.Extension = "SQL";
+                    break;
+                case DataProviderEnum.OLEDBMD:
+                    definition.Extension = "OLEDB-MD";
+                    break;
+            }
+
+            // get the Data Source and Catalogs 
+            definition.ConnectString = string.Format(
+                "Data Source={0};Initial Catalog={1}", 
+                sqlConStringBuilder.DataSource, 
+                sqlConStringBuilder.InitialCatalog);
+
+            // check to if windows security is used or in the provicer is AS
+            if (sqlConStringBuilder.IntegratedSecurity || dataSource.Provider == DataProviderEnum.OLEDBMD)
+            {
+                definition.WindowsCredentials = true;
+
+                // checking to see if the impersonation needs to be set.
+                if (dataSource.WindowCredentials != null)
+                {
+                    // set impersonation details of the windows user
+                    definition.UserName = dataSource.WindowCredentials.UserName;
+                    definition.Password = dataSource.WindowCredentials.PassWord;
+                    definition.CredentialRetrieval = CredentialRetrievalEnum.Store;
+                }
+                else
+                {
+                    // user standard windows / Kebross security
+                    definition.CredentialRetrieval = CredentialRetrievalEnum.Integrated;
+                }
+            }
+            else
+            {
+                // llse use SQL Server security
+                definition.UserName = sqlConStringBuilder.UserID;
+                definition.Password = sqlConStringBuilder.Password;
+                definition.CredentialRetrieval = CredentialRetrievalEnum.Store;
+            }
+
+            return definition;
+        }
+
+        /// <summary>
+        /// The reporting services message.
+        /// </summary>
+        /// <param name="reportMessageType">
+        /// Type of the reporting message.
+        /// </param>
+        /// <param name="method">
+        /// The method.
+        /// </param>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        private void OnReportServerMessage(DeploymentMangerMessageType reportMessageType, string method, string message)
+        {
+            // check to see if the handle has been assign
+            if (this.ReportingServicesMessage != null)
+            {
+                this.ReportingServicesMessage(
+                    this, new DeploymentMangerMessageEventArgs(reportMessageType, method, message));
+            }
+        }
+
+        /// <summary>
+        /// Removes the policy.
+        /// </summary>
+        /// <param name="reportUserName">
+        /// Name of the report user.
+        /// </param>
+        /// <param name="oldPolicy">
+        /// The old policy.
+        /// </param>
+        /// <param name="newPolicy">
+        /// The new policy.
+        /// </param>
+        /// <returns>
+        /// Number to the free array space.
+        /// </returns>
+        private int RemovePolicy(string reportUserName, Policy[] oldPolicy, Policy[] newPolicy)
+        {
+            bool foundOldPolicy = false;
+            int index;
+
+            // loops the old policy list to copy them into the new list
+            for (index = 0; index < oldPolicy.Length; index++)
+            {
+                // if the old policy contains the new username 
+                // then flag the user has been found
+                if (!oldPolicy[index].GroupUserName.Contains(reportUserName))
+                {
+                    // if the new user has been found the move the current policy 
+                    // up the list laving the policy for the new user
+                    // Other wise just copy from the old policy list
+                    // to the new list.
+                    if (foundOldPolicy)
+                    {
+                        newPolicy[index - 1] = new Policy();
+                        newPolicy[index - 1] = oldPolicy[index];
+                    }
+                    else
+                    {
+                        newPolicy[index] = new Policy();
+                        newPolicy[index] = oldPolicy[index];
+                    }
+                }
+                else
+                {
+                    foundOldPolicy = true;
+                }
+            }
+
+            // set the index point back to the empty policy
+            index--;
+            return index;
+        }
+
+        /// <summary>
+        /// Sends the warnings message.
+        /// </summary>
+        /// <param name="reportItem">
+        /// The report item.
+        /// </param>
+        /// <param name="warnings">
+        /// The warnings.
+        /// </param>
+        private void SendWarningsMessage(string reportItem, Warning[] warnings)
+        {
+            // loop through each warning and send out a message
+            foreach (Warning warning in warnings)
+            {
+                this.OnReportServerMessage(
+                    DeploymentMangerMessageType.Warning, 
+                    "UpLoadReports", 
+                    string.Format("{0}:Warning:{1} ", reportItem, warning.Message));
+            }
+        }
+
+        /// <summary>
+        /// Sets the default definition.
+        /// </summary>
+        /// <param name="definition">
+        /// The definition.
+        /// </param>
+        private void SetDefaultDefinition(DataSourceDefinition definition)
+        {
+            definition.UseOriginalConnectString = false;
+            definition.OriginalConnectStringExpressionBased = false;
+            definition.ImpersonateUser = false;
+            definition.ImpersonateUserSpecified = true;
+            definition.Prompt = "Enter a user name and password to access the data source:";
+            definition.Enabled = true;
+            definition.EnabledSpecified = true;
+        }
+
+        #endregion
+    }
+}
