@@ -1,5 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeploymentMangerHelper.cs" company=""> 
+// <copyright file="DeploymentMangerHelper.cs" company="">
+//   
 // </copyright>
 // <summary>
 //   Static class with reuseable functions for reporting services.

@@ -1,4 +1,12 @@
-﻿
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ReportFolderExists.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The report folder exists.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
 namespace ssrsmsbuildtasks.Native
 {
     #region Directives
@@ -12,7 +20,10 @@ namespace ssrsmsbuildtasks.Native
 
     #endregion
 
-    class ReportFolderExists:Task
+    /// <summary>
+    /// The report folder exists.
+    /// </summary>
+    public class ReportFolderExists : Task
     {
         #region Properties
 
@@ -71,15 +82,15 @@ namespace ssrsmsbuildtasks.Native
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting",
-                        "ReportItemExists",
-                        this.BuildEngine.ProjectFileOfTaskNode,
-                        this.BuildEngine.LineNumberOfTaskNode,
-                        this.BuildEngine.ColumnNumberOfTaskNode,
-                        0,
-                        0,
-                        exception.Message,
-                        string.Empty,
+                        "Reporting", 
+                        "ReportItemExists", 
+                        this.BuildEngine.ProjectFileOfTaskNode, 
+                        this.BuildEngine.LineNumberOfTaskNode, 
+                        this.BuildEngine.ColumnNumberOfTaskNode, 
+                        0, 
+                        0, 
+                        exception.Message, 
+                        string.Empty, 
                         this.ToString()));
                 return false;
             }

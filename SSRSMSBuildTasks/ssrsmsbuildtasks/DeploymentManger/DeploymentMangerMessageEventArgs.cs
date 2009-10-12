@@ -55,7 +55,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="message">
         /// The message.
         /// </param>
-        public DeploymentMangerMessageEventArgs(DeploymentMangerMessageType reportMessageType, string method, string message)
+        public DeploymentMangerMessageEventArgs(
+            DeploymentMangerMessageType reportMessageType, string method, string message)
         {
             this.ReportMessageType = reportMessageType;
             this.Method = method;
