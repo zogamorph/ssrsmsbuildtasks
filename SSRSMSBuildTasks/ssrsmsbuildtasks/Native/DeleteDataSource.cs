@@ -32,7 +32,7 @@ namespace ssrsmsbuildtasks.Native
         /// </summary>
         /// <value>The data source folder.</value>
         [Required]
-        public string DataSourceFolder { get; set; }
+        public string Folder { get; set; }
 
         /// <summary>
         /// The data of the data source
@@ -64,7 +64,7 @@ namespace ssrsmsbuildtasks.Native
             rs.ReportingServicesMessage += this.reportingServicesMessage;
             try
             {
-                return rs.DeleteReportDataSource(this.DataSourceName, this.DataSourceFolder);
+                return rs.DeleteReportDataSource(this.DataSourceName, this.Folder);
             }
             catch (Exception ex)
             {

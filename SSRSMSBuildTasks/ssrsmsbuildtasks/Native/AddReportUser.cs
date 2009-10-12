@@ -32,7 +32,7 @@ namespace ssrsmsbuildtasks.Native
         /// </summary>
         /// <value>The name of the folder.</value>
         [Required]
-        public string FolderName { get; set; }
+        public string Folder { get; set; }
 
         /// <summary>
         /// The roles within the report server that the user will have in the report server
@@ -72,7 +72,7 @@ namespace ssrsmsbuildtasks.Native
             rs.ReportingServicesMessage += this.reportingServicesMessage;
             try
             {
-                return rs.AddReportUser(this.ReportUserName, this.ReportingRoles, this.FolderName);
+                return rs.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
             }
             catch (Exception ex)
             {

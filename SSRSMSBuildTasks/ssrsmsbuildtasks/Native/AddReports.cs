@@ -32,7 +32,7 @@ namespace ssrsmsbuildtasks.Native
         /// </summary>
         /// <value>The name of the folder.</value>
         [Required]
-        public string FolderName { get; set; }
+        public string Folder { get; set; }
 
         /// <summary>
         /// The list of report files, include full path, which need to upload to the report server.
@@ -79,7 +79,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return rs.UpLoadReports(reportFiles, this.FolderName);
+                return rs.UpLoadReports(reportFiles, this.Folder);
             }
             catch (Exception ex)
             {
