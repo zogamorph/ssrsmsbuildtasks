@@ -39,7 +39,7 @@ namespace ssrsmsbuildtasks.Native
         /// </summary>
         /// <value>The name of the folder.</value>
         [Required]
-        public string FolderName { get; set; }
+        public string Folder { get; set; }
 
         /// <summary>
         /// The http address of the reports server.
@@ -80,7 +80,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return rs.UploadResource(reportResourcesFile, this.FolderName);
+                return rs.UploadResource(reportResourcesFile, this.Folder);
             }
             catch (Exception ex)
             {

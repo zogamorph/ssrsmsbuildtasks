@@ -74,7 +74,7 @@ namespace ssrsmsbuildtasks.Native
                     reportServerDataSources[index] = new ReportServerDataSource()
                         {
                             ConnectionString = this.DataSources[index].GetMetadata("ConnectionString"), 
-                            DataSourceFolder = this.DataSources[index].GetMetadata("DataSourceFolder"), 
+                            DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
                             Name = this.DataSources[index].GetMetadata("DataSourceName"), 
                             OverWrite = Convert.ToBoolean(this.DataSources[index].GetMetadata("OverWrite")), 
                             Provider =

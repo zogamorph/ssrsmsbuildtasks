@@ -1,17 +1,9 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeleteReportFolder.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   This MSBuild Task will delete report server folder on the report server.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace ssrsmsbuildtasks.Native
+﻿namespace ssrsmsbuildtasks.Native
 {
     #region Directives
 
     using System;
+    using System.Collections.Generic;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -20,19 +12,30 @@ namespace ssrsmsbuildtasks.Native
 
     #endregion
 
-    /// <summary>
-    /// This MSBuild Task will delete report server folder on the report server.
-    /// </summary>
-    public class DeleteReportFolder : Task
+    public class DataSourceExists:Task
     {
+
         #region Properties
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
+        /// </summary>
+        /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the folder.
         /// </summary>
         /// <value>The name of the folder.</value>
-        [Required]
         public string Folder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the report item.
+        /// </summary>
+        /// <value>The report item.</value>
+        [Required]
+        public string DataSourceName { get; set; }
 
         /// <summary>
         /// Gets or sets the report server URL.
@@ -57,21 +60,28 @@ namespace ssrsmsbuildtasks.Native
             rs.ReportingServicesMessage += this.reportingServicesMessage;
             try
             {
-                return rs.DeleteReportFolder(this.Folder);
+                if (String.IsNullOrEmpty(this.Folder))
+                {
+                    this.Folder = "/";
+                }
+
+                this.Exists = rs.ReportItemExists(
+                    this.DataSourceName, NativeDeploymentManger.GetReportItemtype("DataSource"), this.Folder);
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting", 
-                        "DeleteReportFolder", 
-                        this.BuildEngine.ProjectFileOfTaskNode, 
-                        this.BuildEngine.LineNumberOfTaskNode, 
-                        this.BuildEngine.ColumnNumberOfTaskNode, 
-                        0, 
-                        0, 
-                        ex.Message, 
-                        string.Empty, 
+                        "Reporting",
+                        "ReportItemExists",
+                        this.BuildEngine.ProjectFileOfTaskNode,
+                        this.BuildEngine.LineNumberOfTaskNode,
+                        this.BuildEngine.ColumnNumberOfTaskNode,
+                        0,
+                        0,
+                        exception.Message,
+                        string.Empty,
                         this.ToString()));
                 return false;
             }

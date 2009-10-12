@@ -28,11 +28,11 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets FolderName.
+        /// Gets or sets Folder.
         /// </summary>
         /// <value>The name of the folder.</value>
         [Required]
-        public string FolderName { get; set; }
+        public string Folder { get; set; }
 
         /// <summary>
         /// Gets or sets ReportModels.
@@ -77,7 +77,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return rs.UploadModel(reportModelsFiles, this.FolderName);
+                return rs.UploadModel(reportModelsFiles, this.Folder);
             }
             catch (Exception exception)
             {

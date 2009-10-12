@@ -82,7 +82,7 @@ namespace ssrsmsbuildtasks.Native
                 {
                     reportServerDataSources[index] = new ReportServerDataSource()
                         {
-                            DataSourceFolder = this.DataSources[index].GetMetadata("DataSourceFolder"), 
+                            DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
                             Name = this.DataSources[index].GetMetadata("DataSourceName"), 
                             ReportName = this.DataSources[index].GetMetadata("ReportName"), 
                         };

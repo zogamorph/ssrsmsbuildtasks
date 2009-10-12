@@ -67,8 +67,10 @@
     <Compile Include="Native\AddResource.cs" />
     <Compile Include="Native\CreateReportFolder.cs" />
     <Compile Include="Native\CreateReportingDataSource.cs" />
+    <Compile Include="Native\DataSourceExists.cs" />
     <Compile Include="Native\DeleteDataSource.cs" />
     <Compile Include="Native\DeleteReportFolder.cs" />
+    <Compile Include="Native\ReportFolderExists.cs" />
     <Compile Include="Native\ReportItemExists.cs" />
     <Compile Include="Native\RSHelper.cs" />
     <Compile Include="Native\SetReportDataSource.cs" />

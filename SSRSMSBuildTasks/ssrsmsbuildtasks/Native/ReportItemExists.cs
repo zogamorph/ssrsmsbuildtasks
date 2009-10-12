@@ -38,14 +38,14 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets the name of the folder.
         /// </summary>
         /// <value>The name of the folder.</value>
-        public string FolderName { get; set; }
+        public string Folder { get; set; }
 
         /// <summary>
         /// Gets or sets the report item.
         /// </summary>
         /// <value>The report item.</value>
         [Required]
-        public string ReportItem { get; set; }
+        public string ReportItemName { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the report item type.
@@ -77,13 +77,13 @@ namespace ssrsmsbuildtasks.Native
             rs.ReportingServicesMessage += this.reportingServicesMessage;
             try
             {
-                if (String.IsNullOrEmpty(this.FolderName))
+                if (String.IsNullOrEmpty(this.Folder))
                 {
-                    this.FolderName = "/";
+                    this.Folder = "/";
                 }
 
                 this.Exists = rs.ReportItemExists(
-                    this.ReportItem, NativeDeploymentManger.GetReportItemtype(this.ReportItemTypeName), this.FolderName);
+                    this.ReportItemName, NativeDeploymentManger.GetReportItemtype(this.ReportItemTypeName), this.Folder);
                 return true;
             }
             catch (Exception exception)
