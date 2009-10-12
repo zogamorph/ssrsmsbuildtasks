@@ -28,18 +28,18 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// The location of the data source
-        /// </summary>
-        /// <value>The data source folder.</value>
-        [Required]
-        public string Folder { get; set; }
-
-        /// <summary>
         /// The data of the data source
         /// </summary>
         /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
+
+        /// <summary>
+        /// The location of the data source
+        /// </summary>
+        /// <value>The data source folder.</value>
+        [Required]
+        public string Folder { get; set; }
 
         /// <summary>
         /// The Report Server name.

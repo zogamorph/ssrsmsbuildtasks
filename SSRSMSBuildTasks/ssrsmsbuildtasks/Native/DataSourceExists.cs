@@ -1,9 +1,17 @@
-﻿namespace ssrsmsbuildtasks.Native
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="DataSourceExists.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The report folder exists.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace ssrsmsbuildtasks.Native
 {
     #region Directives
 
     using System;
-    using System.Collections.Generic;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -12,10 +20,19 @@
 
     #endregion
 
-    public class DataSourceExists:Task
+    /// <summary>
+    /// The report folder exists.
+    /// </summary>
+    public class DataSourceExists : Task
     {
-
         #region Properties
+
+        /// <summary>
+        /// Gets or sets the report item.
+        /// </summary>
+        /// <value>The report item.</value>
+        [Required]
+        public string DataSourceName { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
@@ -29,13 +46,6 @@
         /// </summary>
         /// <value>The name of the folder.</value>
         public string Folder { get; set; }
-
-        /// <summary>
-        /// Gets or sets the report item.
-        /// </summary>
-        /// <value>The report item.</value>
-        [Required]
-        public string DataSourceName { get; set; }
 
         /// <summary>
         /// Gets or sets the report server URL.
@@ -73,15 +83,15 @@
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting",
-                        "ReportItemExists",
-                        this.BuildEngine.ProjectFileOfTaskNode,
-                        this.BuildEngine.LineNumberOfTaskNode,
-                        this.BuildEngine.ColumnNumberOfTaskNode,
-                        0,
-                        0,
-                        exception.Message,
-                        string.Empty,
+                        "Reporting", 
+                        "ReportItemExists", 
+                        this.BuildEngine.ProjectFileOfTaskNode, 
+                        this.BuildEngine.LineNumberOfTaskNode, 
+                        this.BuildEngine.ColumnNumberOfTaskNode, 
+                        0, 
+                        0, 
+                        exception.Message, 
+                        string.Empty, 
                         this.ToString()));
                 return false;
             }

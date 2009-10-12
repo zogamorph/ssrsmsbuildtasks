@@ -295,7 +295,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // raise a error because the item was not a folder.
                 this.OnReportServerMessage(
-                    DeploymentMangerMessageType.Warning, "DeleteModel", string.Format("Item not a Report: {0}", modelName));
+                    DeploymentMangerMessageType.Warning, 
+                    "DeleteModel", 
+                    string.Format("Item not a Report: {0}", modelName));
                 return false;
             }
             catch (Exception ex)
@@ -336,7 +338,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // raise a error because the item was not a folder.
                 this.OnReportServerMessage(
-                    DeploymentMangerMessageType.Warning, "DeleteReport", string.Format("Item not a Report: {0}", reportName));
+                    DeploymentMangerMessageType.Warning, 
+                    "DeleteReport", 
+                    string.Format("Item not a Report: {0}", reportName));
                 return false;
             }
             catch (Exception ex)
@@ -940,7 +944,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 reportDataSources.Add(
                     useMatchCase ? dataSource.ReportName : dataSource.ReportName.ToLower(), 
-                    DeploymentMangerHelper.FormatItemPath(string.Concat(dataSource.DataSourceFolder, "/", dataSource.Name)));
+                    DeploymentMangerHelper.FormatItemPath(
+                        string.Concat(dataSource.DataSourceFolder, "/", dataSource.Name)));
             }
 
             return sucess;

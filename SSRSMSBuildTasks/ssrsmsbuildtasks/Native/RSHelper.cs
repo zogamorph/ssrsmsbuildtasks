@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeploymentMangerHelper.cs" company="">
+// <copyright file="RSHelper.cs" company="">
 //   
 // </copyright>
 // <summary>

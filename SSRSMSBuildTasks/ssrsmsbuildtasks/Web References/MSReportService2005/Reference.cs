@@ -8615,7 +8615,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CancelBatchCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CancelBatchCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8631,7 +8631,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CancelJobCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CancelJobCompleted(
                     this, 
                     new CancelJobCompletedEventArgs(
@@ -8649,7 +8649,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateBatchCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateBatchCompleted(
                     this, 
                     new CreateBatchCompletedEventArgs(
@@ -8667,7 +8667,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateDataDrivenSubscriptionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateDataDrivenSubscriptionCompleted(
                     this, 
                     new CreateDataDrivenSubscriptionCompletedEventArgs(
@@ -8685,7 +8685,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateDataSourceCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateDataSourceCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8701,7 +8701,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateFolderCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateFolderCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8717,7 +8717,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateLinkedReportCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateLinkedReportCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8733,7 +8733,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateModelCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateModelCompleted(
                     this, 
                     new CreateModelCompletedEventArgs(
@@ -8751,7 +8751,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateReportHistorySnapshotCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateReportHistorySnapshotCompleted(
                     this, 
                     new CreateReportHistorySnapshotCompletedEventArgs(
@@ -8769,7 +8769,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateReportCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateReportCompleted(
                     this, 
                     new CreateReportCompletedEventArgs(
@@ -8787,7 +8787,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateResourceCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateResourceCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8803,7 +8803,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateRoleCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateRoleCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8819,7 +8819,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateScheduleCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateScheduleCompleted(
                     this, 
                     new CreateScheduleCompletedEventArgs(
@@ -8837,7 +8837,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.CreateSubscriptionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.CreateSubscriptionCompleted(
                     this, 
                     new CreateSubscriptionCompletedEventArgs(
@@ -8855,7 +8855,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.DeleteItemCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.DeleteItemCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8871,7 +8871,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.DeleteReportHistorySnapshotCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.DeleteReportHistorySnapshotCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8887,7 +8887,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.DeleteRoleCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.DeleteRoleCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8903,7 +8903,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.DeleteScheduleCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.DeleteScheduleCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8919,7 +8919,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.DeleteSubscriptionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.DeleteSubscriptionCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8935,7 +8935,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.DisableDataSourceCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.DisableDataSourceCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8951,7 +8951,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.EnableDataSourceCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.EnableDataSourceCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8967,7 +8967,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ExecuteBatchCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ExecuteBatchCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -8983,7 +8983,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.FindItemsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.FindItemsCompleted(
                     this, 
                     new FindItemsCompletedEventArgs(
@@ -9001,7 +9001,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.FireEventCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.FireEventCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9017,7 +9017,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.FlushCacheCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.FlushCacheCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9033,7 +9033,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GenerateModelCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GenerateModelCompleted(
                     this, 
                     new GenerateModelCompletedEventArgs(
@@ -9051,7 +9051,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetCacheOptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetCacheOptionsCompleted(
                     this, 
                     new GetCacheOptionsCompletedEventArgs(
@@ -9069,7 +9069,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetDataDrivenSubscriptionPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetDataDrivenSubscriptionPropertiesCompleted(
                     this, 
                     new GetDataDrivenSubscriptionPropertiesCompletedEventArgs(
@@ -9087,7 +9087,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetDataSourceContentsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetDataSourceContentsCompleted(
                     this, 
                     new GetDataSourceContentsCompletedEventArgs(
@@ -9105,7 +9105,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetExecutionOptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetExecutionOptionsCompleted(
                     this, 
                     new GetExecutionOptionsCompletedEventArgs(
@@ -9123,7 +9123,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetExtensionSettingsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetExtensionSettingsCompleted(
                     this, 
                     new GetExtensionSettingsCompletedEventArgs(
@@ -9141,7 +9141,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetItemDataSourcePromptsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetItemDataSourcePromptsCompleted(
                     this, 
                     new GetItemDataSourcePromptsCompletedEventArgs(
@@ -9159,7 +9159,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetItemDataSourcesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetItemDataSourcesCompleted(
                     this, 
                     new GetItemDataSourcesCompletedEventArgs(
@@ -9177,7 +9177,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetItemTypeCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetItemTypeCompleted(
                     this, 
                     new GetItemTypeCompletedEventArgs(
@@ -9195,7 +9195,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetModelDefinitionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetModelDefinitionCompleted(
                     this, 
                     new GetModelDefinitionCompletedEventArgs(
@@ -9213,7 +9213,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetModelItemPermissionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetModelItemPermissionsCompleted(
                     this, 
                     new GetModelItemPermissionsCompletedEventArgs(
@@ -9231,7 +9231,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetModelItemPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetModelItemPoliciesCompleted(
                     this, 
                     new GetModelItemPoliciesCompletedEventArgs(
@@ -9249,7 +9249,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetPermissionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetPermissionsCompleted(
                     this, 
                     new GetPermissionsCompletedEventArgs(
@@ -9267,7 +9267,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetPoliciesCompleted(
                     this, 
                     new GetPoliciesCompletedEventArgs(
@@ -9285,7 +9285,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetPropertiesCompleted(
                     this, 
                     new GetPropertiesCompletedEventArgs(
@@ -9303,7 +9303,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetRenderResourceCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetRenderResourceCompleted(
                     this, 
                     new GetRenderResourceCompletedEventArgs(
@@ -9321,7 +9321,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetReportDefinitionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetReportDefinitionCompleted(
                     this, 
                     new GetReportDefinitionCompletedEventArgs(
@@ -9339,7 +9339,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetReportHistoryLimitCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetReportHistoryLimitCompleted(
                     this, 
                     new GetReportHistoryLimitCompletedEventArgs(
@@ -9357,7 +9357,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetReportHistoryOptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetReportHistoryOptionsCompleted(
                     this, 
                     new GetReportHistoryOptionsCompletedEventArgs(
@@ -9375,7 +9375,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetReportLinkCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetReportLinkCompleted(
                     this, 
                     new GetReportLinkCompletedEventArgs(
@@ -9393,7 +9393,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetReportParametersCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetReportParametersCompleted(
                     this, 
                     new GetReportParametersCompletedEventArgs(
@@ -9411,7 +9411,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetResourceContentsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetResourceContentsCompleted(
                     this, 
                     new GetResourceContentsCompletedEventArgs(
@@ -9429,7 +9429,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetRolePropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetRolePropertiesCompleted(
                     this, 
                     new GetRolePropertiesCompletedEventArgs(
@@ -9447,7 +9447,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetSchedulePropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetSchedulePropertiesCompleted(
                     this, 
                     new GetSchedulePropertiesCompletedEventArgs(
@@ -9465,7 +9465,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetSubscriptionPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetSubscriptionPropertiesCompleted(
                     this, 
                     new GetSubscriptionPropertiesCompletedEventArgs(
@@ -9483,7 +9483,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetSystemPermissionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetSystemPermissionsCompleted(
                     this, 
                     new GetSystemPermissionsCompletedEventArgs(
@@ -9501,7 +9501,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetSystemPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetSystemPoliciesCompleted(
                     this, 
                     new GetSystemPoliciesCompletedEventArgs(
@@ -9519,7 +9519,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetSystemPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetSystemPropertiesCompleted(
                     this, 
                     new GetSystemPropertiesCompletedEventArgs(
@@ -9537,7 +9537,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.GetUserModelCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.GetUserModelCompleted(
                     this, 
                     new GetUserModelCompletedEventArgs(
@@ -9555,7 +9555,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.InheritModelItemParentSecurityCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.InheritModelItemParentSecurityCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9571,7 +9571,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.InheritParentSecurityCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.InheritParentSecurityCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9587,7 +9587,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListChildrenCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListChildrenCompleted(
                     this, 
                     new ListChildrenCompletedEventArgs(
@@ -9605,7 +9605,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListDependentItemsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListDependentItemsCompleted(
                     this, 
                     new ListDependentItemsCompletedEventArgs(
@@ -9623,7 +9623,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListEventsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListEventsCompleted(
                     this, 
                     new ListEventsCompletedEventArgs(
@@ -9641,7 +9641,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListExtensionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListExtensionsCompleted(
                     this, 
                     new ListExtensionsCompletedEventArgs(
@@ -9659,7 +9659,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListJobsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListJobsCompleted(
                     this, 
                     new ListJobsCompletedEventArgs(
@@ -9677,7 +9677,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListModelDrillthroughReportsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListModelDrillthroughReportsCompleted(
                     this, 
                     new ListModelDrillthroughReportsCompletedEventArgs(
@@ -9695,7 +9695,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListModelItemChildrenCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListModelItemChildrenCompleted(
                     this, 
                     new ListModelItemChildrenCompletedEventArgs(
@@ -9713,7 +9713,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListModelPerspectivesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListModelPerspectivesCompleted(
                     this, 
                     new ListModelPerspectivesCompletedEventArgs(
@@ -9731,7 +9731,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListReportHistoryCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListReportHistoryCompleted(
                     this, 
                     new ListReportHistoryCompletedEventArgs(
@@ -9749,7 +9749,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListRolesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListRolesCompleted(
                     this, 
                     new ListRolesCompletedEventArgs(
@@ -9767,7 +9767,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListScheduledReportsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListScheduledReportsCompleted(
                     this, 
                     new ListScheduledReportsCompletedEventArgs(
@@ -9785,7 +9785,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListSchedulesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListSchedulesCompleted(
                     this, 
                     new ListSchedulesCompletedEventArgs(
@@ -9803,7 +9803,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListSecureMethodsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListSecureMethodsCompleted(
                     this, 
                     new ListSecureMethodsCompletedEventArgs(
@@ -9821,7 +9821,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListSubscriptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListSubscriptionsCompleted(
                     this, 
                     new ListSubscriptionsCompletedEventArgs(
@@ -9839,7 +9839,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListSubscriptionsUsingDataSourceCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListSubscriptionsUsingDataSourceCompleted(
                     this, 
                     new ListSubscriptionsUsingDataSourceCompletedEventArgs(
@@ -9857,7 +9857,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ListTasksCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ListTasksCompleted(
                     this, 
                     new ListTasksCompletedEventArgs(
@@ -9875,7 +9875,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.LogoffCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.LogoffCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9891,7 +9891,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.LogonUserCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.LogonUserCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9907,7 +9907,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.MoveItemCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.MoveItemCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9923,7 +9923,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.PauseScheduleCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.PauseScheduleCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9939,7 +9939,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.PrepareQueryCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.PrepareQueryCompleted(
                     this, 
                     new PrepareQueryCompletedEventArgs(
@@ -9957,7 +9957,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.RegenerateModelCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.RegenerateModelCompleted(
                     this, 
                     new RegenerateModelCompletedEventArgs(
@@ -9975,7 +9975,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.RemoveAllModelItemPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.RemoveAllModelItemPoliciesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -9991,7 +9991,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ResumeScheduleCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ResumeScheduleCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10007,7 +10007,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetCacheOptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetCacheOptionsCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10023,7 +10023,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetDataDrivenSubscriptionPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetDataDrivenSubscriptionPropertiesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10039,7 +10039,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetDataSourceContentsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetDataSourceContentsCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10055,7 +10055,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetExecutionOptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetExecutionOptionsCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10071,7 +10071,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetItemDataSourcesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetItemDataSourcesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10087,7 +10087,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetModelDefinitionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetModelDefinitionCompleted(
                     this, 
                     new SetModelDefinitionCompletedEventArgs(
@@ -10105,7 +10105,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetModelDrillthroughReportsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetModelDrillthroughReportsCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10121,7 +10121,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetModelItemPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetModelItemPoliciesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10137,7 +10137,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetPoliciesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10153,7 +10153,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetPropertiesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10169,7 +10169,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetReportDefinitionCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetReportDefinitionCompleted(
                     this, 
                     new SetReportDefinitionCompletedEventArgs(
@@ -10187,7 +10187,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetReportHistoryLimitCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetReportHistoryLimitCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10203,7 +10203,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetReportHistoryOptionsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetReportHistoryOptionsCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10219,7 +10219,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetReportLinkCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetReportLinkCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10235,7 +10235,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetReportParametersCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetReportParametersCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10251,7 +10251,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetResourceContentsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetResourceContentsCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10267,7 +10267,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetRolePropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetRolePropertiesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10283,7 +10283,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetSchedulePropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetSchedulePropertiesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10299,7 +10299,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetSubscriptionPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetSubscriptionPropertiesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10315,7 +10315,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetSystemPoliciesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetSystemPoliciesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10331,7 +10331,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.SetSystemPropertiesCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.SetSystemPropertiesCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10347,7 +10347,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.UpdateReportExecutionSnapshotCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.UpdateReportExecutionSnapshotCompleted(
                     this, new AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
@@ -10363,7 +10363,7 @@ namespace ssrsmsbuildtasks.MSReportService2005
         {
             if (this.ValidateExtensionSettingsCompleted != null)
             {
-                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)(arg);
+                InvokeCompletedEventArgs invokeArgs = (InvokeCompletedEventArgs)arg;
                 this.ValidateExtensionSettingsCompleted(
                     this, 
                     new ValidateExtensionSettingsCompletedEventArgs(
