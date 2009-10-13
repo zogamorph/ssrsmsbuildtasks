@@ -62,7 +62,7 @@ namespace ssrsmsbuildtasks.Native
         {
             NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
             ReportModelFiles[] reportModelsFiles = new ReportModelFiles[this.ReportModels.Length];
-            rs.ReportingServicesMessage += this.reportingServicesMessage;
+            rs.DeploymentMangerMessages += this.reportingServicesMessage;
             try
             {
                 for (int index = 0; index < this.ReportModels.Length; index++)

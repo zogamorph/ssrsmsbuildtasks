@@ -69,7 +69,7 @@ namespace ssrsmsbuildtasks.Native
         {
             // Connecting to the reporting server
             NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
-            rs.ReportingServicesMessage += this.reportingServicesMessage;
+            rs.DeploymentMangerMessages += this.reportingServicesMessage;
             try
             {
                 return rs.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
