@@ -58,11 +58,11 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
             try
             {
-                return rs.CreateFolder(
+                return nativeDeploymentManger.CreateFolder(
                     this.NewFolderPath, this.CreateReportFolderProperties(this.FolderReportProperties));
             }
             catch (Exception ex)

@@ -72,8 +72,8 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
             ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
             try
             {
@@ -88,7 +88,7 @@ namespace ssrsmsbuildtasks.Native
                         };
                 }
 
-                return rs.SetReportDataSource(
+                return nativeDeploymentManger.SetReportDataSource(
                     this.ReportItem, this.Recursive, reportServerDataSources, this.UseMatchCase);
             }
             catch (Exception ex)

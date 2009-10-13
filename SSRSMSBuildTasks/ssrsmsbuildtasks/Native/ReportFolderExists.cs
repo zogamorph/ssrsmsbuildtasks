@@ -65,8 +65,8 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
             try
             {
                 if (String.IsNullOrEmpty(this.FolderName))
@@ -74,7 +74,7 @@ namespace ssrsmsbuildtasks.Native
                     this.FolderName = "/";
                 }
 
-                this.Exists = rs.ReportItemExists(
+                this.Exists = nativeDeploymentManger.ReportItemExists(
                     this.FolderName, NativeDeploymentManger.GetReportItemtype("Folder"), this.Folder);
                 return true;
             }

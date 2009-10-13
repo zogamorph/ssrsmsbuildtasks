@@ -68,11 +68,11 @@ namespace ssrsmsbuildtasks.Native
         public override bool Execute()
         {
             // Connecting to the reporting server
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
             try
             {
-                return rs.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
+                return nativeDeploymentManger.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
             }
             catch (Exception ex)
             {
