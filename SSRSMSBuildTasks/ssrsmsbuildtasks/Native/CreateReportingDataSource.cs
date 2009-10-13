@@ -25,15 +25,6 @@ namespace ssrsmsbuildtasks.Native
     /// </summary>
     public class CreateReportingDataSource : Task
     {
-        #region Constants and Fields
-
-        /// <summary>
-        /// The data provider.
-        /// </summary>
-        private DataProviderEnum dataProvider;
-
-        #endregion
-
         #region Properties
 
         /// <summary>
