@@ -31,7 +31,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
     /// <param name="eventArgs">
     /// The report server message event argumnets.
     /// </param>
-    public delegate void ReportServerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs);
+    public delegate void DeploymentMangerMessage(object sender, DeploymentMangerMessageEventArgs eventArgs);
 
     /// <summary>
     /// Report Server class.
@@ -71,7 +71,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Occurs when [reporting services message].
         /// </summary>
-        public event ReportServerMessages ReportingServicesMessage;
+        public event DeploymentMangerMessage DeploymentMangerMessages;
 
         #endregion
 
@@ -1209,9 +1209,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         private void OnReportServerMessage(DeploymentMangerMessageType reportMessageType, string method, string message)
         {
             // check to see if the handle has been assign
-            if (this.ReportingServicesMessage != null)
+            if (this.DeploymentMangerMessages != null)
             {
-                this.ReportingServicesMessage(
+                this.DeploymentMangerMessages(
                     this, new DeploymentMangerMessageEventArgs(reportMessageType, method, message));
             }
         }

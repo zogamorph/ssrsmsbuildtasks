@@ -64,7 +64,7 @@ namespace ssrsmsbuildtasks.Native
             // Use the current users windows credentials to connect to the report server.
             NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
             ReportResourceFile[] reportResourcesFile = new ReportResourceFile[this.Files.Length];
-            rs.ReportingServicesMessage += this.reportingServicesMessage;
+            rs.DeploymentMangerMessages += this.reportingServicesMessage;
 
             try
             {
