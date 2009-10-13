@@ -69,7 +69,8 @@ namespace ssrsmsbuildtasks.Native
                 {
                     reportModelsFiles[index] = new ReportModelFiles(
                         this.ReportModels[index].GetMetadata("FullPath"), 
-                        this.ReportModels[index].GetMetadata("DataSourceFullPath"));
+                        this.ReportModels[index].GetMetadata("DataSourceFullPath"),
+                        this.ReportModels[index].GetMetadata("ModelName"));
                     string propertiesString = this.ReportModels[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {
