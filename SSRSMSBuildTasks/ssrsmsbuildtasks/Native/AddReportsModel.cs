@@ -60,9 +60,9 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
             ReportModelFiles[] reportModelsFiles = new ReportModelFiles[this.ReportModels.Length];
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
             try
             {
                 for (int index = 0; index < this.ReportModels.Length; index++)
@@ -77,7 +77,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return rs.UploadModel(reportModelsFiles, this.Folder);
+                return nativeDeploymentManger.UploadModel(reportModelsFiles, this.Folder);
             }
             catch (Exception exception)
             {

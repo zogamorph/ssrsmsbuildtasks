@@ -75,7 +75,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         public ReportFile(string reportFilePath)
             : this()
         {
-            this.ReportFilePath = reportFilePath;
+            this.ReportFilePath = reportFilePath;                      
         }
 
         #endregion
@@ -119,9 +119,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             get
             {
-                string localReportName;
-                localReportName = string.IsNullOrEmpty(this.reportName) ? this.reportFileInfo.Name : this.reportName;
-                return localReportName;
+                return this.reportName ?? this.reportFileInfo.Name.Replace(this.reportFileInfo.Extension, string.Empty);
             }
 
             set

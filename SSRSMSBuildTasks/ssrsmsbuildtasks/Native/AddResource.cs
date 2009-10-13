@@ -62,9 +62,9 @@ namespace ssrsmsbuildtasks.Native
         {
             // Creates the new instances of the reporting services.  
             // Use the current users windows credentials to connect to the report server.
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
             ReportResourceFile[] reportResourcesFile = new ReportResourceFile[this.Files.Length];
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
 
             try
             {
@@ -80,7 +80,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return rs.UploadResource(reportResourcesFile, this.Folder);
+                return nativeDeploymentManger.UploadResource(reportResourcesFile, this.Folder);
             }
             catch (Exception ex)
             {

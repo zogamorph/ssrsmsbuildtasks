@@ -54,8 +54,8 @@ namespace ssrsmsbuildtasks.Native
         public override bool Execute()
         {
             // Connecting to the reporting server
-            NativeDeploymentManger rs = new NativeDeploymentManger(this.ReportServerURL);
-            rs.DeploymentMangerMessages += this.reportingServicesMessage;
+            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
+            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
             ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
             try
             {
@@ -90,7 +90,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return rs.CreateDataSource(reportServerDataSources);
+                return nativeDeploymentManger.CreateDataSource(reportServerDataSources);
             }
             catch (Exception ex)
             {
