@@ -119,7 +119,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// The full url address to the report server web services.
         /// </returns>
-        public static string SetAddWebServiceToUrl(string reportServerURL)
+        public static string AddNativeWebServiceToUrl(string reportServerURL)
         {
             if (reportServerURL.EndsWith("ReportService2005.asmx"))
             {
@@ -132,6 +132,30 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
 
             return string.Format("{0}/ReportService2005.asmx", reportServerURL);
+        }
+
+        /// <summary>
+        /// This will take the url to the report server and append the web service.
+        /// </summary>
+        /// <param name="reportServerURL">
+        /// The url to the report server.
+        /// </param>
+        /// <returns>
+        /// The full url address to the report server web services.
+        /// </returns>
+        public static string AddIntegratedWebServiceToUrl(string reportServerURL)
+        {
+            if (reportServerURL.EndsWith(@"/_vti_bin/ReportServer/ReportService2006.asmx"))
+            {
+                return reportServerURL;
+            }
+
+            if (reportServerURL.EndsWith("/"))
+            {
+                return string.Format(@"{0}_vti_bin/ReportServer/ReportService2006.asmx", reportServerURL);
+            }
+
+            return string.Format(@"{0}/_vti_bin/ReportServer/ReportService2006.asmx", reportServerURL);
         }
 
         #endregion
