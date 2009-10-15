@@ -21,8 +21,12 @@
     />
     
     <!-- plug in a custom version of VersionNumber.exe to fix "Y2k7" bug -->
+    <Attrib Files="$(AssemblyVersionFile)"
+            ReadOnly="false" />
     <Exec Command="&quot;$(VersionXmlFile)\..\VersionNumber.exe&quot; &quot;$(AssemblyVersionFile)&quot;" 
           ContinueOnError="false"/>
+    <Attrib Files="$(AssemblyVersionFile)"
+            ReadOnly="true" />
 
     <VersionNumber.Load ConfigFileLocation="$(VersionXmlFile)">
       <Output TaskParameter="VersionNumber"
