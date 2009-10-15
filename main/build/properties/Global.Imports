@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
+
+  <!-- Import Project Properties -->
+  <Import Project="$(PropertiesPath)\Build.properties" />
+  <Import Project="$(PropertiesPath)\Common.properties" />
+  <Import Project="$(PropertiesPath)\CPUArchitecture.properties" />
+  <Import Project="$(PropertiesPath)\RequiredPackages.properties" />
+
+  <!-- Import Custom MSBuild Tasks -->
+  <Import Project="$(TasksPath)\Microsoft.Sdc.Common.tasks" />
+  <Import Project="$(TasksPath)\MSBuild.Community.tasks" />
+  <Import Project="$(TasksPath)\MSBuild.Extended.tasks" />
+
+  <!-- Import Custom Project Targets -->
+  <Import Project="$(TargetsPath)\BuildSolutions.target" />
+  <Import Project="$(TargetsPath)\BuildSuccess.target" />
+  <Import Project="$(TargetsPath)\CleanSolution.target" />
+  <Import Project="$(TargetsPath)\CopyToDrops.target" />
+  <Import Project="$(TargetsPath)\DownloadRequiredPackages.target" />
+  <Import Project="$(TargetsPath)\InstallerUpdateProductId.target" />
+  <Import Project="$(TargetsPath)\InstallerUpdateProductVersion.target" />
+  <Import Project="$(TargetsPath)\InstallerPackage.target" />
+  <Import Project="$(TargetsPath)\InstallerVersion.target" />
+  <Import Project="$(TargetsPath)\SyncWithSourceControl.target" />
+  <Import Project="$(TargetsPath)\VersionNumberGetLast.target" />
+  <Import Project="$(TargetsPath)\VersionNumberIncrement.target" />
+  <Import Project="$(TargetsPath)\FixMissingSdkLibFolder.target" />
+  <Import Project="$(TargetsPath)\ConfigureSigning.target" />
+
+</Project>

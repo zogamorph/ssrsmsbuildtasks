@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
+
+  <Target Name="InstallerUpdateProductId"
+          Condition=" '$(IsDesktopBuild)' != 'true' ">
+
+    <CreateGuid>
+      <Output TaskParameter="GuidRegistryFormatString" PropertyName="NewProductId" />
+    </CreateGuid>
+
+    <!-- Replace the value of the 'productId' Wix variable in 'BuildProperties.wxi' -->
+    <File.RegEx Path="$(DeploymentProjectPath)\$(DeploymentProjectPropertiesFile)"
+                Force="true"
+                NewValue="define productId=&quot;$(NewProductId)&quot;"
+                RegularExpression="define productId=\&quot;.*\&quot;" >
+    </File.RegEx>
+
+    <Message Text="Installer ProductID: '$(NewProductId)'" />
+    
+  </Target>
+
+</Project>

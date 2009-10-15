@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
+
+  <Target Name="DownloadRequiredPackages">
+
+    <!-- Check to see if the Wix 3.0 VisualStudio Package is installed -->
+    <Registry.GetKey RegistryHive="LocalMachine"
+                     Key="SOFTWARE\$(RegistryWowHive)Microsoft\VisualStudio\9.0\Packages\{E0EE8E7D-F498-459E-9E90-2B3D73124AD5}"
+                     Value="ProductVersion"
+                     ContinueOnError="true">
+      <Output TaskParameter="Data" PropertyName="WixVsPackageVersion"/>
+    </Registry.GetKey>
+
+    <Message Condition=" '$(WixVsPackageVersion)' == '3.0' "
+             Text="Existing version of Wix VS Package detected." />
+    
+    <Message Text="Downloading Required 3rd Party Packages from the Web" Importance="HIGH" />
+   
+    <!--<WebDownload
+      FileUri="@(Wix3x64)"
+      FileName="$(RequiredPackagesPath)\$(Wix3x64FileName)"
+      Condition="(('$(PROCESSOR_ARCHITECTURE)'!='x86') AND !Exists('$(RequiredPackagesPath)\$(Wix3x86FileName)'))"/>
+
+    <WebDownload
+      FileUri="@(Wix3x86)"
+      FileName="$(RequiredPackagesPath)\$(Wix3x86FileName)"
+      Condition="(('$(PROCESSOR_ARCHITECTURE)'=='x86') AND !Exists('$(RequiredPackagesPath)\$(Wix3x86FileName)'))"/>-->
+
+  </Target>
+
+</Project>

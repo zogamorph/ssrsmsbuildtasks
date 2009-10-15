@@ -1,0 +1,16 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="SyncWithSourceControl"
+          Condition=" '$(SkipSyncWithSourceControl)' != 'true' ">
+
+    <!--<Sync
+      All="True"
+      Path="$/StyleCopForReSharper"
+      OutputFolder="$(WorkingDirectory)"
+      WorkingDirectory="$(WorkingDirectory)"
+      TfsVersion="2008"
+      Force="True" />-->
+
+  </Target>
+
+</Project>

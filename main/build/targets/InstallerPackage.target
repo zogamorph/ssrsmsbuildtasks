@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="All">
+
+  <Target Name="InstallerPackage"
+          Condition=" '$(IsDesktopBuild)' != 'true' "
+          DependsOnTargets="InstallerVersion">
+
+    <Zip ZipFileName="$(InstallerBuildArtefactPath)\$(InstallerNameWithoutExtension).v$(GlobalBuildVersionNumber).zip" 
+         Files="$(InstallerBuildArtefactPath)\$(InstallerNameWithoutExtension).v$(GlobalBuildVersionNumber).msi"
+         WorkingDirectory="$(InstallerBuildArtefactPath)"
+         Flatten ="false"
+         ZipLevel="10"/>
+
+  </Target>
+
+</Project>
