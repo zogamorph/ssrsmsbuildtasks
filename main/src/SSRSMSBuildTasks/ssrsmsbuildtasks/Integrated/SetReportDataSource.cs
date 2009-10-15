@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -52,7 +52,7 @@ namespace ssrsmsbuildtasks.Native
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether [use match case].
@@ -72,8 +72,9 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
             try
             {
@@ -88,7 +89,7 @@ namespace ssrsmsbuildtasks.Native
                         };
                 }
 
-                return nativeDeploymentManger.SetReportDataSource(
+                return integratedDeploymentManager.SetReportDataSource(
                     this.ReportItem, this.Recursive, reportServerDataSources, this.UseMatchCase);
             }
             catch (Exception ex)

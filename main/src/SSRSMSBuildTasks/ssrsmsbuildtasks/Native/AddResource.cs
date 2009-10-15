@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddResource.cs" company="">
-//   
+// <copyright file="AddResource.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   This MSBuild Task will upload a list of a reports to the requested report server.
@@ -64,7 +64,7 @@ namespace ssrsmsbuildtasks.Native
             // Use the current users windows credentials to connect to the report server.
             NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
             ReportResourceFile[] reportResourcesFile = new ReportResourceFile[this.Files.Length];
-            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
+            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
 
             try
             {
@@ -133,9 +133,9 @@ namespace ssrsmsbuildtasks.Native
         /// <param name="eventArgs">
         /// The event args.
         /// </param>
-        private void reportingServicesMessage(object sender, DeploymentMangerMessageEventArgs eventArgs)
+        private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
-            RSBuildHelper.SendReportMessage(eventArgs, this.BuildEngine, this.ToString());
+            RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());
         }
 
         #endregion

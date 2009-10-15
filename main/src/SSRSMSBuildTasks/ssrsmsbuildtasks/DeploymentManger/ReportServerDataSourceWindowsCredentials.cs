@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReportServerDataSourceWindowsCredentials.cs" company="">
-//   
+// <copyright file="ReportServerDataSourceWindowsCredentials.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   This to create store windows credentials.

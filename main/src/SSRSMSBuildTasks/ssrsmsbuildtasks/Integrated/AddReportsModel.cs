@@ -1,13 +1,13 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddReports.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="AddReportsModel.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will upload a list of a reports to the requested report server.
+//   Upload a report model to the report server
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -21,82 +21,80 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will upload a list of a reports to the requested report server.
+    /// Upload a report model to the report server
     /// </summary>
-    public class AddReports : Task
+    public class AddReportsModel : Task
     {
         #region Properties
 
         /// <summary>
-        /// The report folder where the reports need to be uploaded.
+        /// Gets or sets Folder.
         /// </summary>
         /// <value>The name of the folder.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// The list of report files, include full path, which need to upload to the report server.
+        /// Gets or sets ReportModels.
         /// </summary>
-        /// <value>The report files.</value>
+        /// <value>The report models.</value>
         [Required]
-        public ITaskItem[] ReportFiles { get; set; }
+        public ITaskItem[] ReportModels { get; set; }
 
         /// <summary>
-        /// The http address of the reports server.
+        /// Gets or sets SharePointSiteUrl.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// The execute method which is call msbuild to run the task
+        /// The i task. execute.
         /// </summary>
         /// <returns>
-        /// True if the task runs correctly
+        /// The i task. execute.
         /// </returns>
         public override bool Execute()
         {
-            // Creates the new instances of the reporting services.  
-            // Use the current users windows credentials to connect to the report server.
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            ReportFile[] reportFiles = new ReportFile[this.ReportFiles.Length];
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
-
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            ReportModelFiles[] reportModelsFiles = new ReportModelFiles[this.ReportModels.Length];
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                // loop through the array of reports.
-                for (int index = 0; index < this.ReportFiles.Length; index++)
+                for (int index = 0; index < this.ReportModels.Length; index++)
                 {
-                    reportFiles[index] = new ReportFile(this.ReportFiles[index].GetMetadata("FullPath"));
-                    string propertiesString = this.ReportFiles[index].GetMetadata("ReportServerProperties");
+                    reportModelsFiles[index] = new ReportModelFiles(
+                        this.ReportModels[index].GetMetadata("FullPath"), 
+                        this.ReportModels[index].GetMetadata("DataSourceFullPath"), 
+                        this.ReportModels[index].GetMetadata("ModelName"));
+                    string propertiesString = this.ReportModels[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {
-                        this.AddReportProperties(reportFiles[index], propertiesString);
+                        this.AddModelProperties(reportModelsFiles[index], propertiesString);
                     }
                 }
 
-                return nativeDeploymentManger.UpLoadReports(reportFiles, this.Folder);
+                return integratedDeploymentManager.UploadModel(reportModelsFiles, this.Folder);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                // catches the error and then reports out via msbuild.
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
                         "Reporting", 
-                        "AddReports", 
+                        "AddReportsModel", 
                         this.BuildEngine.ProjectFileOfTaskNode, 
                         this.BuildEngine.LineNumberOfTaskNode, 
                         this.BuildEngine.ColumnNumberOfTaskNode, 
                         0, 
                         0, 
-                        ex.Message, 
+                        exception.Message, 
                         string.Empty, 
                         this.ToString()));
-
                 return false;
             }
         }
@@ -108,19 +106,19 @@ namespace ssrsmsbuildtasks.Native
         /// <summary>
         /// Adds the report properties.
         /// </summary>
-        /// <param name="reportFile">
+        /// <param name="reportModelFiles">
         /// The report server reports.
         /// </param>
         /// <param name="propertiesString">
         /// The properties string.
         /// </param>
-        private void AddReportProperties(ReportFile reportFile, string propertiesString)
+        private void AddModelProperties(ReportModelFiles reportModelFiles, string propertiesString)
         {
             string[] strings;
             foreach (string propertery in propertiesString.Split(new[] { ';' }))
             {
                 strings = propertery.Split(new[] { '=' });
-                reportFile.ReportServerProperties.Add(strings[0], strings[1]);
+                reportModelFiles.ReportServerProperties.Add(strings[0], strings[1]);
             }
         }
 

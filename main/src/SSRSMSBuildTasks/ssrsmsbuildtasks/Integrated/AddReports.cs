@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -42,11 +42,11 @@ namespace ssrsmsbuildtasks.Native
         public ITaskItem[] ReportFiles { get; set; }
 
         /// <summary>
-        /// The http address of the reports server.
+        /// The http address of the SharePointSiteUrl server.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The SharePointSiteUrl server URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -62,9 +62,10 @@ namespace ssrsmsbuildtasks.Native
         {
             // Creates the new instances of the reporting services.  
             // Use the current users windows credentials to connect to the report server.
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
             ReportFile[] reportFiles = new ReportFile[this.ReportFiles.Length];
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
 
             try
             {
@@ -79,7 +80,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return nativeDeploymentManger.UpLoadReports(reportFiles, this.Folder);
+                return integratedDeploymentManager.UpLoadReports(reportFiles, this.Folder);
             }
             catch (Exception ex)
             {

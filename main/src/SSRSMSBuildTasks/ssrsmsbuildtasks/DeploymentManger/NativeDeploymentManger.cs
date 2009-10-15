@@ -1,9 +1,9 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NativeDeploymentManger.cs" company="">
-//   
+// <copyright file="NativeDeploymentManger.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   Delegate to handle sending message between.
+//   Report Server class.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -809,10 +809,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // looping through the roles and assgin them.
             for (int roleIndex = 0; roleIndex < reportingRoles.Length; roleIndex++)
             {
-                newPolicy[index].Roles[roleIndex] = new Role();
-                newPolicy[index].Roles[roleIndex].Name = reportingRoles[roleIndex];
-                newPolicy[index].Roles[roleIndex].Description = string.Format(
-                    "Reporting {0} User / Group", reportingRoles[roleIndex]);
+                newPolicy[index].Roles[roleIndex] = new Role
+                    {
+                        Name = reportingRoles[roleIndex], 
+                        Description = string.Format("Reporting {0} User / Group", reportingRoles[roleIndex])
+                    };
             }
         }
 

@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReportServerDataSource.cs" company="">
-//   
+// <copyright file="ReportServerDataSource.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   A list of supported Data Provider.

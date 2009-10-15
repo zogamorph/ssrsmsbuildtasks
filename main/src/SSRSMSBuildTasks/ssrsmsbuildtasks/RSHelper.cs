@@ -1,13 +1,13 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RSHelper.cs" company="">
-//   
+// <copyright file="RSHelper.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   Static class with reuseable functions for reporting services
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks
 {
     #region Directives
 
@@ -36,7 +36,7 @@ namespace ssrsmsbuildtasks.Native
         /// <param name="senderName">
         /// The sender name.
         /// </param>
-        public static void SendReportMessage(
+        public static void SendDeploymentMangerMessage(
             DeploymentMangerMessageEventArgs eventArgs, IBuildEngine buildEngine, string senderName)
         {
             switch (eventArgs.ReportMessageType)

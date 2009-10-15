@@ -1,20 +1,28 @@
-//------------------------------------------------------------------------------------------------- 
-// <copyright file="CommonAssemblyInfo.cs" company="StyleCop for ReSharper Development Team">
-// Copyright (c) StyleCop for ReSharper Development Team.  All rights reserved.
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="CommonAssemblyInfo.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
-// <summary>Sets whether the assembly was is in debug or release mode</summary>
-//-------------------------------------------------------------------------------------------------
+// <summary>
+//   CommonAssemblyInfo.cs
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
-#if DEBUG 
+#region Directives
 
-[assembly: System.Reflection.AssemblyConfiguration("Debug")] 
+using System.Reflection;
+
+#endregion
+
+#if DEBUG
+
+[assembly: AssemblyConfiguration("Debug")]
 
 #else 
 
-[assembly: System.Reflection.AssemblyConfiguration("Release")] 
+[assembly: System.Reflection.AssemblyConfiguration("Release")]
 
 #endif
 
-[assembly: System.Reflection.AssemblyCompany("SSRSMSBuildTasks Development Team")]
-[assembly: System.Reflection.AssemblyProduct("SSRSMSBuildTasks")]
-[assembly: System.Reflection.AssemblyCopyright("Copyright © 2009")]
+[assembly: AssemblyCompany("SSRSMSBuildTasks Development Team")]
+[assembly: AssemblyProduct("SSRSMSBuildTasks")]
+[assembly: AssemblyCopyright("Copyright © 2009")]

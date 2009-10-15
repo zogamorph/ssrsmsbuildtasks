@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeploymentMangerHelper.cs" company="">
-//   
+// <copyright file="DeploymentMangerHelper.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   Static class with reuseable functions for reporting services.
@@ -16,109 +16,38 @@ namespace ssrsmsbuildtasks.DeploymentManger
     #endregion
 
     /// <summary>
-    /// Static class with reuseable functions for reporting services.
+    /// Deployment Manger Helper
     /// </summary>
     public static class DeploymentMangerHelper
     {
         #region Public Methods
 
         /// <summary>
-        /// Looks trought the list items to find the folder.
+        /// Adds the integrated web service to URL.
         /// </summary>
-        /// <param name="items">
-        /// List of item in the currnet folder.
-        /// </param>
-        /// <param name="folderName">
-        /// The folder name to look for.
-        /// </param>
-        /// <returns>
-        /// Flag if the folder has been found.
-        /// </returns>
-        public static bool FindFolder(CatalogItem[] items, string folderName)
+        /// <param name="sharePointSiteUrl">The share point site URL.</param>
+        /// <returns>Report Server Web Services URL</returns>
+        public static string AddIntegratedWebServiceToUrl(string sharePointSiteUrl)
         {
-            bool found = false;
-
-            for (int index = 0; index < items.Length && !found; index++)
+            if (sharePointSiteUrl.EndsWith(@"/_vti_bin/ReportServer/ReportService2006.asmx"))
             {
-                if ((items[index].Type == ItemTypeEnum.Folder) && (items[index].Name == folderName))
-                {
-                    found = true;
-                }
+                return sharePointSiteUrl;
             }
 
-            return found;
-        }
-
-        /// <summary>
-        /// Finds the type of the item.
-        /// </summary>
-        /// <param name="items">
-        /// The items.
-        /// </param>
-        /// <param name="reportItemName">
-        /// Name of the report item.
-        /// </param>
-        /// <param name="itemFindType">
-        /// Type of the item find.
-        /// </param>
-        /// <returns>
-        /// Flag if the is item has been found.
-        /// </returns>
-        public static bool FindItemType(CatalogItem[] items, string reportItemName, ItemTypeEnum itemFindType)
-        {
-            bool flag = false;
-            for (int i = 0; (i < items.Length) && !flag; i++)
+            if (sharePointSiteUrl.EndsWith("/"))
             {
-                if ((items[i].Type == itemFindType) && (items[i].Name == reportItemName))
-                {
-                    flag = true;
-                }
+                return string.Format(@"{0}_vti_bin/ReportServer/ReportService2006.asmx", sharePointSiteUrl);
             }
 
-            return flag;
+            return string.Format(@"{0}/_vti_bin/ReportServer/ReportService2006.asmx", sharePointSiteUrl);
         }
 
-        /// <summary>
-        /// Make sure the folder path is correct formated.
-        /// </summary>
-        /// <param name="folderPath">
-        /// The folder path.
-        /// </param>
-        /// <returns>
-        /// The path for folder.
-        /// </returns>
-        public static string FormatFolderPath(string folderPath)
-        {
-            return FormatItemPath(folderPath);
-        }
 
         /// <summary>
-        /// This make sure the path to a item start with the / - to show root.
+        /// Adds the native web service to URL.
         /// </summary>
-        /// <param name="itemPath">
-        /// The item path. 
-        /// </param>
-        /// <returns>
-        /// Correct the item path.
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// value is null. 
-        /// </exception>
-        public static string FormatItemPath(string itemPath)
-        {
-            string newItemPath = itemPath.StartsWith("/") ? itemPath : string.Concat("/", itemPath);
-            return newItemPath.Replace("//", "/");
-        }
-
-        /// <summary>
-        /// This will take the url to the report server and append the web service.
-        /// </summary>
-        /// <param name="reportServerURL">
-        /// The url to the report server.
-        /// </param>
-        /// <returns>
-        /// The full url address to the report server web services.
-        /// </returns>
+        /// <param name="reportServerURL">The report server URL.</param>
+        /// <returns>Report Server Web Services URL</returns>
         public static string AddNativeWebServiceToUrl(string reportServerURL)
         {
             if (reportServerURL.EndsWith("ReportService2005.asmx"))
@@ -135,27 +64,69 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// This will take the url to the report server and append the web service.
+        /// Finds the folder.
         /// </summary>
-        /// <param name="reportServerURL">
-        /// The url to the report server.
-        /// </param>
-        /// <returns>
-        /// The full url address to the report server web services.
-        /// </returns>
-        public static string AddIntegratedWebServiceToUrl(string reportServerURL)
+        /// <param name="items">The items.</param>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
+        public static bool FindFolder(CatalogItem[] items, string folderName)
         {
-            if (reportServerURL.EndsWith(@"/_vti_bin/ReportServer/ReportService2006.asmx"))
+            bool found = false;
+
+            for (int index = 0; index < items.Length && !found; index++)
             {
-                return reportServerURL;
+                if ((items[index].Type == ItemTypeEnum.Folder) && (items[index].Name == folderName))
+                {
+                    found = true;
+                }
             }
 
-            if (reportServerURL.EndsWith("/"))
+            return found;
+        }
+
+
+        /// <summary>
+        /// Finds the type of the item.
+        /// </summary>
+        /// <param name="items">The items.</param>
+        /// <param name="reportItemName">Name of the report item.</param>
+        /// <param name="itemFindType">Type of the item find.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
+        public static bool FindItemType(CatalogItem[] items, string reportItemName, ItemTypeEnum itemFindType)
+        {
+            bool flag = false;
+            for (int i = 0; (i < items.Length) && !flag; i++)
             {
-                return string.Format(@"{0}_vti_bin/ReportServer/ReportService2006.asmx", reportServerURL);
+                if ((items[i].Type == itemFindType) && (items[i].Name == reportItemName))
+                {
+                    flag = true;
+                }
             }
 
-            return string.Format(@"{0}/_vti_bin/ReportServer/ReportService2006.asmx", reportServerURL);
+            return flag;
+        }
+
+
+        /// <summary>
+        /// Formats the folder path.
+        /// </summary>
+        /// <param name="folderPath">The folder path.</param>
+        /// <returns>Formatted folder path</returns>
+        public static string FormatFolderPath(string folderPath)
+        {
+            return FormatItemPath(folderPath);
+        }
+
+
+        /// <summary>
+        /// Formats the item path.
+        /// </summary>
+        /// <param name="itemPath">The item path.</param>
+        /// <returns>Formatted item path</returns>
+        public static string FormatItemPath(string itemPath)
+        {
+            string newItemPath = itemPath.StartsWith("/") ? itemPath : string.Concat("/", itemPath);
+            return newItemPath.Replace("//", "/");
         }
 
         #endregion
