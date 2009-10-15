@@ -53,6 +53,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\common\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="DeploymentManger\DeploymentMangerMessage.cs" />
     <Compile Include="DeploymentManger\IntegratedDeploymentManager.cs" />
     <Compile Include="DeploymentManger\NativeDeploymentManger.cs" />
