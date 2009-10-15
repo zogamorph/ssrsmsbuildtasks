@@ -53,6 +53,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeploymentManger\DeploymentMangerMessage.cs" />
+    <Compile Include="DeploymentManger\IntegratedDeploymentManager.cs" />
     <Compile Include="DeploymentManger\NativeDeploymentManger.cs" />
     <Compile Include="DeploymentManger\ReportServerDataSource.cs" />
     <Compile Include="DeploymentManger\ReportServerDataSourceWindowsCredentials.cs" />
@@ -81,6 +83,11 @@
       <DependentUpon>Reference.map</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Web References\MSReportService2006\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -99,6 +106,17 @@
       </CachedDynamicPropName>
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>ssrsmsbuildtasks_MSReportService2005_ReportingService2005</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://localhost/reportserver2k8/ReportService2006.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\MSReportService2006\</RelPath>
+      <UpdateFromURL>http://localhost/reportserver2k8/ReportService2006.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>ssrsmsbuildtasks_MSReportService2006_ReportingService2006</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +213,101 @@
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\MSReportService2005\Warning.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ActiveState.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\CatalogItem.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\DataRetrievalPlan.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\DataSetDefinition.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\DataSource.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\DataSourceDefinition.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\DataSourcePrompt.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Event.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ExecutionSettingEnum.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ExpirationDefinition.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Extension.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ExtensionParameter.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ExtensionSettings.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ItemTypeEnum.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Job.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ModelCatalogItem.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ModelDrillthroughReport.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ModelItem.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ParameterValue.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ParameterValueOrFieldReference.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Policy.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Property.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\MSReportService2006\ReportHistorySnapshot.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ReportParameter.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ReportService2006.wsdl" />
+    <None Include="Web References\MSReportService2006\Role.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Schedule.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\ScheduleDefinitionOrReference.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Subscription.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Task.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\MSReportService2006\Warning.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
   </ItemGroup>
