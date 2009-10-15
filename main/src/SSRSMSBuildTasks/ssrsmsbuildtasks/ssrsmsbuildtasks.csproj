@@ -69,6 +69,18 @@
     <Compile Include="DeploymentManger\ReportFile.cs" />
     <Compile Include="DeploymentManger\ReportResourceFile.cs" />
     <Compile Include="DeploymentManger\DeploymentMangerHelper.cs" />
+    <Compile Include="Integrated\AddReports.cs" />
+    <Compile Include="Integrated\AddReportsModel.cs" />
+    <Compile Include="Integrated\AddReportUser.cs" />
+    <Compile Include="Integrated\AddResource.cs" />
+    <Compile Include="Integrated\CreateReportFolder.cs" />
+    <Compile Include="Integrated\CreateReportingDataSource.cs" />
+    <Compile Include="Integrated\DataSourceExists.cs" />
+    <Compile Include="Integrated\DeleteDataSource.cs" />
+    <Compile Include="Integrated\DeleteReportFolder.cs" />
+    <Compile Include="Integrated\ReportFolderExists.cs" />
+    <Compile Include="Integrated\ReportItemExists.cs" />
+    <Compile Include="Integrated\SetReportDataSource.cs" />
     <Compile Include="Native\AddReports.cs" />
     <Compile Include="Native\AddReportsModel.cs" />
     <Compile Include="Native\AddReportUser.cs" />
@@ -80,7 +92,7 @@
     <Compile Include="Native\DeleteReportFolder.cs" />
     <Compile Include="Native\ReportFolderExists.cs" />
     <Compile Include="Native\ReportItemExists.cs" />
-    <Compile Include="Native\RSHelper.cs" />
+    <Compile Include="RSHelper.cs" />
     <Compile Include="Native\SetReportDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Web References\MSReportService2005\Reference.cs">

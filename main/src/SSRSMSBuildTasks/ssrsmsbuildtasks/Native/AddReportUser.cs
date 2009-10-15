@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddReportUser.cs" company="">
-//   
+// <copyright file="AddReportUser.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   This MSBuild Task will create a new report server user on the report server.
@@ -69,7 +69,7 @@ namespace ssrsmsbuildtasks.Native
         {
             // Connecting to the reporting server
             NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
+            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
                 return nativeDeploymentManger.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
@@ -105,9 +105,9 @@ namespace ssrsmsbuildtasks.Native
         /// <param name="eventArgs">
         /// The event args.
         /// </param>
-        private void reportingServicesMessage(object sender, DeploymentMangerMessageEventArgs eventArgs)
+        private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
-            RSBuildHelper.SendReportMessage(eventArgs, this.BuildEngine, this.ToString());
+            RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());
         }
 
         #endregion

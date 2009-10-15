@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -20,8 +20,9 @@ namespace ssrsmsbuildtasks.Native
 
     #endregion
 
+
     /// <summary>
-    /// This MSBuild Task will create a new report server SQL Server shared data soruce on the report server.
+    /// Create Reporting Data Source
     /// </summary>
     public class CreateReportingDataSource : Task
     {
@@ -35,27 +36,28 @@ namespace ssrsmsbuildtasks.Native
         public ITaskItem[] DataSources { get; set; }
 
         /// <summary>
-        /// The Report Server name.
+        /// Gets or sets the share point site URL.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The share point site URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// Executes a task.
+        /// When overridden in a derived class, executes the task.
         /// </summary>
         /// <returns>
-        /// true if the task executed successfully; otherwise, false.
+        /// true if the task successfully executed; otherwise, false.
         /// </returns>
         public override bool Execute()
         {
             // Connecting to the reporting server
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
             try
             {
@@ -90,7 +92,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return nativeDeploymentManger.CreateDataSource(reportServerDataSources);
+                return integratedDeploymentManager.CreateDataSource(reportServerDataSources);
             }
             catch (Exception ex)
             {
@@ -117,12 +119,8 @@ namespace ssrsmsbuildtasks.Native
         /// <summary>
         /// Adds the report properties.
         /// </summary>
-        /// <param name="reportServerDataSource">
-        /// The report server reports.
-        /// </param>
-        /// <param name="propertiesString">
-        /// The properties string.
-        /// </param>
+        /// <param name="reportServerDataSource">The report server data source.</param>
+        /// <param name="propertiesString">The properties string.</param>
         private void AddReportProperties(ReportServerDataSource reportServerDataSource, string propertiesString)
         {
             string[] strings;
@@ -134,14 +132,10 @@ namespace ssrsmsbuildtasks.Native
         }
 
         /// <summary>
-        /// The reporting services message.
+        /// Deployments the manger messages.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="eventArgs">
-        /// The event args.
-        /// </param>
+        /// <param name="sender">The sender.</param>
+        /// <param name="eventArgs">The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.</param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());

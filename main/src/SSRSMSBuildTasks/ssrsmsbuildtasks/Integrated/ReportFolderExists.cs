@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DataSourceExists.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="ReportFolderExists.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -23,16 +23,9 @@ namespace ssrsmsbuildtasks.Native
     /// <summary>
     /// The report folder exists.
     /// </summary>
-    public class DataSourceExists : Task
+    public class ReportFolderExists : Task
     {
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the report item.
-        /// </summary>
-        /// <value>The report item.</value>
-        [Required]
-        public string DataSourceName { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
@@ -48,11 +41,17 @@ namespace ssrsmsbuildtasks.Native
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        /// Gets or sets the name of the folder.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The name of the folder.</value>
+        public string FolderName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the share point site URL.
+        /// </summary>
+        /// <value>The share point site URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -66,17 +65,18 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                if (String.IsNullOrEmpty(this.Folder))
+                if (String.IsNullOrEmpty(this.FolderName))
                 {
-                    this.Folder = "/";
+                    this.FolderName = "/";
                 }
 
-                this.Exists = nativeDeploymentManger.ReportItemExists(
-                    this.DataSourceName, NativeDeploymentManger.GetReportItemtype("DataSource"), this.Folder);
+                this.Exists = integratedDeploymentManager.ReportItemExists(
+                    this.FolderName, IntegratedDeploymentManager.GetReportItemtype("Folder"), this.Folder);
                 return true;
             }
             catch (Exception exception)

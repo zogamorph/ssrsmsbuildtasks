@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddReports.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="AddResource.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -23,9 +23,16 @@ namespace ssrsmsbuildtasks.Native
     /// <summary>
     /// This MSBuild Task will upload a list of a reports to the requested report server.
     /// </summary>
-    public class AddReports : Task
+    public class AddResource : Task
     {
         #region Properties
+
+        /// <summary>
+        /// The list of report files, include full path, which need to upload to the report server.
+        /// </summary>
+        /// <value>The files.</value>
+        [Required]
+        public ITaskItem[] Files { get; set; }
 
         /// <summary>
         /// The report folder where the reports need to be uploaded.
@@ -35,18 +42,11 @@ namespace ssrsmsbuildtasks.Native
         public string Folder { get; set; }
 
         /// <summary>
-        /// The list of report files, include full path, which need to upload to the report server.
-        /// </summary>
-        /// <value>The report files.</value>
-        [Required]
-        public ITaskItem[] ReportFiles { get; set; }
-
-        /// <summary>
         /// The http address of the reports server.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -62,24 +62,26 @@ namespace ssrsmsbuildtasks.Native
         {
             // Creates the new instances of the reporting services.  
             // Use the current users windows credentials to connect to the report server.
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            ReportFile[] reportFiles = new ReportFile[this.ReportFiles.Length];
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            ReportResourceFile[] reportResourcesFile = new ReportResourceFile[this.Files.Length];
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
 
             try
             {
                 // loop through the array of reports.
-                for (int index = 0; index < this.ReportFiles.Length; index++)
+                for (int index = 0; index < this.Files.Length; index++)
                 {
-                    reportFiles[index] = new ReportFile(this.ReportFiles[index].GetMetadata("FullPath"));
-                    string propertiesString = this.ReportFiles[index].GetMetadata("ReportServerProperties");
+                    reportResourcesFile[index] = new ReportResourceFile(this.Files[index].GetMetadata("FullPath"));
+                    reportResourcesFile[index].MineType = this.Files[index].GetMetadata("MineType");
+                    string propertiesString = this.Files[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {
-                        this.AddReportProperties(reportFiles[index], propertiesString);
+                        this.AddFilesProperties(reportResourcesFile[index], propertiesString);
                     }
                 }
 
-                return nativeDeploymentManger.UpLoadReports(reportFiles, this.Folder);
+                return integratedDeploymentManager.UploadResource(reportResourcesFile, this.Folder);
             }
             catch (Exception ex)
             {
@@ -87,7 +89,7 @@ namespace ssrsmsbuildtasks.Native
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
                         "Reporting", 
-                        "AddReports", 
+                        "AddResources", 
                         this.BuildEngine.ProjectFileOfTaskNode, 
                         this.BuildEngine.LineNumberOfTaskNode, 
                         this.BuildEngine.ColumnNumberOfTaskNode, 
@@ -96,7 +98,6 @@ namespace ssrsmsbuildtasks.Native
                         ex.Message, 
                         string.Empty, 
                         this.ToString()));
-
                 return false;
             }
         }
@@ -108,19 +109,19 @@ namespace ssrsmsbuildtasks.Native
         /// <summary>
         /// Adds the report properties.
         /// </summary>
-        /// <param name="reportFile">
+        /// <param name="reportResourceFile">
         /// The report server reports.
         /// </param>
         /// <param name="propertiesString">
         /// The properties string.
         /// </param>
-        private void AddReportProperties(ReportFile reportFile, string propertiesString)
+        private void AddFilesProperties(ReportResourceFile reportResourceFile, string propertiesString)
         {
             string[] strings;
             foreach (string propertery in propertiesString.Split(new[] { ';' }))
             {
                 strings = propertery.Split(new[] { '=' });
-                reportFile.ReportServerProperties.Add(strings[0], strings[1]);
+                reportResourceFile.ReportServerProperties.Add(strings[0], strings[1]);
             }
         }
 

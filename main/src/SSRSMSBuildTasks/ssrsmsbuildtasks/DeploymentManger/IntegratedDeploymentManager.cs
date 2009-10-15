@@ -1,6 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IntegratedDeploymentManager.cs" company="">
-//   
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="IntegratedDeploymentManager.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   The integrated deployment manager.
@@ -39,11 +39,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the NativeDeploymentManger class.
+        /// Initializes a new instance of the <see cref="IntegratedDeploymentManager"/> class.
         /// </summary>
-        /// <param name="SharepointSiteURL">
-        /// The report server URL.
-        /// </param>
+        /// <param name="SharepointSiteURL">The sharepoint site URL.</param>
         public IntegratedDeploymentManager(string SharepointSiteURL)
         {
             SharepointSiteURL = DeploymentMangerHelper.AddIntegratedWebServiceToUrl(SharepointSiteURL);
@@ -58,7 +56,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Events
 
         /// <summary>
-        /// Occurs when [reporting services message].
+        /// Occurs when [deployment manger messages].
         /// </summary>
         public event DeploymentMangerMessage DeploymentMangerMessages;
 
@@ -69,32 +67,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Gets the report itemtype.
         /// </summary>
-        /// <param name="itemTypeName">
-        /// Name of the item type.
-        /// </param>
-        /// <returns>
-        /// The enum type of the type name.
-        /// </returns>
+        /// <param name="itemTypeName">Name of the item type.</param>
+        /// <returns></returns>
         public static ItemTypeEnum GetReportItemtype(string itemTypeName)
         {
             return (ItemTypeEnum)Enum.Parse(typeof(ItemTypeEnum), itemTypeName, true);
         }
 
+
         /// <summary>
         /// Adds the report user.
         /// </summary>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <param name="reportingRoles">
-        /// The reporting roles.
-        /// </param>
-        /// <param name="reportFolder">
-        /// The report folder.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="reportUserName">Name of the report user.</param>
+        /// <param name="reportingRoles">The reporting roles.</param>
+        /// <param name="reportFolder">The report folder.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool AddReportUser(string reportUserName, string[] reportingRoles, string reportFolder)
         {
             int index;
@@ -148,12 +135,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Creates the data source.
         /// </summary>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="dataSources">The data sources.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool CreateDataSource(ReportServerDataSource[] dataSources)
         {
             bool success = false;
@@ -169,25 +152,22 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return success;
         }
 
+
         /// <summary>
         /// Creates the folder.
         /// </summary>
         /// <param name="folderName">Name of the folder.</param>
-        /// <param name="parnetPath">The parnet path.</param>
-        /// <returns>Flag is the operation was successfully.</returns>
-        public bool CreateFolder(string folderName, string parnetPath)
+        /// <param name="parentPath">The parent path.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
+        public bool CreateFolder(string folderName, string parentPath)
         {
             try
             {
-
-                this.reportingService2006.CreateFolder(folderName, parnetPath);
+                this.reportingService2006.CreateFolder(folderName, parentPath);
                 this.OnReportServerMessage(
-                    DeploymentMangerMessageType.Information,
-                    "CreateFolder",
-                    string.Format(
-                        "Created Report Folder: {0}/{1}",
-                        parnetPath,
-                        folderName));             
+                    DeploymentMangerMessageType.Information, 
+                    "CreateFolder", 
+                    string.Format("Created Report Folder: {0}/{1}", parentPath, folderName));
 
                 return true;
             }
@@ -201,12 +181,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Deletes the model.
         /// </summary>
-        /// <param name="modelName">
-        /// Name of the model.
-        /// </param>
-        /// <returns>
-        /// The delete model.
-        /// </returns>
+        /// <param name="modelName">Name of the model.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool DeleteModel(string modelName)
         {
             // Create the item and format the items
@@ -241,15 +217,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+
         /// <summary>
         /// Deletes the report.
         /// </summary>
-        /// <param name="reportName">
-        /// Name of the report.
-        /// </param>
-        /// <returns>
-        /// The delete report.
-        /// </returns>
+        /// <param name="reportName">Name of the report.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool DeleteReport(string reportName)
         {
             // Create the item and format the items
@@ -284,18 +257,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+
         /// <summary>
         /// Deletes the report data source.
         /// </summary>
-        /// <param name="dataSourceName">
-        /// Name of the data source.
-        /// </param>
-        /// <param name="dataSourceFolder">
-        /// The data source folder.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="dataSourceName">Name of the data source.</param>
+        /// <param name="dataSourceFolder">The data source folder.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
         {
             ItemTypeEnum currentItemType;
@@ -333,15 +301,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+
         /// <summary>
         /// Deletes the report folder.
         /// </summary>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool DeleteReportFolder(string folderName)
         {
             // Create the item and format the items
@@ -379,12 +344,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Deletes the resource.
         /// </summary>
-        /// <param name="resourceName">
-        /// Name of the resource.
-        /// </param>
-        /// <returns>
-        /// The delete resource.
-        /// </returns>
+        /// <param name="resourceName">Name of the resource.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool DeleteResource(string resourceName)
         {
             // Create the item and format the items
@@ -422,15 +383,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Moves the report item.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="destinationItem">
-        /// The destination of the Item.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="reportItem">The report item.</param>
+        /// <param name="destinationItem">The destination item.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool MoveReportItem(string reportItem, string destinationItem)
         {
             try
@@ -454,88 +409,66 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+
         /// <summary>
         /// Reports the item exists.
         /// </summary>
-        /// <param name="reportItemName">
-        /// The report item.
-        /// </param>
-        /// <param name="reportItemType">
-        /// Type of the report item.
-        /// </param>
-        /// <returns>
-        /// True if the item of that type exists.
-        /// </returns>
+        /// <param name="reportItemName">Name of the report item.</param>
+        /// <param name="reportItemType">Type of the report item.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool ReportItemExists(string reportItemName, ItemTypeEnum reportItemType)
         {
             return this.ReportItemExists(reportItemName, reportItemType, string.Empty);
         }
 
+
         /// <summary>
         /// Reports the item exists.
         /// </summary>
-        /// <param name="reportItemName">
-        /// The report item name.
-        /// </param>
-        /// <param name="reportItemType">
-        /// Type of the report item.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// True if the item of that type exists.
-        /// </returns>
+        /// <param name="reportItemName">Name of the report item.</param>
+        /// <param name="reportItemType">Type of the report item.</param>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool ReportItemExists(string reportItemName, ItemTypeEnum reportItemType, string folderName)
         {
             throw new NotImplementedException();
 
             //// Create the search condition
-            //SearchCondition[] conditions = new[] { new SearchCondition() };
+            // SearchCondition[] conditions = new[] { new SearchCondition() };
 
             //// Get formats the folder name
-            //folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
+            // folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
 
-            //try
-            //{
-            //    // Set the search paramter
-            //    conditions[0].Condition = ConditionEnum.Equals;
-            //    conditions[0].ConditionSpecified = true;
-            //    conditions[0].Name = "Name";
-            //    conditions[0].Value = reportItemName;
+            // try
+            // {
+            // // Set the search paramter
+            // conditions[0].Condition = ConditionEnum.Equals;
+            // conditions[0].ConditionSpecified = true;
+            // conditions[0].Name = "Name";
+            // conditions[0].Value = reportItemName;
 
-            //    // all the items that equal to the search parameter
-            //    CatalogItem[] items = this.reportingService2006.FindItems(
-            //        folderName, BooleanOperatorEnum.And, conditions);
+            // // all the items that equal to the search parameter
+            // CatalogItem[] items = this.reportingService2006.FindItems(
+            // folderName, BooleanOperatorEnum.And, conditions);
 
-            //    // Find the item of the that type
-            //    return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
-            //}
-            //catch (Exception exception)
-            //{
-            //    this.OnReportServerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
-            //    return false;
-            //}
+            // // Find the item of the that type
+            // return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
+            // }
+            // catch (Exception exception)
+            // {
+            // this.OnReportServerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
+            // return false;
+            // }
         }
 
         /// <summary>
         /// Sets the report data source.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="recursive">
-        /// If set to. <c>True.</c> [recursive].
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="reportItem">The report item.</param>
+        /// <param name="recursive">if set to <c>true</c> [recursive].</param>
+        /// <param name="dataSources">The data sources.</param>
+        /// <param name="useMatchCase">if set to <c>true</c> [use match case].</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool SetReportDataSource(
             string reportItem, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
         {
@@ -584,18 +517,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+
         /// <summary>
         /// Uploads the model.
         /// </summary>
-        /// <param name="reportModelsFiles">
-        /// The reporting services models.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
+        /// <param name="reportModelsFiles">The report models files.</param>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
         public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName)
         {
             Warning[] warnings;
@@ -609,8 +537,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // need to be set and display any warnings
                 foreach (ReportModelFiles model in reportModelsFiles)
                 {
-                    properties  = this.CreateProperties(model.ReportServerProperties);
-                    this.reportingService2006.CreateModel(model.ModelName, folderName, model.GetBytes(), properties, out warnings);
+                    properties = this.CreateProperties(model.ReportServerProperties);
+                    this.reportingService2006.CreateModel(
+                        model.ModelName, folderName, model.GetBytes(), properties, out warnings);
                     this.SendWarningsMessage(model.ModelName, warnings);
                     this.OnReportServerMessage(
                         DeploymentMangerMessageType.Information, 
@@ -658,7 +587,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                     // uploads reports then outputs that reports was uploaded.
                     this.reportingService2006.CreateReport(
-                                    reportFiles[index].ReportName, folderName, true, reportFiles[index].GetBytes(), properties, out warnings);
+                        reportFiles[index].ReportName, 
+                        folderName, 
+                        true, 
+                        reportFiles[index].GetBytes(), 
+                        properties, 
+                        out warnings);
 
                     if (warnings.Length > 0)
                     {
@@ -755,10 +689,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // looping through the roles and assgin them.
             for (int roleIndex = 0; roleIndex < reportingRoles.Length; roleIndex++)
             {
-                newPolicy[index].Roles[roleIndex] = new Role();
-                newPolicy[index].Roles[roleIndex].Name = reportingRoles[roleIndex];
-                newPolicy[index].Roles[roleIndex].Description = string.Format(
-                    "Reporting {0} User / Group", reportingRoles[roleIndex]);
+                newPolicy[index].Roles[roleIndex] = new Role
+                    {
+                        Name = reportingRoles[roleIndex], 
+                        Description = string.Format("Reporting {0} User / Group", reportingRoles[roleIndex])
+                    };
             }
         }
 
@@ -780,7 +715,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         private void AssginDataSourceToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
         {
             // get list of all the items under the folder
-            CatalogItem[] reportFolderItems = this.reportingService2006.ListChildren(folder, recursive);
+            CatalogItem[] reportFolderItems = this.reportingService2006.ListChildren(folder);
 
             // loop through all items if they are a report then assgin the data source 
             // to the item.

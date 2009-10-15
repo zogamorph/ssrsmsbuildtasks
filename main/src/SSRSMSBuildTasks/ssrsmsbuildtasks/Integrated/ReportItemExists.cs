@@ -1,13 +1,13 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SetReportDataSource.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="ReportItemExists.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   The set report data source.
+//   The report item exists.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -21,44 +21,45 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// The set report data source.
+    /// The report item exists.
     /// </summary>
-    public class SetReportDataSource : Task
+    public class ReportItemExists : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the data sources list.
+        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
         /// </summary>
-        /// <value>The data sources list.</value>
-        public ITaskItem[] DataSources { get; set; }
+        /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="SetReportDataSource"/> is recursive.
+        /// Gets or sets the name of the folder.
         /// </summary>
-        /// <value><c>true</c> if recursive; otherwise, <c>false</c>.</value>
-        [Required]
-        public bool Recursive { get; set; }
+        /// <value>The name of the folder.</value>
+        public string Folder { get; set; }
 
         /// <summary>
         /// Gets or sets the report item.
         /// </summary>
         /// <value>The report item.</value>
         [Required]
-        public string ReportItem { get; set; }
+        public string ReportItemName { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        /// Gets or sets the name of the report item type.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The name of the report item type.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string ReportItemTypeName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [use match case].
+        /// Gets or sets the share point site URL.
         /// </summary>
-        /// <value><c>true</c> if [use match case]; otherwise, <c>false</c>.</value>
-        public bool UseMatchCase { get; set; }
+        /// <value>The share point site URL.</value>
+        [Required]
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -72,37 +73,34 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
-            ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                // loop through the array of reports.
-                for (int index = 0; index < this.DataSources.Length; index++)
+                if (String.IsNullOrEmpty(this.Folder))
                 {
-                    reportServerDataSources[index] = new ReportServerDataSource()
-                        {
-                            DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
-                            Name = this.DataSources[index].GetMetadata("DataSourceName"), 
-                            ReportName = this.DataSources[index].GetMetadata("ReportName"), 
-                        };
+                    this.Folder = "/";
                 }
 
-                return nativeDeploymentManger.SetReportDataSource(
-                    this.ReportItem, this.Recursive, reportServerDataSources, this.UseMatchCase);
+                this.Exists = integratedDeploymentManager.ReportItemExists(
+                    this.ReportItemName, 
+                    IntegratedDeploymentManager.GetReportItemtype(this.ReportItemTypeName), 
+                    this.Folder);
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
                         "Reporting", 
-                        "SetReportDataSource", 
+                        "ReportItemExists", 
                         this.BuildEngine.ProjectFileOfTaskNode, 
                         this.BuildEngine.LineNumberOfTaskNode, 
                         this.BuildEngine.ColumnNumberOfTaskNode, 
                         0, 
                         0, 
-                        ex.Message, 
+                        exception.Message, 
                         string.Empty, 
                         this.ToString()));
                 return false;

@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReportFile.cs" company="">
-//   
+// <copyright file="ReportFile.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   Report Server Report Class.
@@ -75,7 +75,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         public ReportFile(string reportFilePath)
             : this()
         {
-            this.ReportFilePath = reportFilePath;                      
+            this.ReportFilePath = reportFilePath;
         }
 
         #endregion

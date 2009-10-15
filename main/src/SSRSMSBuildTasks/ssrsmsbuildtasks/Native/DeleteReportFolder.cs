@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeleteReportFolder.cs" company="">
-//   
+// <copyright file="DeleteReportFolder.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   This MSBuild Task will delete report server folder on the report server.
@@ -54,7 +54,7 @@ namespace ssrsmsbuildtasks.Native
         public override bool Execute()
         {
             NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
+            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
                 return nativeDeploymentManger.DeleteReportFolder(this.Folder);
@@ -90,9 +90,9 @@ namespace ssrsmsbuildtasks.Native
         /// <param name="eventArgs">
         /// The event args.
         /// </param>
-        private void reportingServicesMessage(object sender, DeploymentMangerMessageEventArgs eventArgs)
+        private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
-            RSBuildHelper.SendReportMessage(eventArgs, this.BuildEngine, this.ToString());
+            RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());
         }
 
         #endregion

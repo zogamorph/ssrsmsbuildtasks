@@ -1,18 +1,17 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CreateReportFolder.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="AddReportUser.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server folder on the report server.
+//   This MSBuild Task will create a new report server user on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
     using System;
-    using System.Collections.Generic;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -22,55 +21,66 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will create a new report server folder on the report server.
+    /// This MSBuild Task will create a new report server user on the report server.
     /// </summary>
-    public class CreateReportFolder : Task
+    public class AddReportUser : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the folder report properties.
+        /// The folder name where the report user will be allow to access.
         /// </summary>
-        /// <value>The folder report properties.</value>
-        public string FolderReportProperties { get; set; }
+        /// <value>The name of the folder.</value>
+        [Required]
+        public string Folder { get; set; }
 
         /// <summary>
-        /// The path to the folder which needs to be created.
+        /// The roles within the report server that the user will have in the report server
         /// </summary>
+        /// <value>The reporting roles.</value>
         [Required]
-        public string NewFolderPath { get; set; }
+        public string[] ReportingRoles { get; set; }
+
+        /// <summary>
+        /// Gets or sets Report Server User name which need to added to the report server.
+        /// </summary>
+        /// <value>The name of the report user.</value>
+        [Required]
+        public string ReportUserName { get; set; }
 
         /// <summary>
         /// The url of the report server.
         /// </summary>
+        /// <value>The report server URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call msbuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// True if the mothed dosen't error
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            // Connecting to the reporting server
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                return nativeDeploymentManger.CreateFolder(
-                    this.NewFolderPath, this.CreateReportFolderProperties(this.FolderReportProperties));
+                return integratedDeploymentManager.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
                         "Reporting", 
-                        "CreateReportFolder", 
+                        "AddReportUser", 
                         this.BuildEngine.ProjectFileOfTaskNode, 
                         this.BuildEngine.LineNumberOfTaskNode, 
                         this.BuildEngine.ColumnNumberOfTaskNode, 
@@ -86,32 +96,6 @@ namespace ssrsmsbuildtasks.Native
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Adds the report properties.
-        /// </summary>
-        /// <param name="propertiesString">
-        /// The properties string.
-        /// </param>
-        /// <returns>
-        /// Dictionary of Report Folder Properties
-        /// </returns>
-        private Dictionary<string, string> CreateReportFolderProperties(string propertiesString)
-        {
-            Dictionary<string, string> reportFolderProperties = new Dictionary<string, string>();
-            string[] strings;
-
-            if (!string.IsNullOrEmpty(propertiesString))
-            {
-                foreach (string propertery in propertiesString.Split(new[] { ';' }))
-                {
-                    strings = propertery.Split(new[] { '=' });
-                    reportFolderProperties.Add(strings[0], strings[1]);
-                }
-            }
-
-            return reportFolderProperties;
-        }
 
         /// <summary>
         /// The reporting services message.

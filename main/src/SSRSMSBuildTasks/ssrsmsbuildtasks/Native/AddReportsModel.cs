@@ -1,6 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddReportsModel.cs" company="">
-//   
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AddReportsModel.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   Upload a report model to the report server
@@ -42,7 +42,7 @@ namespace ssrsmsbuildtasks.Native
         public ITaskItem[] ReportModels { get; set; }
 
         /// <summary>
-        /// Gets or sets ReportServerURL.
+        /// Gets or sets SharePointSiteUrl.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
@@ -62,14 +62,14 @@ namespace ssrsmsbuildtasks.Native
         {
             NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
             ReportModelFiles[] reportModelsFiles = new ReportModelFiles[this.ReportModels.Length];
-            nativeDeploymentManger.DeploymentMangerMessages += this.reportingServicesMessage;
+            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
                 for (int index = 0; index < this.ReportModels.Length; index++)
                 {
                     reportModelsFiles[index] = new ReportModelFiles(
                         this.ReportModels[index].GetMetadata("FullPath"), 
-                        this.ReportModels[index].GetMetadata("DataSourceFullPath"),
+                        this.ReportModels[index].GetMetadata("DataSourceFullPath"), 
                         this.ReportModels[index].GetMetadata("ModelName"));
                     string propertiesString = this.ReportModels[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
@@ -130,9 +130,9 @@ namespace ssrsmsbuildtasks.Native
         /// <param name="eventArgs">
         /// The event args.
         /// </param>
-        private void reportingServicesMessage(object sender, DeploymentMangerMessageEventArgs eventArgs)
+        private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
-            RSBuildHelper.SendReportMessage(eventArgs, this.BuildEngine, this.ToString());
+            RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());
         }
 
         #endregion

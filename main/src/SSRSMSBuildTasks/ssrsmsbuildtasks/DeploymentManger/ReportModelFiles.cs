@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ReportModelFiles.cs" company="">
-//   
+// <copyright file="ReportModelFiles.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   Report Server Model project files.

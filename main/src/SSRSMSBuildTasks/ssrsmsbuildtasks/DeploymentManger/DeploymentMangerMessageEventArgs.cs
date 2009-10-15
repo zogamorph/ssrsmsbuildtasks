@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeploymentMangerMessageEventArgs.cs" company="">
-//   
+// <copyright file="DeploymentMangerMessageEventArgs.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
 // <summary>
 //   Report Server Messages Types.
@@ -37,24 +37,18 @@ namespace ssrsmsbuildtasks.DeploymentManger
     }
 
     /// <summary>
-    /// Report Server Message Args.
+    /// Deployment Manger Message Event Args
     /// </summary>
     public class DeploymentMangerMessageEventArgs : EventArgs
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the DeploymentMangerMessageEventArgs class. Initializes a new instance of the DeploymentMangerMessageEventArgs class. Initializes a new instance of the DeploymentMangerMessageEventArgs class. Initializes a new instance of the DeploymentMangerMessageType class. Initializes a new instance of the  class. Type of the report message.The method.The message.
+        /// Initializes a new instance of the <see cref="DeploymentMangerMessageEventArgs"/> class.
         /// </summary>
-        /// <param name="reportMessageType">
-        /// Type of the report message.
-        /// </param>
-        /// <param name="method">
-        /// The method.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
+        /// <param name="reportMessageType">Type of the report message.</param>
+        /// <param name="method">The method.</param>
+        /// <param name="message">The message.</param>
         public DeploymentMangerMessageEventArgs(
             DeploymentMangerMessageType reportMessageType, string method, string message)
         {

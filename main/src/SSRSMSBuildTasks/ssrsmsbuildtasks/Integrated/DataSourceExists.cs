@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -21,53 +21,54 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// The report folder exists.
+    /// Data Source Exists
     /// </summary>
     public class DataSourceExists : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the report item.
+        /// Gets or sets the name of the data source.
         /// </summary>
-        /// <value>The report item.</value>
+        /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
+        /// Gets or sets a value indicating whether this <see cref="DataSourceExists"/> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        /// Gets or sets the folder.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The folder.</value>
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        /// Gets or sets the share point site URL.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The share point site URL.</value>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// When overridden in a derived class, executes the task.
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// true if the task successfully executed; otherwise, false.
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
                 if (String.IsNullOrEmpty(this.Folder))
@@ -75,8 +76,8 @@ namespace ssrsmsbuildtasks.Native
                     this.Folder = "/";
                 }
 
-                this.Exists = nativeDeploymentManger.ReportItemExists(
-                    this.DataSourceName, NativeDeploymentManger.GetReportItemtype("DataSource"), this.Folder);
+                this.Exists = integratedDeploymentManager.ReportItemExists(
+                    this.DataSourceName, IntegratedDeploymentManager.GetReportItemtype("DataSource"), this.Folder);
                 return true;
             }
             catch (Exception exception)
@@ -102,14 +103,10 @@ namespace ssrsmsbuildtasks.Native
         #region Methods
 
         /// <summary>
-        /// The reporting services message.
+        /// Deployments the manger messages.
         /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="eventArgs">
-        /// The event args.
-        /// </param>
+        /// <param name="sender">The sender.</param>
+        /// <param name="eventArgs">The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.</param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());

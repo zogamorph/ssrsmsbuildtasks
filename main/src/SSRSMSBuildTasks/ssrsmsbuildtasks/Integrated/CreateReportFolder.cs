@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.Integrated
 {
     #region Directives
 
@@ -29,22 +29,22 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets the folder report properties.
-        /// </summary>
-        /// <value>The folder report properties.</value>
-        public string FolderReportProperties { get; set; }
-
-        /// <summary>
         /// The path to the folder which needs to be created.
         /// </summary>
         [Required]
-        public string NewFolderPath { get; set; }
+        public string NewFolderName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the folder report properties.
+        /// </summary>
+        /// <value>The folder report properties.</value>
+        public string ParentPath { get; set; }
 
         /// <summary>
         /// The url of the report server.
         /// </summary>
         [Required]
-        public string ReportServerURL { get; set; }
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -58,12 +58,12 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                return nativeDeploymentManger.CreateFolder(
-                    this.NewFolderPath, this.CreateReportFolderProperties(this.FolderReportProperties));
+                return integratedDeploymentManager.CreateFolder(this.NewFolderName, this.ParentPath);
             }
             catch (Exception ex)
             {
