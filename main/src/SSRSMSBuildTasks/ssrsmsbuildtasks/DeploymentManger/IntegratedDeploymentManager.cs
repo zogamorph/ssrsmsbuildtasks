@@ -119,7 +119,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // Updating the policies of the folder.
                 this.reportingService2006.SetPolicies(reportFolder, newPolicy);
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "AddReportUser", 
                     this.CreateCompleteMessage(reportUserName, reportingRoles, reportFolder));
@@ -127,7 +127,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Information, "AddReportUser", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Information, "AddReportUser", ex.Message);
                 return false;
             }
         }
@@ -164,7 +164,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 this.reportingService2006.CreateFolder(folderName, parentPath);
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "CreateFolder", 
                     string.Format("Created Report Folder: {0}/{1}", parentPath, folderName));
@@ -173,7 +173,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "CreateFolder", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "CreateFolder", ex.Message);
                 return false;
             }
         }
@@ -196,7 +196,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     // Delete the folder
                     this.reportingService2006.DeleteItem(modelName);
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteModel", 
                         string.Format("Deleted Report Item Source: {0}", modelName));
@@ -204,7 +204,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 }
 
                 // raise a error because the item was not a folder.
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Warning, 
                     "DeleteModel", 
                     string.Format("Item not a Report: {0}", modelName));
@@ -212,7 +212,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
                 return false;
             }
         }
@@ -236,7 +236,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     // Delete the folder
                     this.reportingService2006.DeleteItem(reportName);
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteReport", 
                         string.Format("Deleted Report Item Source: {0}", reportName));
@@ -244,7 +244,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 }
 
                 // raise a error because the item was not a folder.
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Warning, 
                     "DeleteReport", 
                     string.Format("Item not a Report: {0}", reportName));
@@ -252,7 +252,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
                 return false;
             }
         }
@@ -279,7 +279,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // If not a data source then send a warning
                 if (currentItemType != ItemTypeEnum.DataSource)
                 {
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Warning, 
                         "DeleteReportDataSource", 
                         string.Format("Report Item is not a data source:{0}/{1}", dataSourceFolder, dataSourceName));
@@ -288,7 +288,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // else Delete the data source
                 this.reportingService2006.DeleteItem(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "DeleteReportDataSource", 
                     string.Format("Deleted Data Source {1}/{0}", dataSourceName, dataSourceFolder));
@@ -296,7 +296,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportDataSource", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "DeleteReportDataSource", ex.Message);
                 return false;
             }
         }
@@ -320,7 +320,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     // Delete the folder
                     this.reportingService2006.DeleteItem(folderName);
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteReportFolder", 
                         string.Format("Deleted Report Folder Source: {0}", folderName));
@@ -328,7 +328,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 }
 
                 // raise a error because the item was not a folder.
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Warning, 
                     "DeleteReportFolder", 
                     string.Format("Item not a folder: {0}", folderName));
@@ -336,7 +336,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
                 return false;
             }
         }
@@ -359,7 +359,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     // Delete the folder
                     this.reportingService2006.DeleteItem(resourceName);
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteResource", 
                         string.Format("Deleted Report Item Source: {0}", resourceName));
@@ -367,7 +367,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 }
 
                 // raise a error because the item was not a folder.
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Warning, 
                     "DeleteResource", 
                     string.Format("Item not a Resource: {0}", resourceName));
@@ -375,7 +375,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
                 return false;
             }
         }
@@ -396,7 +396,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // Call the move item method 
                 this.reportingService2006.MoveItem(reportItem, destinationItem);
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "MoveReportItem", 
                     string.Format("Moved {0} to {1}", reportItem, destinationItem));
@@ -404,7 +404,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "MoveReportItem", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "MoveReportItem", ex.Message);
                 return false;
             }
         }
@@ -456,7 +456,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // }
             // catch (Exception exception)
             // {
-            // this.OnReportServerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
+            // this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
             // return false;
             // }
         }
@@ -501,7 +501,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         break;
 
                     default:
-                        this.OnReportServerMessage(
+                        this.OnDeploymentMangerMessage(
                             DeploymentMangerMessageType.Warning, 
                             "SetReportDataSource", 
                             string.Format("Report Item:{0} is not support for the method", reportItem));
@@ -512,7 +512,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "SetReportDataSource", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "SetReportDataSource", ex.Message);
                 return false;
             }
         }
@@ -541,7 +541,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     this.reportingService2006.CreateModel(
                         model.ModelName, folderName, model.GetBytes(), properties, out warnings);
                     this.SendWarningsMessage(model.ModelName, warnings);
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "UploadModel", 
                         string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
@@ -553,7 +553,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             catch (Exception exception)
             {
                 // Send message and set report fales
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
                 return false;
             }
         }
@@ -599,7 +599,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         this.SendWarningsMessage(reportFiles[index].ReportName, warnings);
                     }
 
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "UpLoadReports", 
                         string.Format("Upload report: {0} to folder: {1}", reportFiles[index].ReportName, folderName));
@@ -610,7 +610,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             catch (Exception ex)
             {
                 // Display any errors
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
                 return false;
             }
         }
@@ -651,7 +651,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                             artefactBytes, 
                             reportServerResoucre.MineType, 
                             properties);
-                        this.OnReportServerMessage(
+                        this.OnDeploymentMangerMessage(
                             DeploymentMangerMessageType.Information, 
                             "UploadResource", 
                             string.Format("Upload artefact: {0} to folder: {1}", reportServerResoucre.Name, folderName));
@@ -663,7 +663,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             catch (Exception ex)
             {
                 // catches the error and then reports out via msbuild.
-                this.OnReportServerMessage(DeploymentMangerMessageType.Error, "UploadResource", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadResource", ex.Message);
                 return false;
             }
         }
@@ -775,7 +775,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // update the report with the new data sources.
             this.reportingService2006.SetItemDataSources(report, reportDataSources);
-            this.OnReportServerMessage(
+            this.OnDeploymentMangerMessage(
                 DeploymentMangerMessageType.Warning, 
                 "SetReportDataSource", 
                 string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
@@ -805,7 +805,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // make sure that no duplicates reporting data source names 
                 if (reportDataSources.ContainsKey(dataSource.ReportName))
                 {
-                    this.OnReportServerMessage(
+                    this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Error, 
                         "SetReportDataSource", 
                         string.Format("Duplicate Data Source Name: {0}", dataSource.ReportName));
@@ -951,7 +951,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     dataSource.Name, dataSource.DataSourceFolder, dataSource.OverWrite, definition, properties);
 
                 // message the data source was created
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "CreateDataSource", 
                     string.Format(
@@ -965,7 +965,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnReportServerMessage(DeploymentMangerMessageType.Information, "CreateDataSource", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Information, "CreateDataSource", ex.Message);
                 return false;
             }
         }
@@ -1076,7 +1076,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="message">
         /// The message.
         /// </param>
-        private void OnReportServerMessage(DeploymentMangerMessageType reportMessageType, string method, string message)
+        private void OnDeploymentMangerMessage(DeploymentMangerMessageType reportMessageType, string method, string message)
         {
             // check to see if the handle has been assign
             if (this.DeploymentMangerMessages != null)
@@ -1153,7 +1153,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // loop through each warning and send out a message
             foreach (Warning warning in warnings)
             {
-                this.OnReportServerMessage(
+                this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Warning, 
                     "UpLoadReports", 
                     string.Format("{0}:Warning:{1} ", reportItem, warning.Message));
