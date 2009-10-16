@@ -540,7 +540,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     properties = this.CreateProperties(model.ReportServerProperties);
                     this.reportingService2006.CreateModel(
                         model.ModelName, folderName, model.GetBytes(), properties, out warnings);
-                    this.SendWarningsMessage(model.ModelName, warnings);
+                    
+                    if (warnings != null)
+                    {
+                        if (warnings.Length > 0)
+                        {
+                            this.SendWarningsMessage(model.ModelName, warnings, "UploadModel");
+                        }
+                    }
+
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "UploadModel", 
@@ -580,29 +588,32 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 // loop through the array of reports.
-                for (int index = 0; index < reportFiles.Length; index++)
+                foreach (ReportFile reportFile in reportFiles)
                 {
                     // Create any reports properties that need to be set.
-                    properties = this.CreateProperties(reportFiles[index].ReportServerProperties);
+                    properties = this.CreateProperties(reportFile.ReportServerProperties);
 
                     // uploads reports then outputs that reports was uploaded.
                     this.reportingService2006.CreateReport(
-                        reportFiles[index].ReportName, 
+                        reportFile.ReportName, 
                         folderName, 
                         true, 
-                        reportFiles[index].GetBytes(), 
+                        reportFile.GetBytes(), 
                         properties, 
                         out warnings);
 
-                    if (warnings.Length > 0)
+                    if (warnings != null)
                     {
-                        this.SendWarningsMessage(reportFiles[index].ReportName, warnings);
+                        if (warnings.Length > 0)
+                        {
+                            this.SendWarningsMessage(reportFile.ReportName, warnings, "UpLoadReports");
+                        }
                     }
 
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "UpLoadReports", 
-                        string.Format("Upload report: {0} to folder: {1}", reportFiles[index].ReportName, folderName));
+                        string.Format("Upload report: {0} to folder: {1}", reportFile.ReportName, folderName));
                 }
 
                 return true;
@@ -1139,23 +1150,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return index;
         }
 
+
         /// <summary>
         /// Sends the warnings message.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="warnings">
-        /// The warnings.
-        /// </param>
-        private void SendWarningsMessage(string reportItem, Warning[] warnings)
+        /// <param name="reportItem">The report item.</param>
+        /// <param name="warnings">The warnings.</param>
+        /// <param name="sender">The sender.</param>
+        private void SendWarningsMessage(string reportItem, Warning[] warnings, string sender)
         {
             // loop through each warning and send out a message
             foreach (Warning warning in warnings)
             {
                 this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Warning, 
-                    "UpLoadReports", 
+                    sender, 
                     string.Format("{0}:Warning:{1} ", reportItem, warning.Message));
             }
         }
