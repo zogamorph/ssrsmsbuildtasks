@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSources>
+    <DataSource Name="SQLConnection">
+      <rd:DataSourceID>fef36018-949c-44c1-b07b-a95eea066e56</rd:DataSourceID>
+      <DataSourceReference>SQLConnection</DataSourceReference>
+    </DataSource>
+  </DataSources>
+  <InteractiveHeight>29.7cm</InteractiveHeight>
+  <rd:DrawGrid>true</rd:DrawGrid>
+  <InteractiveWidth>21cm</InteractiveWidth>
+  <rd:GridSpacing>0.25cm</rd:GridSpacing>
+  <rd:SnapToGrid>true</rd:SnapToGrid>
+  <RightMargin>2.5cm</RightMargin>
+  <LeftMargin>2.5cm</LeftMargin>
+  <PageHeader>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <ReportItems>
+      <Textbox Name="textbox1">
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>0.25cm</Top>
+        <Width>22cm</Width>
+        <Style>
+          <Color>Navy</Color>
+          <FontFamily>Verdana</FontFamily>
+          <FontSize>14pt</FontSize>
+          <FontWeight>700</FontWeight>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Left>0.5cm</Left>
+        <Height>0.75cm</Height>
+        <Value>=Globals!ReportName</Value>
+      </Textbox>
+    </ReportItems>
+    <Height>1.25cm</Height>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <BottomMargin>2.5cm</BottomMargin>
+  <rd:ReportID>c07ffff4-4ce5-4780-afb3-e0558d73cad3</rd:ReportID>
+  <PageWidth>21cm</PageWidth>
+  <DataSets>
+    <DataSet Name="ReportData">
+      <Fields>
+        <Field Name="tableName">
+          <DataField>tableName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="indexName">
+          <DataField>indexName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="indexType">
+          <DataField>indexType</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="partition_number">
+          <DataField>partition_number</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="numberOfPages">
+          <DataField>numberOfPages</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="fragmentCount">
+          <DataField>fragmentCount</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="fragmentationPercent">
+          <DataField>fragmentationPercent</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+        <Field Name="averageFragmentationInPages">
+          <DataField>averageFragmentationInPages</DataField>
+          <rd:TypeName>System.Double</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>SQLConnection</DataSourceName>
+        <CommandText>SELECT t.name AS tableName
+	,i.[name] AS indexName
+	,s.index_type_desc AS indexType
+	,s.partition_number
+	,s.page_count AS numberOfPages		
+	,s.fragment_count AS fragmentCount		
+	,ROUND(avg_fragmentation_in_percent,2) AS fragmentationPercent
+	,ROUND(s.avg_fragment_size_in_pages, 2) AS averageFragmentationInPages	--page_count/fragment_count
+FROM sys.dm_db_index_physical_stats(db_id(),null, null, null, null) AS s
+	INNER JOIN sys.indexes AS i ON s.[object_id] = i.[object_id] AND s.index_id = i.index_id 
+	INNER JOIN sys.tables AS t ON t.[object_id] = s.[object_id]
+WHERE s.database_id = DB_ID()	--Current database only
+	AND i.name IS NOT NULL		--Ignore heaps
+    AND t.is_ms_shipped = 0		--Ignore system objects
+ORDER BY fragmentationPercent DESC;</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <Width>30.75cm</Width>
+  <Body>
+    <ColumnSpacing>1cm</ColumnSpacing>
+    <ReportItems>
+      <Table Name="table1">
+        <DataSetName>ReportData</DataSetName>
+        <Top>0.25cm</Top>
+        <Width>29.5cm</Width>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="tableName">
+                      <rd:DefaultName>tableName</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>7</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!tableName.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="indexName">
+                      <rd:DefaultName>indexName</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>6</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!indexName.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="indexType">
+                      <rd:DefaultName>indexType</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>5</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!indexType.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="partition_number">
+                      <rd:DefaultName>partition_number</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>4</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!partition_number.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="numberOfPages">
+                      <rd:DefaultName>numberOfPages</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>3</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!numberOfPages.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="fragmentCount">
+                      <rd:DefaultName>fragmentCount</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>2</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!fragmentCount.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="fragmentationPercent">
+                      <rd:DefaultName>fragmentationPercent</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>1</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!fragmentationPercent.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="averageFragmentationInPages">
+                      <rd:DefaultName>averageFragmentationInPages</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!tableName.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!averageFragmentationInPages.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox2">
+                      <rd:DefaultName>textbox2</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>30</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Table Name</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox3">
+                      <rd:DefaultName>textbox3</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>29</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Index Name</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox12">
+                      <rd:DefaultName>textbox12</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>28</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Index Type</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox5">
+                      <rd:DefaultName>textbox5</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>27</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Partition </Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox4">
+                      <rd:DefaultName>textbox4</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>26</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Number </Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox15">
+                      <rd:DefaultName>textbox15</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>25</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Fragment </Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ColSpan>2</ColSpan>
+                  <ReportItems>
+                    <Textbox Name="textbox6">
+                      <rd:DefaultName>textbox6</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Center</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>24</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Fragmentation </Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+            <TableRow>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox16">
+                      <rd:DefaultName>textbox16</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>23</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox19">
+                      <rd:DefaultName>textbox19</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>22</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox20">
+                      <rd:DefaultName>textbox20</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>21</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox21">
+                      <rd:DefaultName>textbox21</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>20</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Number</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox22">
+                      <rd:DefaultName>textbox22</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>19</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Of Pages</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox23">
+                      <rd:DefaultName>textbox23</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>18</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Count</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox24">
+                      <rd:DefaultName>textbox24</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>17</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Percent</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox25">
+                      <rd:DefaultName>textbox25</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>16</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value> Average In Pages</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+          </TableRows>
+        </Header>
+        <TableColumns>
+          <TableColumn>
+            <Width>5.75cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>6.5cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>3.25cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>2.25cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>2.25cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>2.5cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>3.25cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>3.75cm</Width>
+          </TableColumn>
+        </TableColumns>
+        <Height>2.53968cm</Height>
+        <Footer>
+          <TableRows>
+            <TableRow>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox8">
+                      <rd:DefaultName>textbox8</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>15</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox9">
+                      <rd:DefaultName>textbox9</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>14</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox14">
+                      <rd:DefaultName>textbox14</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>13</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox11">
+                      <rd:DefaultName>textbox11</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>12</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox10">
+                      <rd:DefaultName>textbox10</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>11</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox17">
+                      <rd:DefaultName>textbox17</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>10</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox13">
+                      <rd:DefaultName>textbox13</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>9</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox18">
+                      <rd:DefaultName>textbox18</rd:DefaultName>
+                      <Style>
+                        <FontFamily>Verdana</FontFamily>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>8</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value />
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+          </TableRows>
+        </Footer>
+        <Left>0.5cm</Left>
+      </Table>
+    </ReportItems>
+    <Height>5cm</Height>
+  </Body>
+  <Language>en-US</Language>
+  <TopMargin>2.5cm</TopMargin>
+  <PageHeight>29.7cm</PageHeight>
+</Report>

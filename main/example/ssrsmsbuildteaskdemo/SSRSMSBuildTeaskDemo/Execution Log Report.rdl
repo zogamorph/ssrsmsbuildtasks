@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2005/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <DataSources>
+    <DataSource Name="ReportServer">
+      <rd:DataSourceID>1731884c-aff2-4745-904f-312c729c7e5b</rd:DataSourceID>
+      <DataSourceReference>ReportServer</DataSourceReference>
+    </DataSource>
+  </DataSources>
+  <InteractiveHeight>29.7cm</InteractiveHeight>
+  <ReportParameters>
+    <ReportParameter Name="pTimeStart">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>ParametersDefaults</DataSetName>
+          <ValueField>DefaultTimeStart</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Start Time</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="pTimeEnd">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>ParametersDefaults</DataSetName>
+          <ValueField>DefaultTimeEnd</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>End Time</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <rd:DrawGrid>true</rd:DrawGrid>
+  <InteractiveWidth>21cm</InteractiveWidth>
+  <rd:GridSpacing>0.25cm</rd:GridSpacing>
+  <rd:SnapToGrid>true</rd:SnapToGrid>
+  <RightMargin>2.5cm</RightMargin>
+  <LeftMargin>2.5cm</LeftMargin>
+  <PageHeader>
+    <PrintOnFirstPage>true</PrintOnFirstPage>
+    <ReportItems>
+      <Textbox Name="textbox1">
+        <rd:DefaultName>textbox1</rd:DefaultName>
+        <Top>0.25cm</Top>
+        <Width>22cm</Width>
+        <Style>
+          <Color>Navy</Color>
+          <FontFamily>Verdana</FontFamily>
+          <FontSize>14pt</FontSize>
+          <FontWeight>700</FontWeight>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Left>0.5cm</Left>
+        <Height>0.75cm</Height>
+        <Value>=Globals!ReportName</Value>
+      </Textbox>
+    </ReportItems>
+    <Height>1.25cm</Height>
+    <PrintOnLastPage>true</PrintOnLastPage>
+  </PageHeader>
+  <BottomMargin>2.5cm</BottomMargin>
+  <rd:ReportID>5aeca051-5778-47d5-8dc5-993e347ff098</rd:ReportID>
+  <PageWidth>21cm</PageWidth>
+  <DataSets>
+    <DataSet Name="ReportData">
+      <Fields>
+        <Field Name="Name">
+          <DataField>NAME</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ReportPath">
+          <DataField>ReportPath</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="UserName">
+          <DataField>UserName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RequestType">
+          <DataField>RequestType</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="Format">
+          <DataField>Format</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Parameters">
+          <DataField>Parameters</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TimeStart">
+          <DataField>TimeStart</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="TimeEnd">
+          <DataField>TimeEnd</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="TimeDataRetrieval">
+          <DataField>TimeDataRetrieval</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TimeProcessing">
+          <DataField>TimeProcessing</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TimeRendering">
+          <DataField>TimeRendering</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Source">
+          <DataField>Source</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Status">
+          <DataField>Status</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ByteCount">
+          <DataField>ByteCount</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="RowCount">
+          <DataField>RowCount</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>ReportServer</DataSourceName>
+        <CommandText>SELECT ISNULL(c.[Name],el.ReportID) AS NAME,
+	   ISNULL(c.[Path],'Deleted') AS ReportPath,
+	   el.[UserName],
+	   el.[RequestType],
+	   el.[Format],
+	   el.[Parameters],
+	   el.[TimeStart],
+	   el.[TimeEnd],
+	   el.[TimeDataRetrieval],
+	   el.[TimeProcessing],
+	   el.[TimeRendering],
+	   el.[Source],
+	   el.[Status],
+	   el.[ByteCount],
+	   el.[RowCount]
+FROM dbo.[ExecutionLog] AS el
+	LEFT OUTER JOIN dbo.[Catalog] AS c 
+		ON el.[ReportID] = c.[ItemID]
+WHERE el.[TimeStart] &gt;= @pTimeStart
+AND el.[TimeEnd]  &lt;= @pTimeEnd</CommandText>
+        <QueryParameters>
+          <QueryParameter Name="@pTimeStart">
+            <Value>=Parameters!pTimeStart.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@pTimeEnd">
+            <Value>=Parameters!pTimeEnd.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+    <DataSet Name="ParametersDefaults">
+      <Fields>
+        <Field Name="DefaultTimeStart">
+          <DataField>DefaultTimeStart</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="DefaultTimeEnd">
+          <DataField>DefaultTimeEnd</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+      </Fields>
+      <Query>
+        <DataSourceName>ReportServer</DataSourceName>
+        <CommandText>SELECT  MIN(el.[TimeStart]) DefaultTimeStart,
+	   MAX(el.[TimeEnd]) DefaultTimeEnd
+FROM dbo.[ExecutionLog] AS el</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+    </DataSet>
+  </DataSets>
+  <Width>26.25cm</Width>
+  <Body>
+    <ColumnSpacing>1cm</ColumnSpacing>
+    <ReportItems>
+      <Table Name="ExecutionLogTable">
+        <ZIndex>1</ZIndex>
+        <DataSetName>ReportData</DataSetName>
+        <Top>1.5cm</Top>
+        <Width>25.27645cm</Width>
+        <Details>
+          <TableRows>
+            <TableRow>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Name">
+                      <rd:DefaultName>Name</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>7</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!Name.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="UserName">
+                      <rd:DefaultName>UserName</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>6</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!UserName.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="RequestType">
+                      <rd:DefaultName>RequestType</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>5</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!RequestType.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="Format">
+                      <rd:DefaultName>Format</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>4</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!Format.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TimeStart">
+                      <rd:DefaultName>TimeStart</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <Format>g</Format>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>3</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!TimeStart.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="TimeEnd">
+                      <rd:DefaultName>TimeEnd</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <Format>g</Format>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>2</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!TimeEnd.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+            <TableRow>
+              <Visibility>
+                <Hidden>true</Hidden>
+                <ToggleItem>Name</ToggleItem>
+              </Visibility>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox2">
+                      <rd:DefaultName>textbox2</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <TextAlign>Right</TextAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>1</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Path</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ColSpan>5</ColSpan>
+                  <ReportItems>
+                    <Textbox Name="Path">
+                      <rd:DefaultName>Path</rd:DefaultName>
+                      <Style>
+                        <BackgroundColor>=IIF(RunningValue(Fields!Name.Value,Count,Nothing) mod 2, "Silver", "White")</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>8pt</FontSize>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <CanGrow>true</CanGrow>
+                      <Value>=Fields!ReportPath.Value</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+          </TableRows>
+        </Details>
+        <Header>
+          <TableRows>
+            <TableRow>
+              <TableCells>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox3">
+                      <rd:DefaultName>textbox3</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>13</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Name</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox22">
+                      <rd:DefaultName>textbox22</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>12</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>User Name</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox19">
+                      <rd:DefaultName>textbox19</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>11</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Request Type</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox16">
+                      <rd:DefaultName>textbox16</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>10</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Format</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox5">
+                      <rd:DefaultName>textbox5</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>9</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Time Start</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+                <TableCell>
+                  <ReportItems>
+                    <Textbox Name="textbox4">
+                      <rd:DefaultName>textbox4</rd:DefaultName>
+                      <Style>
+                        <Color>White</Color>
+                        <BackgroundColor>#909859</BackgroundColor>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontWeight>700</FontWeight>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                      <ZIndex>8</ZIndex>
+                      <CanGrow>true</CanGrow>
+                      <Value>Time End</Value>
+                    </Textbox>
+                  </ReportItems>
+                </TableCell>
+              </TableCells>
+              <Height>0.63492cm</Height>
+            </TableRow>
+          </TableRows>
+          <RepeatOnNewPage>true</RepeatOnNewPage>
+          <FixedHeader>true</FixedHeader>
+        </Header>
+        <TableColumns>
+          <TableColumn>
+            <Width>6cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>5.77645cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>3.5cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>1.75cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>4.25cm</Width>
+          </TableColumn>
+          <TableColumn>
+            <Width>4cm</Width>
+          </TableColumn>
+        </TableColumns>
+        <Height>1.90476cm</Height>
+        <Left>0.5cm</Left>
+      </Table>
+      <Textbox Name="textbox11">
+        <Top>0.25cm</Top>
+        <Width>22cm</Width>
+        <Style>
+          <Color>Green</Color>
+          <FontFamily>Verdana</FontFamily>
+          <FontWeight>700</FontWeight>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+        <CanGrow>true</CanGrow>
+        <Left>0.5cm</Left>
+        <Height>0.75cm</Height>
+        <Value>="Between Start Time: " &amp; Parameters!pTimeStart.Value &amp; " and End Time: " &amp; Parameters!pTimeEnd.Value</Value>
+      </Textbox>
+    </ReportItems>
+    <Height>4.25cm</Height>
+  </Body>
+  <Language>en-US</Language>
+  <TopMargin>2.5cm</TopMargin>
+  <PageHeight>29.7cm</PageHeight>
+</Report>
