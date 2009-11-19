@@ -25,6 +25,14 @@ namespace ssrsmsbuildtasks.Native
     /// </summary>
     public class AddReportsModel : Task
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddReportsModel"/> class.
+        /// </summary>
+        public AddReportsModel()
+        {
+            this.DisableWarnings = false;
+        }
+
         #region Properties
 
         /// <summary>
@@ -47,6 +55,12 @@ namespace ssrsmsbuildtasks.Native
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether to disable warnings.
+        /// </summary>
+        /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
+        public bool DisableWarnings { get; set; }
 
         #endregion
 
@@ -78,7 +92,7 @@ namespace ssrsmsbuildtasks.Native
                     }
                 }
 
-                return nativeDeploymentManger.UploadModel(reportModelsFiles, this.Folder);
+                return nativeDeploymentManger.UploadModel(reportModelsFiles, this.Folder, this.DisableWarnings);
             }
             catch (Exception exception)
             {

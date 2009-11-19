@@ -25,6 +25,14 @@ namespace ssrsmsbuildtasks.Integrated
     /// </summary>
     public class AddReports : Task
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddReports"/> class.
+        /// </summary>
+        public AddReports()
+        {
+            this.DisableWarnings = false;
+        }
+
         #region Properties
 
         /// <summary>
@@ -47,6 +55,12 @@ namespace ssrsmsbuildtasks.Integrated
         /// <value>The SharePointSiteUrl server URL.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to disable warnings.
+        /// </summary>
+        /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
+        public bool DisableWarnings { get; set; }
 
         #endregion
 
@@ -80,7 +94,7 @@ namespace ssrsmsbuildtasks.Integrated
                     }
                 }
 
-                return integratedDeploymentManager.UpLoadReports(reportFiles, this.Folder);
+                return integratedDeploymentManager.UpLoadReports(reportFiles, this.Folder, this.DisableWarnings);
             }
             catch (Exception ex)
             {

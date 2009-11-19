@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server SQL Server shared data soruce on the report server.
+//   Create Reporting Data Source
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -12,6 +12,7 @@ namespace ssrsmsbuildtasks.Integrated
     #region Directives
 
     using System;
+    using System.Text;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -19,7 +20,6 @@ namespace ssrsmsbuildtasks.Integrated
     using ssrsmsbuildtasks.DeploymentManger;
 
     #endregion
-
 
     /// <summary>
     /// Create Reporting Data Source
@@ -54,6 +54,8 @@ namespace ssrsmsbuildtasks.Integrated
         /// </returns>
         public override bool Execute()
         {
+            string invaildDataourceMessage;
+
             // Connecting to the reporting server
             IntegratedDeploymentManager integratedDeploymentManager =
                 new IntegratedDeploymentManager(this.SharePointSiteUrl);
@@ -64,6 +66,11 @@ namespace ssrsmsbuildtasks.Integrated
                 // loop through the array of reports.
                 for (int index = 0; index < this.DataSources.Length; index++)
                 {
+                    if (!this.isDataSourceValid(this.DataSources[index], out invaildDataourceMessage))
+                    {
+                        throw new Exception(invaildDataourceMessage);
+                    }
+
                     reportServerDataSources[index] = new ReportServerDataSource()
                         {
                             ConnectionString = this.DataSources[index].GetMetadata("ConnectionString"), 
@@ -119,8 +126,12 @@ namespace ssrsmsbuildtasks.Integrated
         /// <summary>
         /// Adds the report properties.
         /// </summary>
-        /// <param name="reportServerDataSource">The report server data source.</param>
-        /// <param name="propertiesString">The properties string.</param>
+        /// <param name="reportServerDataSource">
+        /// The report server data source.
+        /// </param>
+        /// <param name="propertiesString">
+        /// The properties string.
+        /// </param>
         private void AddReportProperties(ReportServerDataSource reportServerDataSource, string propertiesString)
         {
             string[] strings;
@@ -134,11 +145,71 @@ namespace ssrsmsbuildtasks.Integrated
         /// <summary>
         /// Deployments the manger messages.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.</param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="eventArgs">
+        /// The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.
+        /// </param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());
+        }
+
+        /// <summary>
+        /// The is data source vaild.
+        /// </summary>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
+        /// <param name="invalidDataSourceMessage">
+        /// The invalid data source message.
+        /// </param>
+        /// <returns>
+        /// The is data source valid.
+        /// </returns>
+        private bool isDataSourceValid(ITaskItem dataSource, out string invalidDataSourceMessage)
+        {
+            StringBuilder invalidDataSourceMessageStringBuilder = new StringBuilder();
+            bool isVaild = true;
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("ConnectionString")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing ConnectionString Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("Folder")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing Folder Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("DataSourceName")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing DataSourceName Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("OverWrite")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing OverWrite Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("Provider")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing Provider Metadata", dataSource.ItemSpec));
+            }
+
+            invalidDataSourceMessage = invalidDataSourceMessageStringBuilder.ToString();
+            return isVaild;
         }
 
         #endregion
