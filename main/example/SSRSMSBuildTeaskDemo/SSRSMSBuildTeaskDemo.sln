@@ -3,6 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "SSRSMSBuildTeaskDemo", "SSRSMSBuildTeaskDemo\SSRSMSBuildTeaskDemo.rptproj", "{B1D4FA80-23E7-42C0-AB3A-C6D83F9D7895}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{4888C37A-DAAB-4358-8B52-CFC381B57BAC}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.rtf = Readme.rtf
+		RunUploadReports.cmd = RunUploadReports.cmd
+		ssrsmsbuildtasks.integrated.targets = ssrsmsbuildtasks.integrated.targets
+		ssrsmsbuildtasks.native.targets = ssrsmsbuildtasks.native.targets
+		SSRSMSBuildTeaskDemo.msbuild = SSRSMSBuildTeaskDemo.msbuild
+		UploadReports.cmd = UploadReports.cmd
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bin", "Bin", "{CBE30466-4A98-4A32-BFD2-8B5574F57003}"
+	ProjectSection(SolutionItems) = preProject
+		Bin\ssrsmsbuildtasks.dll = Bin\ssrsmsbuildtasks.dll
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 2
@@ -30,5 +45,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CBE30466-4A98-4A32-BFD2-8B5574F57003} = {4888C37A-DAAB-4358-8B52-CFC381B57BAC}
 	EndGlobalSection
 EndGlobal
