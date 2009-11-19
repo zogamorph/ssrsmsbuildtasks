@@ -640,16 +640,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Uploads the model.
         /// </summary>
-        /// <param name="reportModelsFiles">
-        /// The reporting services models.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// Flag is the operation was successfully.
-        /// </returns>
-        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName)
+        /// <param name="reportModelsFiles">The reporting services models.</param>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <param name="disableWarnings">if set to <c>true</c> [disable warnings].</param>
+        /// <returns>Flag is the operation was successfully.</returns>
+        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings )
         {
             Warning[] warnings;
             Property[] properties;
@@ -666,7 +661,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     warnings = this.reportingService2005.CreateModel(
                         model.ModelName, folderName, model.GetBytes(), properties);
 
-                    if (warnings != null)
+                    if (warnings != null && !disableWarnings)
                     {
                         if (warnings.Length > 0)
                         {
@@ -703,7 +698,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// Ture if the reports are uploaded.
         /// </returns>
-        public bool UpLoadReports(ReportFile[] reportFiles, string folderName)
+        public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
         {
             Warning[] warnings;
             Property[] properties;
@@ -722,7 +717,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     warnings = this.reportingService2005.CreateReport(
                         reportFile.ReportName, folderName, true, reportFile.GetBytes(), properties);
 
-                    if (warnings != null)
+                    if (warnings != null && !disableWarnings)
                     {
                         if (warnings.Length > 0)
                         {

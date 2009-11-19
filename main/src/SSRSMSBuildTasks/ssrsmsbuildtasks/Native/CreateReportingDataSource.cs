@@ -12,6 +12,7 @@ namespace ssrsmsbuildtasks.Native
     #region Directives
 
     using System;
+    using System.Text;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
@@ -35,7 +36,7 @@ namespace ssrsmsbuildtasks.Native
         public ITaskItem[] DataSources { get; set; }
 
         /// <summary>
-        /// The Report Server name.
+        /// Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
@@ -53,15 +54,24 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
+            string invaildDataourceMessage;
+
             // Connecting to the reporting server
             NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
             nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
+            
             try
             {
                 // loop through the array of reports.
                 for (int index = 0; index < this.DataSources.Length; index++)
                 {
+                    
+                    if (!this.isDataSourceValid(this.DataSources[index], out invaildDataourceMessage))
+                    {
+                        throw new Exception(invaildDataourceMessage);
+                    }
+
                     reportServerDataSources[index] = new ReportServerDataSource()
                         {
                             ConnectionString = this.DataSources[index].GetMetadata("ConnectionString"), 
@@ -145,6 +155,62 @@ namespace ssrsmsbuildtasks.Native
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());
+        }
+
+        /// <summary>
+        /// The is data source vaild.
+        /// </summary>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
+        /// <param name="invalidDataSourceMessage">
+        /// The invalid data source message.
+        /// </param>
+        /// <returns>
+        /// The is data source valid.
+        /// </returns>
+        private bool isDataSourceValid(ITaskItem dataSource, out string invalidDataSourceMessage)
+        {
+            StringBuilder invalidDataSourceMessageStringBuilder = new StringBuilder();
+            bool isVaild = true;
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("ConnectionString")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing ConnectionString Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("Folder")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing Folder Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("DataSourceName")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing DataSourceName Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("OverWrite")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing OverWrite Metadata", dataSource.ItemSpec));
+            }
+
+            if (string.IsNullOrEmpty(dataSource.GetMetadata("Provider")))
+            {
+                isVaild = false;
+                invalidDataSourceMessageStringBuilder.AppendLine(
+                    string.Format("{0}:Missing Provider Metadata", dataSource.ItemSpec));
+            }
+
+            invalidDataSourceMessage = invalidDataSourceMessageStringBuilder.ToString();
+            return isVaild;
         }
 
         #endregion

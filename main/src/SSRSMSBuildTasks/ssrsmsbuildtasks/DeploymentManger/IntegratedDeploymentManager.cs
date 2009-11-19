@@ -523,8 +523,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </summary>
         /// <param name="reportModelsFiles">The report models files.</param>
         /// <param name="folderName">Name of the folder.</param>
-        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
-        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName)
+        /// <param name="disableWarnings">if set to <c>true</c> [disable
+        /// warnings].</param>
+        /// <returns><c>true</c> if exists; otherwise, <c>false</c>./// </returns>
+        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
         {
             Warning[] warnings;
             Property[] properties;
@@ -541,7 +543,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     this.reportingService2006.CreateModel(
                         model.ModelName, folderName, model.GetBytes(), properties, out warnings);
                     
-                    if (warnings != null)
+                    if (warnings != null && !disableWarnings)
                     {
                         if (warnings.Length > 0)
                         {
@@ -569,16 +571,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Ups the load reports.
         /// </summary>
-        /// <param name="reportFiles">
-        /// The report files.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// Ture if the reports are uploaded.
-        /// </returns>
-        public bool UpLoadReports(ReportFile[] reportFiles, string folderName)
+        /// <param name="reportFiles">The report files.</param>
+        /// <param name="folderName">Name of the folder.</param>
+        /// <param name="disableWarnings">if set to <c>true</c> [disable warnings].</param>
+        /// <returns>Ture if the reports are uploaded.</returns>
+        public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
         {
             Warning[] warnings;
             Property[] properties;
@@ -602,7 +599,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         properties, 
                         out warnings);
 
-                    if (warnings != null)
+                    if (warnings != null && !disableWarnings)
                     {
                         if (warnings.Length > 0)
                         {
