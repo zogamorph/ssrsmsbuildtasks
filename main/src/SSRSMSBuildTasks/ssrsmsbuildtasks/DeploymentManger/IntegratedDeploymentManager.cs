@@ -227,7 +227,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             // Create the item and format the items
             ItemTypeEnum currentItemType;
-            reportName = DeploymentMangerHelper.FormatFolderPath(reportName);
             try
             {
                 // get the item type.
@@ -267,9 +266,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
         {
             ItemTypeEnum currentItemType;
-
-            // make sure the item path is formated.
-            dataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSourceFolder);
             try
             {
                 // get the item type of the item check if datasource
@@ -311,7 +307,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             // Create the item and format the items
             ItemTypeEnum currentItemType;
-            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             try
             {
                 // get the item type.
@@ -350,7 +345,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             // Create the item and format the items
             ItemTypeEnum currentItemType;
-            resourceName = DeploymentMangerHelper.FormatFolderPath(resourceName);
             try
             {
                 // get the item type.
@@ -409,19 +403,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
-
-        /// <summary>
-        /// Reports the item exists.
-        /// </summary>
-        /// <param name="reportItemName">Name of the report item.</param>
-        /// <param name="reportItemType">Type of the report item.</param>
-        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
-        public bool ReportItemExists(string reportItemName, ItemTypeEnum reportItemType)
-        {
-            return this.ReportItemExists(reportItemName, reportItemType, string.Empty);
-        }
-
-
         /// <summary>
         /// Reports the item exists.
         /// </summary>
@@ -429,36 +410,23 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="reportItemType">Type of the report item.</param>
         /// <param name="folderName">Name of the folder.</param>
         /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
-        public bool ReportItemExists(string reportItemName, ItemTypeEnum reportItemType, string folderName)
+        public bool ReportItemExists(string folderName, string reportItemName, ItemTypeEnum reportItemType)
         {
-            throw new NotImplementedException();
 
-            //// Create the search condition
-            // SearchCondition[] conditions = new[] { new SearchCondition() };
-
-            //// Get formats the folder name
-            // folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
-
-            // try
-            // {
-            // // Set the search paramter
-            // conditions[0].Condition = ConditionEnum.Equals;
-            // conditions[0].ConditionSpecified = true;
-            // conditions[0].Name = "Name";
-            // conditions[0].Value = reportItemName;
-
-            // // all the items that equal to the search parameter
-            // CatalogItem[] items = this.reportingService2006.FindItems(
-            // folderName, BooleanOperatorEnum.And, conditions);
-
-            // // Find the item of the that type
-            // return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
-            // }
-            // catch (Exception exception)
-            // {
-            // this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
-            // return false;
-            // }
+            try
+            {
+                
+                // all the items that equal to the search parameter
+                CatalogItem[] items = this.reportingService2006.ListChildren(folderName);
+                
+                // Find the item of the that type
+                return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
+            }
+            catch (Exception exception)
+            {
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "ReportItemExists", exception.Message);
+                return false;
+            }
         }
 
         /// <summary>

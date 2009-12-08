@@ -83,10 +83,9 @@ namespace ssrsmsbuildtasks.Integrated
                     this.Folder = "/";
                 }
 
-                this.Exists = integratedDeploymentManager.ReportItemExists(
+                this.Exists = integratedDeploymentManager.ReportItemExists(this.Folder,
                     this.ReportItemName, 
-                    IntegratedDeploymentManager.GetReportItemtype(this.ReportItemTypeName), 
-                    this.Folder);
+                    IntegratedDeploymentManager.GetReportItemtype(this.ReportItemTypeName));
                 return true;
             }
             catch (Exception exception)

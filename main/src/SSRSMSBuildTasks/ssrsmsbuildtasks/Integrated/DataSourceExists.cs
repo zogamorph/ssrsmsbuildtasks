@@ -45,6 +45,7 @@ namespace ssrsmsbuildtasks.Integrated
         /// Gets or sets the folder.
         /// </summary>
         /// <value>The folder.</value>
+        [Required]
         public string Folder { get; set; }
 
         /// <summary>
@@ -77,7 +78,7 @@ namespace ssrsmsbuildtasks.Integrated
                 }
 
                 this.Exists = integratedDeploymentManager.ReportItemExists(
-                    this.DataSourceName, IntegratedDeploymentManager.GetReportItemtype("DataSource"), this.Folder);
+                     this.Folder, this.DataSourceName, IntegratedDeploymentManager.GetReportItemtype("DataSource"));
                 return true;
             }
             catch (Exception exception)

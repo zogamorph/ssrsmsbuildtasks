@@ -44,6 +44,7 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets the name of the folder.
         /// </summary>
         /// <value>The name of the folder.</value>
+        [Required]
         public string FolderName { get; set; }
 
         /// <summary>

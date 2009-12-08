@@ -84,7 +84,7 @@ namespace ssrsmsbuildtasks.Integrated
                     reportServerDataSources[index] = new ReportServerDataSource()
                         {
                             DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
-                            Name = this.DataSources[index].GetMetadata("DataSourceName"),
+                            Name = this.DataSources[index].ItemSpec,
                             ReportDataSourceNames =
                                 string.IsNullOrEmpty(this.DataSources[index].GetMetadata("ReportDataSourceNames"))
                                     ? null

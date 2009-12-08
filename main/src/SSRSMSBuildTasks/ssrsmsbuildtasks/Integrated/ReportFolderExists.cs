@@ -38,12 +38,14 @@ namespace ssrsmsbuildtasks.Integrated
         /// Gets or sets the name of the folder.
         /// </summary>
         /// <value>The name of the folder.</value>
+        [Required]
         public string Folder { get; set; }
 
         /// <summary>
         /// Gets or sets the name of the folder.
         /// </summary>
         /// <value>The name of the folder.</value>
+        [Required]
         public string FolderName { get; set; }
 
         /// <summary>
@@ -70,13 +72,9 @@ namespace ssrsmsbuildtasks.Integrated
             integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                if (String.IsNullOrEmpty(this.FolderName))
-                {
-                    this.FolderName = "/";
-                }
-
+               
                 this.Exists = integratedDeploymentManager.ReportItemExists(
-                    this.FolderName, IntegratedDeploymentManager.GetReportItemtype("Folder"), this.Folder);
+                     this.Folder, this.FolderName, IntegratedDeploymentManager.GetReportItemtype("Folder"));
                 return true;
             }
             catch (Exception exception)
