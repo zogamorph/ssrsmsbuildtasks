@@ -47,14 +47,19 @@
 		</ReportDataSourceToDeploy>
 	</ItemGroup>
 	
-	<Target Name="FullDepoly" DependsOnTargets="CreateReportingFolders;CreateConnectionSources;DeployReports;SetReportsDataSource" />
+	<Target Name="FullDepoly" DependsOnTargets="DeleteFolders;CreateReportingFolders;CreateConnectionSources;DeployReports;SetReportsDataSource" />
 	
 	<Target Name="DeleteFolders">
 		<!--Checking and deleteing Project Report Folder-->
-		<ReportFolderExists SharePointSiteUrl="$(SharePointSiteUrl)" Folder="/" FolderName="SSRSMSBuildTeaskDemo">
+		<ReportFolderExists SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)" FolderName="$(ProjectReportFolder)">
 			<Output TaskParameter="Exists" PropertyName="ReportItemExists" />
 		</ReportFolderExists>
-		<DeleteReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" Folder="/SSRSMSBuildTeaskDemo" Condition="$(ReportItemExists) == True"/>
+		<DeleteReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)/$(ProjectReportFolder)/" Condition="$(ReportItemExists) == True"/>
+		<!--Checking and deleteing Project Report Folder-->
+		<ReportFolderExists SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportDataSources)" FolderName="$(ProjectReportDataSources)">
+			<Output TaskParameter="Exists" PropertyName="ReportItemExists" />
+		</ReportFolderExists>
+		<DeleteReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportDataSources)/$(ProjectReportDataSources)/" Condition="$(ReportItemExists) == True"/>
 	</Target>
 	
 	<Target Name="CreateReportingFolders">
