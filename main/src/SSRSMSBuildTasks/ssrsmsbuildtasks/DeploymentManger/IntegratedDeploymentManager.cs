@@ -763,10 +763,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // assgin the matched data source reference to the report.
                     dataSourceRef = new DataSourceReference
                         {
-                            Reference =
-                                dataSources[
-                                    useMatchCase
-                                        ? reportDataSources[index].Name
+                            Reference = dataSources[useMatchCase
+                                                        ? reportDataSources[index].Name
                                         : reportDataSources[index].Name.ToLower()] as string
                         };
                     reportDataSources[index].Item = dataSourceRef;
@@ -783,21 +781,14 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
         }
 
+
         /// <summary>
         /// Builds the report data source table.
         /// </summary>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="reportDataSources">
-        /// The report data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        /// <returns>
-        /// True if table was built.
-        /// </returns>
+        /// <param name="dataSources">The data sources.</param>
+        /// <param name="reportDataSources">The report data sources.</param>
+        /// <param name="useMatchCase">If set to. <c>True.</c> [use match case].</param>
+        /// <returns>True if table was built.</returns>
         private bool BuildReportDataSourceTable(
             ReportServerDataSource[] dataSources, Hashtable reportDataSources, bool useMatchCase)
         {
@@ -805,18 +796,42 @@ namespace ssrsmsbuildtasks.DeploymentManger
             foreach (ReportServerDataSource dataSource in dataSources)
             {
                 // make sure that no duplicates reporting data source names 
-                if (reportDataSources.ContainsKey(dataSource.ReportName))
+                if (dataSource.ReportDataSourceNames != null)
                 {
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetReportDataSource", 
-                        string.Format("Duplicate Data Source Name: {0}", dataSource.ReportName));
-                    sucess = false;
+                    foreach (string reportDataSourceName in dataSource.ReportDataSourceNames)
+                    {
+                        if (reportDataSources.ContainsKey(reportDataSourceName))
+                        {
+                            this.OnDeploymentMangerMessage(
+                                DeploymentMangerMessageType.Error,
+                                "SetReportDataSource",
+                                string.Format("Duplicate Data Source Name: {0}", dataSource.ReportDataSourceNames));
+                            sucess = false;
+                            break;
+                        }
+
+                        reportDataSources.Add(useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), string.Format("{0}/{1}.rsds", dataSource.DataSourceFolder, dataSource.Name));
+
+                    }
                 }
 
-                reportDataSources.Add(
-                    useMatchCase ? dataSource.ReportName : dataSource.ReportName.ToLower(), 
-                    string.Format("{0}/{1}.rsds",dataSource.DataSourceFolder, dataSource.Name));
+                if (reportDataSources.ContainsKey(dataSource.Name))
+                {
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Error,
+                        "SetReportDataSource",
+                        string.Format("Duplicate Data Source Name: {0}", dataSource.Name));
+                    sucess = false;
+                }
+                else
+                {
+                    reportDataSources.Add(useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), string.Format("{0}/{1}.rsds", dataSource.DataSourceFolder, dataSource.Name));
+                }
+
+                if (!sucess)
+                {
+                    break;
+                }
             }
 
             return sucess;

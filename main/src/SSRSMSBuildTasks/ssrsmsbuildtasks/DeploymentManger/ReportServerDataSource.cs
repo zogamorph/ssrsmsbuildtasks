@@ -46,7 +46,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// data source report name
         /// </summary>
-        private string reportName;
+        private string[] _reportDataSourceNames;
 
         #endregion
 
@@ -63,8 +63,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Initializes a new instance of the ReportServerDataSource class.
         /// </summary>
-        /// <param name="reportName">
-        /// Name of the report.
+        /// <param name="reportDataSourceNames">
+        /// List of the report data source names.
         /// </param>
         /// <param name="name">
         /// The Data Source name.
@@ -85,7 +85,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The window credentials.
         /// </param>
         public ReportServerDataSource(
-            string reportName, 
+            string[] reportDataSourceNames, 
             string name, 
             DataProviderEnum provider, 
             string connectionString, 
@@ -94,7 +94,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             ReportServerDataSourceWindowsCredentials windowCredentials)
             : this()
         {
-            this.reportName = reportName;
+            this._reportDataSourceNames = reportDataSourceNames;
             this.Name = name;
             this.Provider = provider;
             this.ConnectionString = connectionString;
@@ -106,8 +106,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Initializes a new instance of the ReportServerDataSource class.
         /// </summary>
-        /// <param name="reportName">
-        /// Name of the report.
+        /// <param name="reportDataSourceNames">
+        /// List of the report data source names.
         /// </param>
         /// <param name="name">
         /// The Data Source name.
@@ -125,7 +125,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The data source folder.
         /// </param>
         public ReportServerDataSource(
-            string reportName, 
+            string[] reportDataSourceNames, 
             string name, 
             DataProviderEnum provider, 
             string connectionString, 
@@ -133,7 +133,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             string dataSourceFolder)
             : this()
         {
-            this.reportName = reportName;
+            this._reportDataSourceNames = reportDataSourceNames;
             this.Name = name;
             this.Provider = provider;
             this.ConnectionString = connectionString;
@@ -182,18 +182,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Gets or sets the name of the report.
         /// </summary>
         /// <value>The name of the report.</value>
-        public string ReportName
-        {
-            get
-            {
-                return string.IsNullOrEmpty(this.reportName) ? this.Name : this.reportName;
-            }
-
-            set
-            {
-                this.reportName = value;
-            }
-        }
+        public string[] ReportDataSourceNames { get; set; }
 
         /// <summary>
         /// Gets the report properties.

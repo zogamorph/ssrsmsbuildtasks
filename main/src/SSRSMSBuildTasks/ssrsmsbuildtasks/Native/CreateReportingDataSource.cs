@@ -76,7 +76,7 @@ namespace ssrsmsbuildtasks.Native
                         {
                             ConnectionString = this.DataSources[index].GetMetadata("ConnectionString"), 
                             DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
-                            Name = this.DataSources[index].GetMetadata("DataSourceName"), 
+                            Name = this.DataSources[index].ItemSpec, 
                             OverWrite = Convert.ToBoolean(this.DataSources[index].GetMetadata("OverWrite")), 
                             Provider =
                                 (DataProviderEnum)
@@ -186,13 +186,6 @@ namespace ssrsmsbuildtasks.Native
                 isVaild = false;
                 invalidDataSourceMessageStringBuilder.AppendLine(
                     string.Format("{0}:Missing Folder Metadata", dataSource.ItemSpec));
-            }
-
-            if (string.IsNullOrEmpty(dataSource.GetMetadata("DataSourceName")))
-            {
-                isVaild = false;
-                invalidDataSourceMessageStringBuilder.AppendLine(
-                    string.Format("{0}:Missing DataSourceName Metadata", dataSource.ItemSpec));
             }
 
             if (string.IsNullOrEmpty(dataSource.GetMetadata("OverWrite")))

@@ -929,19 +929,41 @@ namespace ssrsmsbuildtasks.DeploymentManger
             foreach (ReportServerDataSource dataSource in dataSources)
             {
                 // make sure that no duplicates reporting data source names 
-                if (reportDataSources.ContainsKey(dataSource.ReportName))
+                if (dataSource.ReportDataSourceNames != null)
                 {
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetReportDataSource", 
-                        string.Format("Duplicate Data Source Name: {0}", dataSource.ReportName));
-                    sucess = false;
+                    foreach (string reportDataSourceName in dataSource.ReportDataSourceNames)
+                    {
+                        if (reportDataSources.ContainsKey(reportDataSourceName))
+                        {
+                            this.OnDeploymentMangerMessage(
+                                DeploymentMangerMessageType.Error,
+                                "SetReportDataSource",
+                                string.Format("Duplicate Data Source Name: {0}", dataSource.ReportDataSourceNames));
+                            sucess = false;
+                            break;
+                        }
+
+                        reportDataSources.Add(useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), DeploymentMangerHelper.FormatItemPath(string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
+                    }
                 }
 
-                reportDataSources.Add(
-                    useMatchCase ? dataSource.ReportName : dataSource.ReportName.ToLower(), 
-                    DeploymentMangerHelper.FormatItemPath(
-                        string.Concat(dataSource.DataSourceFolder, "/", dataSource.Name)));
+                if (reportDataSources.ContainsKey(dataSource.Name))
+                {
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Error,
+                        "SetReportDataSource",
+                        string.Format("Duplicate Data Source Name: {0}", dataSource.Name));
+                    sucess = false;                
+                }
+                else
+                {
+                    reportDataSources.Add(useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), DeploymentMangerHelper.FormatItemPath(string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
+                }
+                
+                if (!sucess)
+                {
+                    break;
+                }
             }
 
             return sucess;
