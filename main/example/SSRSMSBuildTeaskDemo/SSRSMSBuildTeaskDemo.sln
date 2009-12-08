@@ -5,12 +5,15 @@ Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "SSRSMSBuildTeaskDemo", "SSR
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{4888C37A-DAAB-4358-8B52-CFC381B57BAC}"
 	ProjectSection(SolutionItems) = preProject
+		IntegratedUploadReports.cmd = IntegratedUploadReports.cmd
+		NativeUploadReports.cmd = NativeUploadReports.cmd
 		Readme.rtf = Readme.rtf
-		RunUploadReports.cmd = RunUploadReports.cmd
+		RunIntegratedUploadReports.cmd = RunIntegratedUploadReports.cmd
+		RunNativeUploadReports.cmd = RunNativeUploadReports.cmd
 		ssrsmsbuildtasks.integrated.targets = ssrsmsbuildtasks.integrated.targets
 		ssrsmsbuildtasks.native.targets = ssrsmsbuildtasks.native.targets
-		SSRSMSBuildTeaskDemo.msbuild = SSRSMSBuildTeaskDemo.msbuild
-		UploadReports.cmd = UploadReports.cmd
+		SSRSMSBuildTeaskDemo_Integrated.msbuild = SSRSMSBuildTeaskDemo_Integrated.msbuild
+		SSRSMSBuildTeaskDemo_Native.msbuild = SSRSMSBuildTeaskDemo_Native.msbuild
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bin", "Bin", "{CBE30466-4A98-4A32-BFD2-8B5574F57003}"
