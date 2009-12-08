@@ -477,8 +477,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // Create hashtable 
                 Hashtable reportDataSources = new Hashtable(dataSources.Length);
 
-                // format the Item path and get the item type
-                reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
                 ItemTypeEnum currentItemType = this.reportingService2006.GetItemType(reportItem);
 
                 // build table if there was error then stop
@@ -580,8 +578,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             Warning[] warnings;
             Property[] properties;
 
-            // make sure the folder the name correct.
-            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             try
             {
                 // loop through the array of reports.
@@ -592,7 +588,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                     // uploads reports then outputs that reports was uploaded.
                     this.reportingService2006.CreateReport(
-                        reportFile.ReportName, 
+                        reportFile.ReportFileInfo.Name, 
                         folderName, 
                         true, 
                         reportFile.GetBytes(), 
@@ -637,8 +633,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName)
         {
-            // make sure the folder the name correct.
-            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             Property[] properties;
             try
             {
@@ -822,8 +816,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 reportDataSources.Add(
                     useMatchCase ? dataSource.ReportName : dataSource.ReportName.ToLower(), 
-                    DeploymentMangerHelper.FormatItemPath(
-                        string.Concat(dataSource.DataSourceFolder, "/", dataSource.Name)));
+                    string.Format("{0}/{1}.rsds",dataSource.DataSourceFolder, dataSource.Name));
             }
 
             return sucess;
@@ -937,7 +930,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 // formating the data source folder.
-                dataSource.DataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSource.DataSourceFolder);
+                dataSource.DataSourceFolder = dataSource.DataSourceFolder;
 
                 // check to see if the properties are define if then create the default which are needed
                 if (dataSource.ReportServerProperties.Count == 0)
@@ -956,7 +949,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // create the data source
                 this.reportingService2006.CreateDataSource(
-                    dataSource.Name, dataSource.DataSourceFolder, dataSource.OverWrite, definition, properties);
+                    string.Format("{0}.rsds", dataSource.Name), dataSource.DataSourceFolder, dataSource.OverWrite, definition, properties);
 
                 // message the data source was created
                 this.OnDeploymentMangerMessage(
