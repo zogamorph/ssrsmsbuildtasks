@@ -213,7 +213,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     items = this.reportingService2005.FindItems(folderPath, BooleanOperatorEnum.And, conditions);
 
                     // if the folder name is not found then create the folder.
-                    if (!DeploymentMangerHelper.FindFolder(items, folderNames[index]))
+                    if (!DeploymentMangerHelper.FindItemType(items, folderNames[index], ItemTypeEnum.Folder))
                     {
                         if (index != (folderNames.Length - 1) && reportFolderProperites != null)
                         {
