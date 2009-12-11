@@ -87,7 +87,6 @@
     <None Include="properties\Build.properties" />
     <None Include="RunFirst.cmd" />
     <None Include="signing\SSRSMSBuildTasks-Public.snk" />
-    <None Include="signing\SSRSMSBuildTasks.snk" />
     <None Include="targets\BuildSolutions.target" />
     <None Include="targets\BuildSuccess.target" />
     <None Include="targets\CleanSolution.target" />
