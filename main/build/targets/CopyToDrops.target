@@ -6,9 +6,11 @@
           Condition=" '$(IsDesktopBuild)' != 'true' "
           DependsOnTargets="VersionNumberGetLast">
     
-    <!--<Copy SourceFiles="$(InstallerBuildArtefactPath)\$(InstallerNameWithoutExtension).v$(GlobalBuildVersionNumber).zip"
+    <Copy SourceFiles="$(SolutionsPath)\SSRSMSBuildTasks\ssrsmsbuildtasks\bin\Release\ssrsmsbuildtasks.dll;
+                       $(SolutionsPath)\..\example\SSRSMSBuildTeaskDemo\ssrsmsbuildtasks.native.tasks;
+                       $(SolutionsPath)\..\example\SSRSMSBuildTeaskDemo\ssrsmsbuildtasks.integrated.tasks;"
           DestinationFolder="$(DropsPath)\$(GlobalBuildVersionNumber)"
-          SkipUnchangedFiles="false" />-->
+          SkipUnchangedFiles="false" />
 
   </Target>
 

@@ -1,6 +1,6 @@
 <Project InitialTargets="FullDepoly" DefaultTargets="FullDepoly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Import the Natvie  mode tasks for deploying the reports-->
-	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.native.targets" />
+	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.native.tasks" />
 	
 	<!--ReportServer-->
 	<PropertyGroup>
