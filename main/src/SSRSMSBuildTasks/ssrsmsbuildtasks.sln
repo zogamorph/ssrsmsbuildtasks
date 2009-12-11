@@ -5,9 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssrsmsbuildtasks", "ssrsmsb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasks.Build", "..\..\build\SSRSMSBuildTasks.Build.csproj", "{D0393E31-6D4B-4580-9718-A8A730CDCB69}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasksDocProject", "SSRSMSBuildTasksDocProject\SSRSMSBuildTasksDocProject.csproj", "{8969FBB1-012B-451E-BF39-C1D249698BB2}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs06.codeplex.com/
 		SccLocalPath0 = .
@@ -17,6 +19,9 @@ Global
 		SccProjectUniqueName2 = ..\\..\\build\\SSRSMSBuildTasks.Build.csproj
 		SccProjectName2 = ../../build
 		SccLocalPath2 = ..\\..\\build
+		SccProjectUniqueName3 = SSRSMSBuildTasksDocProject\\SSRSMSBuildTasksDocProject.csproj
+		SccProjectName3 = SSRSMSBuildTasksDocProject
+		SccLocalPath3 = SSRSMSBuildTasksDocProject
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +36,10 @@ Global
 		{D0393E31-6D4B-4580-9718-A8A730CDCB69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0393E31-6D4B-4580-9718-A8A730CDCB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0393E31-6D4B-4580-9718-A8A730CDCB69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
