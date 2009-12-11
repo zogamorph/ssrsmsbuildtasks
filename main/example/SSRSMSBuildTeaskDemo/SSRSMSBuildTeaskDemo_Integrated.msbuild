@@ -1,6 +1,6 @@
 <Project InitialTargets="FullDepoly" DefaultTargets="FullDepoly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Import the integrated mode tasks for deploying the reports-->
-	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.integrated.targets" />
+	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.integrated.tasks" />
 	
 	<!--Sharepoint Server-->
 	<PropertyGroup>
