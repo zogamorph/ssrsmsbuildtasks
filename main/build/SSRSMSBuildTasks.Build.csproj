@@ -7,8 +7,8 @@
     <ProjectGuid>{D0393E31-6D4B-4580-9718-A8A730CDCB69}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StyleCop.For.ReSharper.Build</RootNamespace>
-    <AssemblyName>StyleCop.For.ReSharper.Build</AssemblyName>
+    <RootNamespace>SSRSMSBuildTasks.Build</RootNamespace>
+    <AssemblyName>SSRSMSBuildTasks.Build</AssemblyName>
     <StartupObject>
     </StartupObject>
     <FileUpgradeFlags>
