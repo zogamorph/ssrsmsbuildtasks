@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "SSRSMSBuildTeaskDemo", "SSRSMSBuildTeaskDemo\SSRSMSBuildTeaskDemo.rptproj", "{B1D4FA80-23E7-42C0-AB3A-C6D83F9D7895}"
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "SSRSMSBuildTaskDemo", "SSRSMSBuildTaskDemo\SSRSMSBuildTaskDemo.rptproj", "{B1D4FA80-23E7-42C0-AB3A-C6D83F9D7895}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{4888C37A-DAAB-4358-8B52-CFC381B57BAC}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,16 +10,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution 
 		Readme.rtf = Readme.rtf
 		RunIntegratedUploadReports.cmd = RunIntegratedUploadReports.cmd
 		RunNativeUploadReports.cmd = RunNativeUploadReports.cmd
-		ssrsmsbuildtasks.integrated.targets = ssrsmsbuildtasks.integrated.targets
-		ssrsmsbuildtasks.native.targets = ssrsmsbuildtasks.native.targets
-		SSRSMSBuildTeaskDemo_Integrated.msbuild = SSRSMSBuildTeaskDemo_Integrated.msbuild
-		SSRSMSBuildTeaskDemo_Native.msbuild = SSRSMSBuildTeaskDemo_Native.msbuild
+		SSRSMSBuildTaskDemo_Integrated.msbuild = SSRSMSBuildTaskDemo_Integrated.msbuild
+		SSRSMSBuildTaskDemo_Native.msbuild = SSRSMSBuildTaskDemo_Native.msbuild
+		ssrsmsbuildtasks.integrated.tasks = ssrsmsbuildtasks.integrated.tasks
+		ssrsmsbuildtasks.native.tasks = ssrsmsbuildtasks.native.tasks
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bin", "Bin", "{CBE30466-4A98-4A32-BFD2-8B5574F57003}"
-	ProjectSection(SolutionItems) = preProject
-		Bin\ssrsmsbuildtasks.dll = Bin\ssrsmsbuildtasks.dll
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
@@ -27,9 +24,10 @@ Global
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs06.codeplex.com/
 		SccLocalPath0 = .
-		SccProjectUniqueName1 = SSRSMSBuildTeaskDemo\\SSRSMSBuildTeaskDemo.rptproj
+		SccProjectUniqueName1 = SSRSMSBuildTaskDemo\\SSRSMSBuildTaskDemo.rptproj
 		SccProjectName1 = SSRSMSBuildTeaskDemo
 		SccLocalPath1 = SSRSMSBuildTeaskDemo
+		SccProjectFilePathRelativizedFromConnection1 = ..\\SSRSMSBuildTaskDemo\\
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Default = Debug|Default
