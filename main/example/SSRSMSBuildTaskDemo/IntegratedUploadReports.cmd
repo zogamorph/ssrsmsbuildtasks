@@ -5,7 +5,7 @@ SET SharePointSiteUrl=%1
 IF "%SharePointSiteUrl%"=="?" GOTO :Error
 IF "%SharePointSiteUrl%"=="" GOTO :Error
 
-@%WinDir%\microsoft.net\Framework\v2.0.50727\MSBuild SSRSMSBuildTeaskDemo_Integrated.msbuild /t:FullDepoly /p:SharePointSiteUrl=%SharePointSiteUrl%
+@%WinDir%\microsoft.net\Framework\v2.0.50727\MSBuild SSRSMSBuildTaskDemo_Integrated.msbuild /t:FullDepoly /p:SharePointSiteUrl=%SharePointSiteUrl%
 GOTO :End 
 
 :Error
