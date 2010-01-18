@@ -31,6 +31,12 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets the data sources list.
         /// </summary>
         /// <value>The data sources list.</value>
+        /// <remarks> The following meta data is required:  Folder - Folder of
+        /// there the data source is stored within the report server. If the
+        /// Reports use different data source name to refer to data source then
+        /// add the refer name to following meta data on comma separated list:
+        /// ReportDataSourceNames
+        /// </remarks>
         public ITaskItem[] DataSources { get; set; }
 
         /// <summary>
@@ -44,6 +50,8 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets the report item.
         /// </summary>
         /// <value>The report item.</value>
+        /// <remarks>The ReportItem can be a report server folder path which go through all the reports and sub folders report if recursive
+        /// or to path to the report which only set the data source for that report</remarks>
         [Required]
         public string ReportItem { get; set; }
 
@@ -65,10 +73,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call msbuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

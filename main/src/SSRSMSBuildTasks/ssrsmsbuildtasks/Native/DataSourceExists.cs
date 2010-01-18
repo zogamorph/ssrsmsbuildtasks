@@ -21,30 +21,30 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// The report folder exists.
+    /// This MSBuild Task will check for the existences of the data source a within the requested report server folder.
     /// </summary>
     public class DataSourceExists : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the report item.
+        /// Gets or sets the name of the data source.
         /// </summary>
-        /// <value>The report item.</value>
+        /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
+        /// Gets or sets a value indicating whether this <see cref="DataSourceExists"/> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        /// Gets or sets report folder path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The report folder path.</value>
         public string Folder { get; set; }
 
         /// <summary>
@@ -59,10 +59,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server user on the report server.
+//   This MSBuild  Task will create a new report server user on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -21,37 +21,37 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will create a new report server user on the report server.
+    /// This MSBuild Task will create a new report user to the requested SharePoint report document library path.
     /// </summary>
     public class AddReportUser : Task
     {
         #region Properties
 
         /// <summary>
-        /// The folder name where the report user will be allow to access.
+        /// Gets or sets the SharePoint report document library path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// The roles within the report server that the user will have in the report server
+        /// Gets or sets the reporting roles.
         /// </summary>
         /// <value>The reporting roles.</value>
         [Required]
         public string[] ReportingRoles { get; set; }
 
         /// <summary>
-        /// Gets or sets Report Server User name which need to added to the report server.
+        /// Gets or sets new report user name which need to added to the report document library path.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
         public string ReportUserName { get; set; }
 
         /// <summary>
-        /// The url of the report server.
+        /// Gets or sets SharePoint site Url.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The SharePoint site Url.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
 
@@ -60,7 +60,7 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The execute method which is call msbuild to run the task
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
         /// True if the mothed dosen't error

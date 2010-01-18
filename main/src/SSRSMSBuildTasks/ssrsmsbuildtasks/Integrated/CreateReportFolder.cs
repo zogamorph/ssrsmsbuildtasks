@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server folder on the report server.
+//   This MSBuild  Task will create a new report server folder on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -22,27 +22,30 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will create a new report server folder on the report server.
+    /// This MSBuild Task will create a folder within the requested SharePoint report document library path.
     /// </summary>
     public class CreateReportFolder : Task
     {
         #region Properties
 
         /// <summary>
-        /// The path to the folder which needs to be created.
+        /// Gets or sets the new name of the folder.
         /// </summary>
+        /// <value>The new name of the folder.</value>
         [Required]
         public string NewFolderName { get; set; }
 
         /// <summary>
-        /// Gets or sets the folder report properties.
+        /// Gets or sets the parent folder path.
         /// </summary>
-        /// <value>The folder report properties.</value>
+        /// <value>The parent folder path.</value>
+        /// <remarks>The parent path is the SharePoint report document library path that the folder</remarks>
         public string ParentPath { get; set; }
 
         /// <summary>
-        /// The url of the report server.
+        /// Gets or sets SharePoint site Url.
         /// </summary>
+        /// <value>The SharePoint site Url.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
 
@@ -51,10 +54,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

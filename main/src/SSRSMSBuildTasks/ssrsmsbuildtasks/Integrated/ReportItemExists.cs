@@ -21,7 +21,7 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// The report item exists.
+    /// This MSBuild Task will check for the existences of the report item a within the requested SharePoint report document library path.
     /// </summary>
     public class ReportItemExists : Task
     {
@@ -35,9 +35,9 @@ namespace ssrsmsbuildtasks.Integrated
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        /// Gets or sets the SharePoint report document library path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The SharePoint report document library path.</value>
         public string Folder { get; set; }
 
         /// <summary>
@@ -51,6 +51,7 @@ namespace ssrsmsbuildtasks.Integrated
         /// Gets or sets the name of the report item type.
         /// </summary>
         /// <value>The name of the report item type.</value>
+        /// <remarks>Report Item Type Name are names used within reporting services ItemTypeEnum</remarks>
         [Required]
         public string ReportItemTypeName { get; set; }
 
@@ -66,10 +67,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

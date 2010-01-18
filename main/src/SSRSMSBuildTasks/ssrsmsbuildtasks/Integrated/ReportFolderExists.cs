@@ -21,7 +21,7 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// The report folder exists.
+    /// This MSBuild Task will check for the existences of the report folder a within the requested SharePoint report document library path.
     /// </summary>
     public class ReportFolderExists : Task
     {
@@ -35,9 +35,10 @@ namespace ssrsmsbuildtasks.Integrated
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        /// Gets or sets the SharePoint report document library path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The SharePoint report document library path.</value>
+        /// <remarks>The folder is the SharePoint report document library path that the folder</remarks>
         [Required]
         public string Folder { get; set; }
 
@@ -60,10 +61,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

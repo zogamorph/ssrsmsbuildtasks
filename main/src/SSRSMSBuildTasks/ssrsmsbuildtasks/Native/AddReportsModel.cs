@@ -21,7 +21,7 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// Upload a report model to the report server
+    /// This MSBuild Task will upload a list of a report models files to the requested report server.
     /// </summary>
     public class AddReportsModel : Task
     {
@@ -36,9 +36,9 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets Folder.
+        /// Gets or sets report folder path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
@@ -46,11 +46,18 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets ReportModels.
         /// </summary>
         /// <value>The report models.</value>
+        /// <remarks>The following meta data are needed to for report models
+        ///     ModelName - Name of the model 
+        ///     DataSourceFullPath - Location of the Data Source View File  
+        /// Adding the meta data ReportServerProperties will with comma
+        /// separated name value paired list will set the report server
+        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// </remarks>
         [Required]
         public ITaskItem[] ReportModels { get; set; }
 
         /// <summary>
-        /// Gets or sets SharePointSiteUrl.
+        /// Gets or sets report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
@@ -67,10 +74,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The i task. execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The i task. execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

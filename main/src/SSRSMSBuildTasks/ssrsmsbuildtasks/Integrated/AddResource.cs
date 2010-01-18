@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will upload a list of a reports to the requested report server.
+//   This MSBuild  Task will upload a list of a reports to the requested report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -21,30 +21,37 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will upload a list of a reports to the requested report server.
+    /// This MSBuild Task will upload a list of resources files to the requested SharePoint report document library path.
     /// </summary>
     public class AddResource : Task
     {
         #region Properties
 
         /// <summary>
-        /// The list of report files, include full path, which need to upload to the report server.
+        /// Gets or sets the files.
         /// </summary>
         /// <value>The files.</value>
+        /// <remarks> The following meta data is require to upload resource file:
+        ///      MineType - The file mine type
+        /// Adding the meta data ReportServerProperties will with comma
+        /// separated name value paired list will set the report server
+        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// </remarks>
+
         [Required]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
-        /// The report folder where the reports need to be uploaded.
+        /// Gets or sets new report user name which need to added to the report document library path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The name of the report user.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// The http address of the reports server.
+        /// Gets or sets SharePoint site Url.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The SharePoint site Url.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
 
@@ -53,10 +60,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The execute method which is call msbuild to run the task
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// True if the task runs correctly
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {
