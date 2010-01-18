@@ -8,8 +8,8 @@
     
     <Copy SourceFiles="$(SolutionsPath)\SSRSMSBuildTasks\ssrsmsbuildtasks\bin\Release\ssrsmsbuildtasks.dll;
                        $(SolutionsPath)\SSRSMSBuildTasks\SSRSMSBuildTasksDocProject\bin\Release\SSRSMSBuildTasksHelp.chm;
-                       $(SolutionsPath)\..\example\SSRSMSBuildTeaskDemo\ssrsmsbuildtasks.native.tasks;
-                       $(SolutionsPath)\..\example\SSRSMSBuildTeaskDemo\ssrsmsbuildtasks.integrated.tasks;"
+                       $(SolutionsPath)\..\example\SSRSMSBuildTaskDemo\ssrsmsbuildtasks.native.tasks;
+                       $(SolutionsPath)\..\example\SSRSMSBuildTaskDemo\ssrsmsbuildtasks.integrated.tasks;"
           DestinationFolder="$(DropsPath)\$(GlobalBuildVersionNumber)"
           SkipUnchangedFiles="false" />
 
