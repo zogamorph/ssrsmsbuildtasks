@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server user on the report server.
+//   This MSBuild  Task will create a new report server user on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -28,28 +28,30 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// The folder name where the report user will be allow to access.
+        /// Gets or sets the report folder path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
+
         /// <summary>
-        /// The roles within the report server that the user will have in the report server
+        /// Gets or sets the reporting roles.
         /// </summary>
         /// <value>The reporting roles.</value>
+        /// <remarks>The reporting roles need to match the role within the targeted report server</remarks>
         [Required]
         public string[] ReportingRoles { get; set; }
 
         /// <summary>
-        /// The url of the report server.
+        /// Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
 
         /// <summary>
-        /// Gets or sets Report Server User name which need to added to the report server.
+        /// Gets or sets Report Server User name.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
@@ -60,10 +62,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute method which is call msbuild to run the task
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// True if the mothed dosen't error
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

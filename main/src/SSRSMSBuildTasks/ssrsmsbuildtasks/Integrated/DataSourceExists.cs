@@ -21,7 +21,7 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// Data Source Exists
+    /// This MSBuild Task will check for the existences of the data source a within the requested SharePoint report document library path.
     /// </summary>
     public class DataSourceExists : Task
     {
@@ -42,9 +42,9 @@ namespace ssrsmsbuildtasks.Integrated
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the folder.
+        /// Gets or sets the SharePoint report document library path.
         /// </summary>
-        /// <value>The folder.</value>
+        /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
@@ -60,10 +60,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// When overridden in a derived class, executes the task.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// true if the task successfully executed; otherwise, false.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

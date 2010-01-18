@@ -21,7 +21,7 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// Upload a report model to the report server
+    /// This MSBuild Task will upload a list of report model files to the requested SharePoint report document library path.
     /// </summary>
     public class AddReportsModel : Task
     {
@@ -36,23 +36,30 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets Folder.
+        /// Gets or sets the SharePoint report document library path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets ReportModels.
+        /// Gets or sets the report models.
         /// </summary>
         /// <value>The report models.</value>
+        /// <remarks>The following meta data are needed to for report models
+        ///     ModelName - Name of the model 
+        ///     DataSourceFullPath - Location of the Data Source View File  
+        /// Adding the meta data ReportServerProperties will with comma
+        /// separated name value paired list will set the report server
+        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// </remarks>
         [Required]
         public ITaskItem[] ReportModels { get; set; }
 
         /// <summary>
-        /// Gets or sets SharePointSiteUrl.
+        /// Gets or sets SharePoint site Url.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The SharePoint site Url.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
 
@@ -67,10 +74,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The i task. execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The i task. execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

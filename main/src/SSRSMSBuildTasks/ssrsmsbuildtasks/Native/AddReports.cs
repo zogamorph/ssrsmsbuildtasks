@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will upload a list of a reports to the requested report server.
+//   This MSBuild  Task will upload a list of a reports to the requested report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -21,11 +21,10 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will upload a list of a reports to the requested report server.
+    /// This MSBuild Task will upload a list of a reports files to the requested report server.
     /// </summary>
     public class AddReports : Task
     {
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AddReports"/> class.
         /// </summary>
@@ -37,21 +36,25 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// The report folder where the reports need to be uploaded.
+        /// Gets or sets the report folder path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// The list of report files, include full path, which need to upload to the report server.
+        /// Gets or sets the report files.
         /// </summary>
         /// <value>The report files.</value>
+        /// <remarks>Adding the meta data ReportServerProperties will with comma
+        /// separated name value paired list will set the report server
+        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// </remarks>
         [Required]
         public ITaskItem[] ReportFiles { get; set; }
 
         /// <summary>
-        /// The http address of the reports server.
+        /// Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
@@ -68,10 +71,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute method which is call msbuild to run the task
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// True if the task runs correctly
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

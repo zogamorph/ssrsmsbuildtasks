@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will delete report server folder on the report server.
+//   This MSBuild  Task will delete report server folder on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -21,16 +21,16 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will delete report server folder on the report server.
+    /// This MSBuild Task will delete a folder within the requested SharePoint report document library path.
     /// </summary>
-    public class DeleteReportFolder : Task
+     public class DeleteReportFolder : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        /// Gets or sets the SharePoint report document library path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
@@ -46,10 +46,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// When overridden in a derived class, executes the task.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// true if the task successfully executed; otherwise, false.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

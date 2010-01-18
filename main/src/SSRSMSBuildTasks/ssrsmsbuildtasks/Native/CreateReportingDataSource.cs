@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server SQL Server shared data soruce on the report server.
+//   This MSBuild  Task will create a new report server SQL Server shared data soruce on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will create a new report server SQL Server shared data soruce on the report server.
+    /// This MSBuild Task will create a new report server SQL Server shared data source on the report server.
     /// </summary>
     public class CreateReportingDataSource : Task
     {
@@ -32,6 +32,19 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets the data sources.
         /// </summary>
         /// <value>The data sources.</value>
+        /// <remarks>Name of the data source is set by the Include
+        ///     Creating a data source requires the following meta data: 
+        ///     ConnectionString - Connection string for the data source.
+        ///     Folder - SharePoint report document library folder path to upload the data source.
+        ///     OverWrite - <c>true</c> if over write the data; otherwise, <c>false</c>.
+        ///     Provider - The Provider the data source will use:SQL - SQL Server or OLEDBMD for Analysis Services.
+        /// The optional meta data is required for windows credentials use
+        ///     WindowsUser - Windows User name 
+        ///     WindowsUserPassword - The Windows User Password 
+        /// Adding the meta data ReportServerProperties will with comma
+        /// separated name value paired list will set the report server
+        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// </remarks>
         [Required]
         public ITaskItem[] DataSources { get; set; }
 
@@ -47,10 +60,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// Executes a task.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// true if the task executed successfully; otherwise, false.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

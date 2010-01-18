@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will delete report server folder on the report server.
+//   This MSBuild  Task will delete report server folder on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -28,9 +28,9 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        /// Gets or sets the report folder path.
         /// </summary>
-        /// <value>The name of the folder.</value>
+        /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
@@ -46,10 +46,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

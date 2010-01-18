@@ -28,21 +28,21 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// The data of the data source
+        /// Gets or sets the name of the data source.
         /// </summary>
         /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
-
+        
         /// <summary>
-        /// The location of the data source
+        /// Gets or sets report folder path.
         /// </summary>
-        /// <value>The data source folder.</value>
+        /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// The Report Server name.
+        /// Gets or sets report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
@@ -53,10 +53,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

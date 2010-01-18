@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will create a new report server folder on the report server.
+//   This MSBuild  Task will create a new report server folder on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -32,6 +32,9 @@ namespace ssrsmsbuildtasks.Native
         /// Gets or sets the folder report properties.
         /// </summary>
         /// <value>The folder report properties.</value>
+        /// <remarks>The folder properties need to be set as a comma separated
+        /// list I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// </remarks>
         public string FolderReportProperties { get; set; }
 
         /// <summary>
@@ -51,10 +54,10 @@ namespace ssrsmsbuildtasks.Native
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {

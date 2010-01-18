@@ -31,6 +31,12 @@ namespace ssrsmsbuildtasks.Integrated
         /// Gets or sets the data sources list.
         /// </summary>
         /// <value>The data sources list.</value>
+        /// <remarks> The following meta data is required:  Folder - Folder of
+        /// there the data source is stored within the report server. If the
+        /// Reports use different data source name to refer to data source then
+        /// add the refer name to following meta data on comma separated list:
+        /// ReportDataSourceNames
+        /// </remarks>
         public ITaskItem[] DataSources { get; set; }
 
         /// <summary>
@@ -48,9 +54,9 @@ namespace ssrsmsbuildtasks.Integrated
         public string ReportItem { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        /// Gets or sets SharePoint site Url.
         /// </summary>
-        /// <value>The report server URL.</value>
+        /// <value>The SharePoint site Url.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
 
@@ -65,10 +71,10 @@ namespace ssrsmsbuildtasks.Integrated
         #region Public Methods
 
         /// <summary>
-        /// The execute.
+        /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// The execute.
+        /// <c>true</c> if the task runs correctly
         /// </returns>
         public override bool Execute()
         {
