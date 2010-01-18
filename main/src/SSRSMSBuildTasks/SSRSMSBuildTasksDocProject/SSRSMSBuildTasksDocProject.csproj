@@ -45,6 +45,12 @@
   <ItemGroup>
     <Compile Include="BuildProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\common\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\..\common\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DaveSexton.DocProject, Version=1.11.0.0, Culture=neutral, PublicKeyToken=af1a4bab65cc4ece, processorArchitecture=MSIL">
