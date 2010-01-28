@@ -93,7 +93,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The report folder.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool AddReportUser(string reportUserName, string[] reportingRoles, string reportFolder)
         {
@@ -140,7 +140,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             catch (Exception ex)
             {
-                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Information, "AddReportUser", ex.Message);
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "AddReportUser", ex.Message);
                 return false;
             }
         }
@@ -152,7 +152,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The data sources.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool CreateDataSource(ReportServerDataSource[] dataSources)
         {
@@ -179,7 +179,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The report Folder Properites.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool CreateFolder(string folderName, Dictionary<string, string> reportFolderProperites)
         {
@@ -349,7 +349,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The data source folder.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
         {
@@ -395,7 +395,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Name of the folder.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool DeleteReportFolder(string folderName)
         {
@@ -427,6 +427,61 @@ namespace ssrsmsbuildtasks.DeploymentManger
             catch (Exception ex)
             {
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "DeleteReportFolder", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Deletes the report user.
+        /// </summary>
+        /// <param name="reportUserName">
+        /// Name of the report user.
+        /// </param>
+        /// <param name="reportFolder">
+        /// The report folder.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// </returns>
+        public bool DeleteReportUser(string reportUserName, string reportFolder)
+        {
+            bool inheritParent, policyExists, scusess = true;
+            Policy[] oldPolicy, newPolicy;
+
+            try
+            {
+                // formats the folder name.
+                reportFolder = DeploymentMangerHelper.FormatFolderPath(reportFolder);
+
+                // Get the access policies of the folder.
+                oldPolicy = this.reportingService2005.GetPolicies(reportFolder, out inheritParent);
+
+                // Check to see if the user exists.
+                policyExists = this.DoesPolicyExists(oldPolicy, reportUserName);
+                if (policyExists)
+                {
+                    newPolicy = new Policy[oldPolicy.Length - 1];
+                    this.RemovePolicy(reportUserName, oldPolicy, newPolicy);
+                    this.reportingService2005.SetPolicies(reportFolder, newPolicy);
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "DeleteReportUser", 
+                        string.Format("Deleted User:{0} from folder:{1}", reportUserName, reportFolder));
+                }
+                else
+                {
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Error, 
+                        "DeleteReportUser", 
+                        string.Format("User:{0} not found for folder:{1}", reportUserName, reportFolder));
+                    scusess = false;
+                }
+
+                return scusess;
+            }
+            catch (Exception ex)
+            {
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Information, "DeleteReportUser", ex.Message);
                 return false;
             }
         }
@@ -484,7 +539,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The destination of the Item.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool MoveReportItem(string reportItem, string destinationItem)
         {
@@ -572,6 +627,32 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
+        /// Reports the user exists.
+        /// </summary>
+        /// <param name="reportUserName">
+        /// Name of the report user.
+        /// </param>
+        /// <param name="reportFolder">
+        /// The report folder.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// </returns>
+        public bool ReportUserExists(string reportUserName, string reportFolder)
+        {
+            bool inheritParent;
+            Policy[] currentPolicies;
+
+            reportFolder = DeploymentMangerHelper.FormatFolderPath(reportFolder);
+
+            // Get the access policies of the folder.
+            currentPolicies = this.reportingService2005.GetPolicies(reportFolder, out inheritParent);
+
+            // Check to see if the user exists.
+            return this.DoesPolicyExists(currentPolicies, reportUserName);
+        }
+
+        /// <summary>
         /// Sets the report data source.
         /// </summary>
         /// <param name="reportItem">
@@ -587,7 +668,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// If set to. <c>True.</c> [use match case].
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool SetReportDataSource(
             string reportItem, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
@@ -640,11 +721,19 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Uploads the model.
         /// </summary>
-        /// <param name="reportModelsFiles">The reporting services models.</param>
-        /// <param name="folderName">Name of the folder.</param>
-        /// <param name="disableWarnings">if set to <c>true</c> [disable warnings].</param>
-        /// <returns>Flag is the operation was successfully.</returns>
-        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings )
+        /// <param name="reportModelsFiles">
+        /// The reporting services models.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <param name="disableWarnings">
+        /// if set to <c>true</c> [disable warnings].
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// </returns>
+        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
         {
             Warning[] warnings;
             Property[] properties;
@@ -695,6 +784,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="folderName">
         /// Name of the folder.
         /// </param>
+        /// <param name="disableWarnings">
+        /// The disable Warnings.
+        /// </param>
         /// <returns>
         /// Ture if the reports are uploaded.
         /// </returns>
@@ -727,7 +819,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
-                        "UpLoadReports",
+                        "UpLoadReports", 
                         string.Format("Upload report: {0} to folder: {1}", reportFile.ReportName, folderName));
                 }
 
@@ -751,7 +843,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Name of the folder.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName)
         {
@@ -936,30 +1028,36 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         if (reportDataSources.ContainsKey(reportDataSourceName))
                         {
                             this.OnDeploymentMangerMessage(
-                                DeploymentMangerMessageType.Error,
-                                "SetReportDataSource",
+                                DeploymentMangerMessageType.Error, 
+                                "SetReportDataSource", 
                                 string.Format("Duplicate Data Source Name: {0}", dataSource.ReportDataSourceNames));
                             sucess = false;
                             break;
                         }
 
-                        reportDataSources.Add(useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), DeploymentMangerHelper.FormatItemPath(string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
+                        reportDataSources.Add(
+                            useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), 
+                            DeploymentMangerHelper.FormatItemPath(
+                                string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
                     }
                 }
 
                 if (reportDataSources.ContainsKey(dataSource.Name))
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error,
-                        "SetReportDataSource",
+                        DeploymentMangerMessageType.Error, 
+                        "SetReportDataSource", 
                         string.Format("Duplicate Data Source Name: {0}", dataSource.Name));
-                    sucess = false;                
+                    sucess = false;
                 }
                 else
                 {
-                    reportDataSources.Add(useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), DeploymentMangerHelper.FormatItemPath(string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
+                    reportDataSources.Add(
+                        useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), 
+                        DeploymentMangerHelper.FormatItemPath(
+                            string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
                 }
-                
+
                 if (!sucess)
                 {
                     break;
@@ -1070,7 +1168,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The data source.
         /// </param>
         /// <returns>
-        /// Flag is the operation was successfully.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         private bool CreateReportDataSource(ReportServerDataSource dataSource)
         {
@@ -1137,10 +1235,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // loop through all the old Policy see if the policy is already created
             for (int index = 0; index < oldPolicy.Length && !returnValue; index++)
             {
-                if (oldPolicy[index].GroupUserName == reportUserName)
-                {
-                    returnValue = true;
-                }
+                returnValue = String.Compare(oldPolicy[index].GroupUserName, reportUserName, true) == 0;
             }
 
             return returnValue;
@@ -1224,7 +1319,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="message">
         /// The message.
         /// </param>
-        private void OnDeploymentMangerMessage(DeploymentMangerMessageType reportMessageType, string method, string message)
+        private void OnDeploymentMangerMessage(
+            DeploymentMangerMessageType reportMessageType, string method, string message)
         {
             // check to see if the handle has been assign
             if (this.DeploymentMangerMessages != null)
@@ -1259,7 +1355,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 // if the old policy contains the new username 
                 // then flag the user has been found
-                if (!oldPolicy[index].GroupUserName.Contains(reportUserName))
+                if (!(String.Compare(oldPolicy[index].GroupUserName, reportUserName, true) == 0))
                 {
                     // if the new user has been found the move the current policy 
                     // up the list laving the policy for the new user
@@ -1287,20 +1383,25 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return index;
         }
 
-
         /// <summary>
         /// Sends the warnings message.
         /// </summary>
-        /// <param name="reportItem">The report item.</param>
-        /// <param name="warnings">The warnings.</param>
-        /// <param name="sender">The sender.</param>
+        /// <param name="reportItem">
+        /// The report item.
+        /// </param>
+        /// <param name="warnings">
+        /// The warnings.
+        /// </param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
         private void SendWarningsMessage(string reportItem, Warning[] warnings, string sender)
         {
             // loop through each warning and send out a message
             foreach (Warning warning in warnings)
             {
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning,
+                    DeploymentMangerMessageType.Warning, 
                     sender, 
                     string.Format("{0}:Warning:{1} ", reportItem, warning.Message));
             }

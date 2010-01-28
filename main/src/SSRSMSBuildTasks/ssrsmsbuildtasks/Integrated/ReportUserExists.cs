@@ -1,43 +1,39 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="DeleteDataSource.cs" company="SSRSMSBuildTasks Development Team">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ReportUserExists.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will delete report server data source on the report server.
+//   The report user exists.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
-
     using System;
+
+    using DeploymentManger;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
-    using ssrsmsbuildtasks.DeploymentManger;
-
-    #endregion
-
     /// <summary>
-    /// This MSBuild Task will delete reporting data source to the requested SharePoint report document library path.
+    /// The report user exists.
     /// </summary>
-    public class DeleteReportingDataSource : Task
+    public class ReportUserExists: Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the data source.
+        /// Gets or sets a value indicating whether this <see cref="ReportUserExists"/> is exists.
         /// </summary>
-        /// <value>The name of the data source.</value>
-        [Required]
-        public string DataSourceName { get; set; }
+        /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        /// Gets or sets the report folder path.
         /// </summary>
-        /// <value>The SharePoint report document library path.</value>
+        /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
@@ -47,6 +43,13 @@ namespace ssrsmsbuildtasks.Integrated
         /// <value>The share point site URL.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets Report Server User name.
+        /// </summary>
+        /// <value>The name of the report user.</value>
+        [Required]
+        public string ReportUserName { get; set; }
 
         #endregion
 
@@ -60,26 +63,27 @@ namespace ssrsmsbuildtasks.Integrated
         /// </returns>
         public override bool Execute()
         {
-            IntegratedDeploymentManager integratedDeploymentManager =
-                new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            // Connecting to the reporting server
+            IntegratedDeploymentManager integratedDeploymentManager = new IntegratedDeploymentManager(this.SharePointSiteUrl);
             integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                return integratedDeploymentManager.DeleteReportDataSource(this.DataSourceName, this.Folder);
+                this.Exists = integratedDeploymentManager.ReportUserExists(this.ReportUserName, this.Folder);
+                return true; 
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting", 
-                        "DeleteDataSource", 
-                        this.BuildEngine.ProjectFileOfTaskNode, 
-                        this.BuildEngine.LineNumberOfTaskNode, 
-                        this.BuildEngine.ColumnNumberOfTaskNode, 
-                        0, 
-                        0, 
-                        ex.Message, 
-                        string.Empty, 
+                        "Reporting",
+                        "DeleteReportUser",
+                        this.BuildEngine.ProjectFileOfTaskNode,
+                        this.BuildEngine.LineNumberOfTaskNode,
+                        this.BuildEngine.ColumnNumberOfTaskNode,
+                        0,
+                        0,
+                        ex.Message,
+                        string.Empty,
                         this.ToString()));
                 return false;
             }
@@ -90,10 +94,14 @@ namespace ssrsmsbuildtasks.Integrated
         #region Methods
 
         /// <summary>
-        /// Deployments the manger messages.
+        /// The reporting services message.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.</param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="eventArgs">
+        /// The event args.
+        /// </param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());

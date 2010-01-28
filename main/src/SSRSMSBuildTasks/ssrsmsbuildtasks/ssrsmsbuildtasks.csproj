@@ -79,8 +79,10 @@
     <Compile Include="Integrated\DataSourceExists.cs" />
     <Compile Include="Integrated\DeleteDataSource.cs" />
     <Compile Include="Integrated\DeleteReportFolder.cs" />
+    <Compile Include="Integrated\DeleteReportUser.cs" />
     <Compile Include="Integrated\ReportFolderExists.cs" />
     <Compile Include="Integrated\ReportItemExists.cs" />
+    <Compile Include="Integrated\ReportUserExists.cs" />
     <Compile Include="Integrated\SetReportDataSource.cs" />
     <Compile Include="Native\AddReports.cs" />
     <Compile Include="Native\AddReportsModel.cs" />
@@ -91,8 +93,10 @@
     <Compile Include="Native\DataSourceExists.cs" />
     <Compile Include="Native\DeleteDataSource.cs" />
     <Compile Include="Native\DeleteReportFolder.cs" />
+    <Compile Include="Native\DeleteReportUser.cs" />
     <Compile Include="Native\ReportFolderExists.cs" />
     <Compile Include="Native\ReportItemExists.cs" />
+    <Compile Include="Native\ReportUserExists.cs" />
     <Compile Include="RSHelper.cs" />
     <Compile Include="Native\SetReportDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
