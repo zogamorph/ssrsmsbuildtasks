@@ -1,31 +1,34 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddReportUser.cs" company="SSRSMSBuildTasks Development Team">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ReportUserExists.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will create a new report server user on the report server.
+//   The report user exists.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region Directives
-
     using System;
+
+    using DeploymentManger;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
-    using ssrsmsbuildtasks.DeploymentManger;
-
-    #endregion
-
     /// <summary>
-    /// This MSBuild Task will create a new report server user on the report server.
+    /// The report user exists.
     /// </summary>
-    public class AddReportUser : Task
+    public class ReportUserExists: Task
     {
         #region Properties
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="ReportUserExists"/> is exists.
+        /// </summary>
+        /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
+        [Output]
+        public bool Exists { get; set; }
 
         /// <summary>
         /// Gets or sets the report folder path.
@@ -33,15 +36,6 @@ namespace ssrsmsbuildtasks.Native
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
-
-
-        /// <summary>
-        /// Gets or sets the reporting roles.
-        /// </summary>
-        /// <value>The reporting roles.</value>
-        /// <remarks>The reporting roles need to match the role within the targeted report server</remarks>
-        [Required]
-        public string[] ReportingRoles { get; set; }
 
         /// <summary>
         /// Gets or sets the report server URL.
@@ -74,21 +68,22 @@ namespace ssrsmsbuildtasks.Native
             nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                return nativeDeploymentManger.AddReportUser(this.ReportUserName, this.ReportingRoles, this.Folder);
+                this.Exists = nativeDeploymentManger.ReportUserExists(this.ReportUserName, this.Folder);
+                return true; 
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting", 
-                        "AddReportUser", 
-                        this.BuildEngine.ProjectFileOfTaskNode, 
-                        this.BuildEngine.LineNumberOfTaskNode, 
-                        this.BuildEngine.ColumnNumberOfTaskNode, 
-                        0, 
-                        0, 
-                        ex.Message, 
-                        string.Empty, 
+                        "Reporting",
+                        "DeleteReportUser",
+                        this.BuildEngine.ProjectFileOfTaskNode,
+                        this.BuildEngine.LineNumberOfTaskNode,
+                        this.BuildEngine.ColumnNumberOfTaskNode,
+                        0,
+                        0,
+                        ex.Message,
+                        string.Empty,
                         this.ToString()));
                 return false;
             }

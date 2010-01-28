@@ -64,7 +64,7 @@ namespace ssrsmsbuildtasks.Integrated
         /// The execute method which is call MSBuild to run the task
         /// </summary>
         /// <returns>
-        /// <c>true</c> if the task runs correctly
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public override bool Execute()
         {
