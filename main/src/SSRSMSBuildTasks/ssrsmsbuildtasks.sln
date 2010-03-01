@@ -7,6 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasks.Build", ".
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasksDocProject", "SSRSMSBuildTasksDocProject\SSRSMSBuildTasksDocProject.csproj", "{8969FBB1-012B-451E-BF39-C1D249698BB2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1F60FB1B-D7D6-4C34-B2BB-EE39347011B0}"
+	ProjectSection(SolutionItems) = preProject
+		Update2005ProxyClass.cmd = Update2005ProxyClass.cmd
+		Update2006ProxyClass.cmd = Update2006ProxyClass.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 4

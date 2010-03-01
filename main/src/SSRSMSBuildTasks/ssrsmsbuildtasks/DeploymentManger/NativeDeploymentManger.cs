@@ -18,7 +18,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.Net;
     using System.Text;
 
-    using ssrsmsbuildtasks.MSReportService2005;
+    using Proxy.Native;
 
     #endregion
 

@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   Static class with reuseable functions for reporting services.
+//   Deployment Manger Helper
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,8 +11,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 {
     #region Directives
 
-    using ssrsmsbuildtasks.MSReportService2005;
-    using ssrsmsbuildtasks.MSReportService2006;
+    using ssrsmsbuildtasks.DeploymentManger.Proxy.Itergrated;
+
     #endregion
 
     /// <summary>
@@ -25,8 +25,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Adds the integrated web service to URL.
         /// </summary>
-        /// <param name="sharePointSiteUrl">The share point site URL.</param>
-        /// <returns>Report Server Web Services URL</returns>
+        /// <param name="sharePointSiteUrl">
+        /// The share point site URL.
+        /// </param>
+        /// <returns>
+        /// Report Server Web Services URL
+        /// </returns>
         public static string AddIntegratedWebServiceToUrl(string sharePointSiteUrl)
         {
             if (sharePointSiteUrl.EndsWith(@"/_vti_bin/ReportServer/ReportService2006.asmx"))
@@ -42,12 +46,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return string.Format(@"{0}/_vti_bin/ReportServer/ReportService2006.asmx", sharePointSiteUrl);
         }
 
-
         /// <summary>
         /// Adds the native web service to URL.
         /// </summary>
-        /// <param name="reportServerURL">The report server URL.</param>
-        /// <returns>Report Server Web Services URL</returns>
+        /// <param name="reportServerURL">
+        /// The report server URL.
+        /// </param>
+        /// <returns>
+        /// Report Server Web Services URL
+        /// </returns>
         public static string AddNativeWebServiceToUrl(string reportServerURL)
         {
             if (reportServerURL.EndsWith("ReportService2005.asmx"))
@@ -66,12 +73,20 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Finds the folder.
         /// </summary>
-        /// <param name="items">The items.</param>
-        /// <param name="folderName">Name of the folder.</param>
-        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
-        public static bool FindItemType(ssrsmsbuildtasks.MSReportService2006.CatalogItem[] items, string reportItemName, ssrsmsbuildtasks.MSReportService2006.ItemTypeEnum itemFindType)
+        /// <param name="items">
+        /// The items.
+        /// </param>
+        /// <param name="reportItemName">
+        /// Name of the report item.
+        /// </param>
+        /// <param name="itemFindType">
+        /// Type of the item find.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool FindItemType(CatalogItem[] items, string reportItemName, ItemTypeEnum itemFindType)
         {
-
             bool flag = false;
             for (int i = 0; (i < items.Length) && !flag; i++)
             {
@@ -83,16 +98,24 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             return flag;
         }
-
 
         /// <summary>
         /// Finds the type of the item.
         /// </summary>
-        /// <param name="items">The items.</param>
-        /// <param name="reportItemName">Name of the report item.</param>
-        /// <param name="itemFindType">Type of the item find.</param>
-        /// <returns><c>true</c> if exists; otherwise, <c>false</c>.</returns>
-        public static bool FindItemType(ssrsmsbuildtasks.MSReportService2005.CatalogItem[] items, string reportItemName, ssrsmsbuildtasks.MSReportService2005.ItemTypeEnum itemFindType)
+        /// <param name="items">
+        /// The items.
+        /// </param>
+        /// <param name="reportItemName">
+        /// Name of the report item.
+        /// </param>
+        /// <param name="itemFindType">
+        /// Type of the item find.
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool FindItemType(
+            Proxy.Native.CatalogItem[] items, string reportItemName, Proxy.Native.ItemTypeEnum itemFindType)
         {
             bool flag = false;
             for (int i = 0; (i < items.Length) && !flag; i++)
@@ -106,23 +129,29 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return flag;
         }
 
-
         /// <summary>
         /// Formats the folder path.
         /// </summary>
-        /// <param name="folderPath">The folder path.</param>
-        /// <returns>Formatted folder path</returns>
+        /// <param name="folderPath">
+        /// The folder path.
+        /// </param>
+        /// <returns>
+        /// Formatted folder path
+        /// </returns>
         public static string FormatFolderPath(string folderPath)
         {
             return FormatItemPath(folderPath);
         }
 
-
         /// <summary>
         /// Formats the item path.
         /// </summary>
-        /// <param name="itemPath">The item path.</param>
-        /// <returns>Formatted item path</returns>
+        /// <param name="itemPath">
+        /// The item path.
+        /// </param>
+        /// <returns>
+        /// Formatted item path
+        /// </returns>
         public static string FormatItemPath(string itemPath)
         {
             string newItemPath = itemPath.StartsWith("/") ? itemPath : string.Concat("/", itemPath);
