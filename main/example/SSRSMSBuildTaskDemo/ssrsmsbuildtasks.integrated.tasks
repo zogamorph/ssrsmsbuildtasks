@@ -14,7 +14,10 @@
   <UsingTask TaskName="ssrsmsbuildtasks.Integrated.DataSourceExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.Integrated.DeleteReportFolder" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.Integrated.DeleteReportingDataSource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Integrated.DeleteReportUser" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.Integrated.ReportFolderExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.Integrated.ReportItemExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Integrated.ReportUserExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.Integrated.SetReportDataSource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+	
 </Project>
