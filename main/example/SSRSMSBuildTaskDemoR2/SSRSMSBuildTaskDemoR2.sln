@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{4888C37A-DAAB-4358-8B52-CFC381B57BAC}"
+	ProjectSection(SolutionItems) = preProject
+		IntegratedUploadReports.cmd = IntegratedUploadReports.cmd
+		NativeUploadReports.cmd = NativeUploadReports.cmd
+		Readme.rtf = Readme.rtf
+		RunIntegratedUploadReports.cmd = RunIntegratedUploadReports.cmd
+		RunNativeUploadReports.cmd = RunNativeUploadReports.cmd
+		SSRSMSBuildTaskDemoR2_Integrated.msbuild = SSRSMSBuildTaskDemoR2_Integrated.msbuild
+		SSRSMSBuildTaskDemoR2_Native.msbuild = SSRSMSBuildTaskDemoR2_Native.msbuild
+		ssrsmsbuildtasks.integrated.tasks = ssrsmsbuildtasks.integrated.tasks
+		ssrsmsbuildtasks.native.tasks = ssrsmsbuildtasks.native.tasks
+		ssrsmsbuildtasks.R2.tasks = ssrsmsbuildtasks.R2.tasks
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bin", "Bin", "{CBE30466-4A98-4A32-BFD2-8B5574F57003}"
+EndProject
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "SSRSMSBuildTaskDemoR2", "SSRSMSBuildTaskDemoR2\SSRSMSBuildTaskDemoR2.rptproj", "{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 2
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs06.codeplex.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = SSRSMSBuildTaskDemoR2\\SSRSMSBuildTaskDemoR2.rptproj
+		SccProjectName1 = SSRSMSBuildTeaskDemoR2
+		SccLocalPath1 = SSRSMSBuildTeaskDemoR\u0022
+		SccProjectFilePathRelativizedFromConnection1 = ..\\SSRSMSBuildTaskDemoR2\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		DebugLocal|Default = DebugLocal|Default
+		Production|Default = Production|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.Debug|Default.ActiveCfg = Debug
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.Debug|Default.Build.0 = DebugLocal
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.Debug|Default.Deploy.0 = DebugLocal
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.DebugLocal|Default.ActiveCfg = DebugLocal
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.DebugLocal|Default.Build.0 = DebugLocal
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.DebugLocal|Default.Deploy.0 = DebugLocal
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.Production|Default.ActiveCfg = Production
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.Production|Default.Build.0 = Production
+		{5B98498D-EA05-4220-8CE4-E9DCA0EE2853}.Production|Default.Deploy.0 = Production
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CBE30466-4A98-4A32-BFD2-8B5574F57003} = {4888C37A-DAAB-4358-8B52-CFC381B57BAC}
+	EndGlobalSection
+EndGlobal

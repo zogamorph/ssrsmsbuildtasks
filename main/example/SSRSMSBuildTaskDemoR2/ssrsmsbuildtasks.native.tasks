@@ -1,0 +1,23 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <SSRSMSBuildTasksLibrary>ssrsmsbuildtasks.dll</SSRSMSBuildTasksLibrary>
+    <SSRSMSBuildTasksPath>$(MSBuildProjectDirectory)\bin\$(SSRSMSBuildTasksLibrary)</SSRSMSBuildTasksPath>
+  </PropertyGroup>
+  
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.AddReports" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.AddReportsModel" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.AddReportUser" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.AddResource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.CreateReportFolder" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.CreateReportingDataSource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.DataSourceExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.DeleteReportFolder" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.DeleteReportingDataSource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.DeleteReportUser" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.ReportFolderExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.ReportItemExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.ReportUserExists" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+  <UsingTask TaskName="ssrsmsbuildtasks.Native.SetReportDataSource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
+	
+</Project>

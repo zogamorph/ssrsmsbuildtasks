@@ -1,0 +1,94 @@
+<Project InitialTargets="FullDepoly" DefaultTargets="FullDepoly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- Import the integrated mode tasks for deploying the reports-->
+	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.R2.tasks" />
+	
+	<!--Sharepoint Server-->
+	<PropertyGroup>
+		<SharePointSiteUrl>http://$(COMPUTERNAME)</SharePointSiteUrl>
+		<ProjectParnetReportFolder>http://$(COMPUTERNAME)/sites/SSRS/Reports</ProjectParnetReportFolder>
+		<ProjectReportFolder>SSRSMSBuildTeaskDemo</ProjectReportFolder>
+		<ProjectParnetReportDataSources>http://$(COMPUTERNAME)/sites/SSRS/Data%20Connections</ProjectParnetReportDataSources>
+		<ProjectReportDataSources>SSRSMSBuildTeaskDemo</ProjectReportDataSources>
+	</PropertyGroup>
+	
+	<!--Databases-->
+	<PropertyGroup>
+		<!--Update with the name of the SQL Server that you wish the reports run against-->
+		<SQLServer>$(COMPUTERNAME)</SQLServer>
+		<!--Update with name of the SQL Server that contains the report server database-->
+		<ReportSQLServer>$(COMPUTERNAME)</ReportSQLServer>
+		<!--The name of database you wish the reports to run against-->
+		<Reportingdb>msdb</Reportingdb>
+		<!--The Report Server database name-->
+		<ReportServerdb>ReportServer</ReportServerdb>
+	</PropertyGroup>
+
+	<!--Reports-->
+	<ItemGroup>
+		<ReportsToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\*.rdl" />
+	</ItemGroup>
+	
+	<!--DataSoucre-->
+	<ItemGroup>
+		<!--The Include is the Name of the DataSet to create-->
+		<ReportDataSourceToDeploy Include="ReportServer">
+			<ConnectionString>Data Source=$(SQLServer);initial catalog=$(ReportServerdb);Integrated Security=True</ConnectionString>
+			<Folder>$(ProjectParnetReportDataSources)/$(ProjectReportDataSources)</Folder>
+			<Provider>SQL</Provider>
+			<OverWrite>True</OverWrite>
+		</ReportDataSourceToDeploy>
+		<ReportDataSourceToDeploy Include="$(COMPUTERNAME)-$(Reportingdb)">
+			<ConnectionString>Data Source=$(SQLServer);initial catalog=$(Reportingdb);Integrated Security=True</ConnectionString>
+			<!--The reports use the name below to referre to this data source as SQLConnection do not change the report name otherwise this build script will faill-->
+			<ReportDataSourceNames>SQLConnection</ReportDataSourceNames>
+			<Folder>$(ProjectParnetReportDataSources)/$(ProjectReportDataSources)</Folder>
+			<Provider>SQL</Provider>
+			<OverWrite>True</OverWrite>
+		</ReportDataSourceToDeploy>
+	</ItemGroup>
+	
+	<Target Name="FullDepoly" DependsOnTargets="GetServerURL;DeleteFolders;CreateReportingFolders;CreateConnectionSources;DeployReports;SetReportsDataSource" />
+
+  <!--Get Full Server URL-->
+  <Target Name="GetServerURL">
+    <Message Text="Getting Server URL" Importance ="normal" />
+    <GetFullURL ServerURL="$(ServerURL)" IsIntergatedMode="True">
+      <Output TaskParameter="ReportServerUrl" PropertyName="SharePointSiteUrl" />
+    </GetFullURL>
+    <Message Text="ReportServerURL: $(SharePointSiteUrl)" Importance ="normal" />
+  </Target>
+  
+	<Target Name="DeleteFolders">
+		<!--Checking and deleteing Project Report Folder-->
+		<ReportFolderExists SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)" FolderName="$(ProjectReportFolder)">
+			<Output TaskParameter="Exists" PropertyName="ReportItemExists" />
+		</ReportFolderExists>
+		<DeleteReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)/$(ProjectReportFolder)/" Condition="$(ReportItemExists) == True"/>
+		<!--Checking and deleteing Project Report Folder-->
+		<ReportFolderExists SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportDataSources)" FolderName="$(ProjectReportDataSources)">
+			<Output TaskParameter="Exists" PropertyName="ReportItemExists" />
+		</ReportFolderExists>
+		<DeleteReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportDataSources)/$(ProjectReportDataSources)/" Condition="$(ReportItemExists) == True"/>
+	</Target>
+	
+	<Target Name="CreateReportingFolders">
+		<!-- Create the Report Folders -->
+		<CreateReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" ParentPath="$(ProjectParnetReportFolder)" NewFolderName="$(ProjectReportFolder)" />
+		<CreateReportFolder SharePointSiteUrl="$(SharePointSiteUrl)" ParentPath="$(ProjectParnetReportDataSources)" NewFolderName="$(ProjectReportDataSources)" />
+	</Target>
+	
+	<Target Name="CreateConnectionSources">
+		<!--This will create the reporting data source -->
+		<CreateReportingDataSource SharePointSiteUrl="$(SharePointSiteUrl)" DataSources="@(ReportDataSourceToDeploy)" />
+	</Target>
+	
+	<Target Name="DeployReports">
+		<!--This will upload the reports to folder name-->
+		<AddReports SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)/$(ProjectReportFolder)/" ReportFiles="@(ReportsToDeploy)" />
+	</Target>
+	
+	<Target Name="SetReportsDataSource">
+		<!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+		<SetReportDataSource SharePointSiteUrl="$(SharePointSiteUrl)" Recursive="true" ReportItem="$(ProjectParnetReportFolder)/$(ProjectReportFolder)" dataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
+	</Target>
+</Project>
