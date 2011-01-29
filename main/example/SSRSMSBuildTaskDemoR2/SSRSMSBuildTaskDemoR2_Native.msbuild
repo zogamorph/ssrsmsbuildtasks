@@ -1,0 +1,87 @@
+<Project InitialTargets="FullDepoly" DefaultTargets="FullDepoly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- Import the Natvie  mode tasks for deploying the reports-->
+	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.R2.tasks" />
+	
+	<!--ReportServer-->
+	<PropertyGroup>
+		<ServerURL>http://$(COMPUTERNAME)/reportserver</ServerURL>
+		<ProjectReportFolder>/SSRSMSBuildTeaskDemoR2/Reports</ProjectReportFolder>
+		<ProjectReportDataSources>/SSRSMSBuildTeaskDemoR2/Data Sources</ProjectReportDataSources>
+	</PropertyGroup>
+	
+	<!--Databases-->
+	<PropertyGroup>
+		<!--Update with the name of the SQL Server that you wish the reports run against-->
+		<SQLServer>$(COMPUTERNAME)</SQLServer>
+		<!--Update with name of the SQL Server that contains the report server database-->
+		<ReportSQLServer>$(COMPUTERNAME)</ReportSQLServer>
+		<!--The name of database you wish the reports to run against-->
+		<Reportingdb>msdb</Reportingdb>
+		<!--The Report Server database name-->
+		<ReportServerdb>ReportServer</ReportServerdb>
+	</PropertyGroup>
+	
+	<!--Reports-->
+	<ItemGroup>
+		<ReportsToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\*.rdl" />
+	</ItemGroup>
+	
+	<!--DataSoucre-->
+	<ItemGroup>
+		<!--The Include is the Name of the DataSet to create-->
+		<ReportDataSourceToDeploy Include="ReportServer">
+			<ConnectionString>Data Source=$(SQLServer);initial catalog=$(ReportServerdb);Integrated Security=True</ConnectionString>
+			<Folder>$(ProjectReportDataSources)</Folder>
+			<Provider>SQL</Provider>
+			<OverWrite>True</OverWrite>
+		</ReportDataSourceToDeploy>
+		<ReportDataSourceToDeploy Include="$(COMPUTERNAME)-$(Reportingdb)">
+			<ConnectionString>Data Source=$(SQLServer);initial catalog=$(Reportingdb);Integrated Security=True</ConnectionString>
+			<!--The reports use the name below to referre to this data source as SQLConnection do not change the report name otherwise this build script will faill-->
+			<ReportDataSourceNames>SQLConnection</ReportDataSourceNames>
+			<Folder>$(ProjectReportDataSources)</Folder>
+			<Provider>SQL</Provider>
+			<OverWrite>True</OverWrite>
+		</ReportDataSourceToDeploy>
+	</ItemGroup>
+	
+	<Target Name="FullDepoly" DependsOnTargets="GetServerURL;DeleteFolders;CreateReportingFolders;CreateConnectionSources;DeployReports;SetReportsDataSource" />
+
+  <!--Get Full Server URL-->
+  <Target Name="GetServerURL">
+    <Message Text="Getting Server URL" Importance ="normal" />
+    <GetFullURL ServerURL="$(ServerURL)" IsIntergatedMode="False">
+      <Output TaskParameter="ReportServerUrl" PropertyName="ReportingServerURL" />
+    </GetFullURL>
+    <Message Text="ReportServerURL: $(ReportingServerURL)" Importance ="normal" />
+  </Target>
+  
+	<Target Name="DeleteFolders">
+		<!--Checking and deleteing Project Report Folder-->
+		<ReportFolderExists ReportServerURL="$(ReportingServerURL)" Folder="/" FolderName="SSRSMSBuildTeaskDemo">
+			<Output TaskParameter="Exists" PropertyName="ReportItemExists" />
+		</ReportFolderExists>
+		<DeleteReportFolder ReportServerURL="$(ReportingServerURL)" Folder="/SSRSMSBuildTeaskDemo" Condition="$(ReportItemExists) == True"/>
+	</Target>
+	
+	<Target Name="CreateReportingFolders">
+		<!-- Create the Report Folders -->
+		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectReportFolder)" />
+		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectReportDataSources)" />
+	</Target>
+	
+	<Target Name="CreateConnectionSources">
+		<!--This will create the reporting data source -->
+		<CreateReportingDataSource ReportServerURL="$(ReportingServerURL)" DataSources="@(ReportDataSourceToDeploy)" />
+	</Target>
+	
+	<Target Name="DeployReports">
+		<!--This will upload the reports to folder name-->
+		<AddReports ReportServerURL="$(ReportingServerURL)" Folder="$(ProjectReportFolder)" ReportFiles="@(ReportsToDeploy)" />
+	</Target>
+	
+	<Target Name="SetReportsDataSource">
+		<!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+		<SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" dataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
+	</Target>
+</Project>
