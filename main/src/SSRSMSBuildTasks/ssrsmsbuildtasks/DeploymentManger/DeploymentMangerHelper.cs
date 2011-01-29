@@ -2,24 +2,30 @@
 // <copyright file="DeploymentMangerHelper.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
-// <summary>
-//   Deployment Manger Helper
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
 {
-    #region Directives
-
-    using ssrsmsbuildtasks.DeploymentManger.Proxy.Itergrated;
-
-    #endregion
 
     /// <summary>
     /// Deployment Manger Helper
     /// </summary>
     public static class DeploymentMangerHelper
     {
+        #region Constants and Fields
+
+        /// <summary>
+        /// The reportservic e 2005 asmx.
+        /// </summary>
+        private const string REPORTSERVICE2005ASMX = "ReportService2005.asmx";
+
+        /// <summary>
+        /// The vtibinreportserverreportservic e 2006 asmx.
+        /// </summary>
+        private const string VTIBINREPORTSERVERREPORTSERVICE2006ASMX = @"/_vti_bin/ReportServer/ReportService2006.asmx";
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -33,17 +39,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public static string AddIntegratedWebServiceToUrl(string sharePointSiteUrl)
         {
-            if (sharePointSiteUrl.EndsWith(@"/_vti_bin/ReportServer/ReportService2006.asmx"))
+            if (sharePointSiteUrl.EndsWith(VTIBINREPORTSERVERREPORTSERVICE2006ASMX))
             {
                 return sharePointSiteUrl;
             }
 
             if (sharePointSiteUrl.EndsWith("/"))
             {
-                return string.Format(@"{0}_vti_bin/ReportServer/ReportService2006.asmx", sharePointSiteUrl);
+                return string.Format(@"{0}{1}", sharePointSiteUrl, VTIBINREPORTSERVERREPORTSERVICE2006ASMX);
             }
 
-            return string.Format(@"{0}/_vti_bin/ReportServer/ReportService2006.asmx", sharePointSiteUrl);
+            return string.Format(@"{0}/{1}", sharePointSiteUrl, VTIBINREPORTSERVERREPORTSERVICE2006ASMX);
         }
 
         /// <summary>
@@ -57,17 +63,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public static string AddNativeWebServiceToUrl(string reportServerURL)
         {
-            if (reportServerURL.EndsWith("ReportService2005.asmx"))
+            if (reportServerURL.EndsWith(REPORTSERVICE2005ASMX))
             {
                 return reportServerURL;
             }
 
             if (reportServerURL.EndsWith("/"))
             {
-                return string.Format("{0}ReportService2005.asmx", reportServerURL);
+                return string.Format("{0}{1}", reportServerURL, REPORTSERVICE2005ASMX);
             }
 
-            return string.Format("{0}/ReportService2005.asmx", reportServerURL);
+            return string.Format("{0}/{1}", reportServerURL, REPORTSERVICE2005ASMX);
         }
 
         /// <summary>
@@ -85,7 +91,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if exists; otherwise, <c>false</c>.
         /// </returns>
-        public static bool FindItemType(CatalogItem[] items, string reportItemName, ItemTypeEnum itemFindType)
+        public static bool FindItemType(Proxy.Itergrated.CatalogItem[] items, string reportItemName, Proxy.Itergrated.ItemTypeEnum itemFindType)
         {
             bool flag = false;
             for (int i = 0; (i < items.Length) && !flag; i++)
@@ -121,6 +127,35 @@ namespace ssrsmsbuildtasks.DeploymentManger
             for (int i = 0; (i < items.Length) && !flag; i++)
             {
                 if ((items[i].Type == itemFindType) && (items[i].Name == reportItemName))
+                {
+                    flag = true;
+                }
+            }
+
+            return flag;
+        }
+
+        /// <summary>
+        /// The find item type.
+        /// </summary>
+        /// <param name="items">
+        /// The items.
+        /// </param>
+        /// <param name="reportItemName">
+        /// The report item name.
+        /// </param>
+        /// <param name="itemFindType">
+        /// The item find type.
+        /// </param>
+        /// <returns>
+        /// The find item type.
+        /// </returns>
+        public static bool FindItemType(Proxy.R2.CatalogItem[] items, string reportItemName, string itemFindType)
+        {
+            bool flag = false;
+            for (int i = 0; (i < items.Length) && !flag; i++)
+            {
+                if ((items[i].TypeName == itemFindType) && (items[i].Name == reportItemName))
                 {
                     flag = true;
                 }
