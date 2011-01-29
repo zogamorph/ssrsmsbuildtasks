@@ -2,9 +2,6 @@
 // <copyright file="ReportResourceFile.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
-// <summary>
-//   Report Server Resource class.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
@@ -15,12 +12,14 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.Collections.Generic;
     using System.IO;
 
+    using ssrsmsbuildtasks.DeploymentManger.InterFaces;
+
     #endregion
 
     /// <summary>
     /// Report Server Resource class.
     /// </summary>
-    public class ReportResourceFile
+    public class ReportResourceFile : IReportServerUploadItem
     {
         #region Constants and Fields
 
@@ -84,9 +83,24 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+        /// <summary>
+        /// Gets UploadItemName.
+        /// </summary>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        string IReportServerUploadItem.UploadItemName
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         #endregion
 
-        #region Public Methods
+        #region Implemented Interfaces
+
+        #region IReportServerUploadItem
 
         /// <summary>
         /// Gets the resource bytes.
@@ -111,6 +125,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             return artefactBytes;
         }
+
+        #endregion
 
         #endregion
     }

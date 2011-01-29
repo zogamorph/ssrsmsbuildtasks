@@ -2,9 +2,6 @@
 // <copyright file="ReportFile.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
-// <summary>
-//   Report Server Report Class.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
@@ -15,12 +12,14 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.IO;
     using System.Text;
 
+    using ssrsmsbuildtasks.DeploymentManger.InterFaces;
+
     #endregion
 
     /// <summary>
     /// Report Server Report Class.
     /// </summary>
-    public class ReportFile
+    public class ReportFile : IReportServerUploadItem
     {
         #region Constants and Fields
 
@@ -140,9 +139,22 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+        /// <summary>
+        /// Gets UploadItemName.
+        /// </summary>
+        string IReportServerUploadItem.UploadItemName
+        {
+            get
+            {
+                return this.ReportName;
+            }
+        }
+
         #endregion
 
-        #region Public Methods
+        #region Implemented Interfaces
+
+        #region IReportServerUploadItem
 
         /// <summary>
         /// Gets the bytes.
@@ -162,6 +174,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             return (new UTF8Encoding()).GetBytes(rdlString);
         }
+
+        #endregion
 
         #endregion
     }

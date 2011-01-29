@@ -1,10 +1,7 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IntegratedDeploymentManager.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="R2DeploymentManger.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
-// <summary>
-//   The integrated deployment manager.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
@@ -18,39 +15,49 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.Net;
     using System.Text;
 
-    using Proxy.Itergrated;
-    using InterFaces;
+    using ssrsmsbuildtasks.DeploymentManger.InterFaces;
+    using ssrsmsbuildtasks.DeploymentManger.Proxy.R2;
 
     #endregion
 
     /// <summary>
-    /// The integrated deployment manager.
+    /// Report Server class.
     /// </summary>
-    public class IntegratedDeploymentManager
+    public class R2DeploymentManger
     {
         #region Constants and Fields
 
         /// <summary>
+        /// The reportservic e 2010 asmx.
+        /// </summary>
+        private const string REPORTSERVICE2010ASMX = "ReportService2010.asmx";
+
+        /// <summary>
+        /// The vtibinreportserver.
+        /// </summary>
+        private const string VTIBINREPORTSERVER = "/_vti_bin/ReportServer/";
+
+        /// <summary>
         /// MS Reporting Services Web Services Class
         /// </summary>
-        private readonly ReportingService2006 reportingService2006;
+        private readonly ReportingService2010 reportingService2010;
 
         #endregion
 
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IntegratedDeploymentManager"/> class.
+        /// Initializes a new instance of the <see cref="R2DeploymentManger"/> class. 
+        /// Initializes a new instance of the NativeDeploymentManger class.
         /// </summary>
-        /// <param name="SharepointSiteURL">
-        /// The sharepoint site URL.
+        /// <param name="reportServerURL">
+        /// The report server URL.
         /// </param>
-        public IntegratedDeploymentManager(string SharepointSiteURL)
+        public R2DeploymentManger(string reportServerURL)
         {
-            SharepointSiteURL = DeploymentMangerHelper.AddIntegratedWebServiceToUrl(SharepointSiteURL);
-            this.reportingService2006 = new ReportingService2006(SharepointSiteURL)
+            this.reportingService2010 = new ReportingService2010(reportServerURL)
                 {
-                    Credentials = CredentialCache.DefaultCredentials 
+                   Credentials = CredentialCache.DefaultCredentials 
                 };
         }
 
@@ -59,7 +66,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Events
 
         /// <summary>
-        /// Occurs when [deployment manger messages].
+        /// Occurs when [reporting services message].
         /// </summary>
         public event DeploymentMangerMessage DeploymentMangerMessages;
 
@@ -68,17 +75,52 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Public Methods
 
         /// <summary>
-        /// Gets the report itemtype.
+        /// Gets the native URL.
         /// </summary>
-        /// <param name="itemTypeName">
-        /// Name of the item type.
+        /// <param name="serverAddress">
+        /// The server address.
         /// </param>
         /// <returns>
-        /// enum for the item type name
+        /// The get native url.
         /// </returns>
-        public static ItemTypeEnum GetReportItemtype(string itemTypeName)
+        public static string GetNativeURL(string serverAddress)
         {
-            return (ItemTypeEnum)Enum.Parse(typeof(ItemTypeEnum), itemTypeName, true);
+            if (serverAddress.EndsWith(REPORTSERVICE2010ASMX))
+            {
+                return serverAddress;
+            }
+
+            if (serverAddress.EndsWith("/"))
+            {
+                return string.Format("{0}{1}", serverAddress, REPORTSERVICE2010ASMX);
+            }
+
+            return string.Format("{0}/{1}", serverAddress, REPORTSERVICE2010ASMX);
+        }
+
+        /// <summary>
+        /// Gets the sharepoint.
+        /// </summary>
+        /// <param name="serverAddress">
+        /// The server address.
+        /// </param>
+        /// <returns>
+        /// The get sharepoint.
+        /// </returns>
+        public static string GetSharepoint(string serverAddress)
+        {
+            string sharePointPrefix = string.Format("{0}{1}", VTIBINREPORTSERVER, REPORTSERVICE2010ASMX);
+            if (serverAddress.EndsWith(sharePointPrefix))
+            {
+                return serverAddress;
+            }
+
+            if (serverAddress.EndsWith("/"))
+            {
+                return string.Format("{0}{1}", serverAddress, sharePointPrefix);
+            }
+
+            return string.Format("{0}/{1}", serverAddress, sharePointPrefix);
         }
 
         /// <summary>
@@ -104,8 +146,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             try
             {
+                // formats the folder name.
+                reportFolder = DeploymentMangerHelper.FormatFolderPath(reportFolder);
+
                 // Get the access policies of the folder.
-                oldPolicy = this.reportingService2006.GetPolicies(reportFolder, out inheritParent);
+                oldPolicy = this.reportingService2010.GetPolicies(reportFolder, out inheritParent);
 
                 // Check to see if the user exists.
                 policyExists = this.DoesPolicyExists(oldPolicy, reportUserName);
@@ -129,7 +174,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 this.AddReportingRoles(index, newPolicy, reportingRoles);
 
                 // Updating the policies of the folder.
-                this.reportingService2006.SetPolicies(reportFolder, newPolicy);
+                this.reportingService2010.SetPolicies(reportFolder, newPolicy);
                 this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "AddReportUser", 
@@ -173,21 +218,80 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="folderName">
         /// Name of the folder.
         /// </param>
-        /// <param name="parentPath">
-        /// The parent path.
+        /// <param name="reportFolderProperites">
+        /// The report Folder Properites.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
-        public bool CreateFolder(string folderName, string parentPath)
+        public bool CreateFolder(string folderName, Dictionary<string, string> reportFolderProperites)
         {
+            CatalogItem[] items;
+            SearchCondition[] conditions = new SearchCondition[1];
+            Property[] findProperites = new Property[1];
+            Property[] folderProperites = new Property[0];
+
+            // Connecting to the reporting server
             try
             {
-                this.reportingService2006.CreateFolder(folderName, parentPath);
-                this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "CreateFolder", 
-                    string.Format("Created Report Folder: {0}/{1}", parentPath, folderName));
+
+                findProperites[0] = new Property() { Name = "Resursive", Value = "False"};
+
+                // Remove the root path
+                folderName = folderName.StartsWith("/") ? folderName.Substring(1) : folderName;
+
+                // split the folder path into units
+                string[] folderNames = folderName.Split(new[] { '/' });
+                string folderPath = "/";
+
+                // loop the units of the path to see if exists.
+                for (int index = 0; index < folderNames.Length; index++)
+                {
+                    // Create the search condition
+                    conditions[0] = new SearchCondition
+                        {
+                            Condition = ConditionEnum.Equals, 
+                            ConditionSpecified = true, 
+                            Name = "Name", 
+                            Values = new[] { folderNames[index] }
+                        };
+
+                    // Find Items in current folder
+                    items = this.reportingService2010.FindItems(
+                        folderPath, BooleanOperatorEnum.And, findProperites, conditions);
+
+                    // if the folder name is not found then create the folder.
+                    if (!DeploymentMangerHelper.FindItemType(items, folderNames[index], ReportItemStrings.Folder))
+                    {
+                        if (index == (folderNames.Length - 1) && reportFolderProperites != null)
+                        {
+                            folderProperites = new Property[reportFolderProperites.Count];
+                            int folderProperiteIndex = 0;
+                            foreach (var folderProperite in reportFolderProperites)
+                            {
+                                folderProperites[folderProperiteIndex] = new Property
+                                    {
+                                        Name = folderProperite.Key,
+                                        Value = folderProperite.Value
+                                    };
+                                folderProperiteIndex++;
+                            }
+                        }
+
+                        this.reportingService2010.CreateFolder(folderNames[index], folderPath, folderProperites);
+                        this.OnDeploymentMangerMessage(
+                            DeploymentMangerMessageType.Information, 
+                            "CreateFolder", 
+                            string.Format(
+                                "Created Report Folder: {0}/{1}", 
+                                folderPath != "/" ? folderPath : string.Empty, 
+                                folderNames[index]));
+                    }
+
+                    // build move the path to the newly created or existing path. 
+                    folderPath = string.Format(
+                        "{0}/{1}", folderPath != "/" ? folderPath : string.Empty, folderNames[index]);
+                }
 
                 return true;
             }
@@ -205,21 +309,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Name of the model.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// The delete model.
         /// </returns>
         public bool DeleteModel(string modelName)
         {
             // Create the item and format the items
-            ItemTypeEnum currentItemType;
+            string currentItemType;
             modelName = DeploymentMangerHelper.FormatFolderPath(modelName);
             try
             {
                 // get the item type.
-                currentItemType = this.reportingService2006.GetItemType(modelName);
-                if (currentItemType == ItemTypeEnum.Model)
+                currentItemType = this.reportingService2010.GetItemType(modelName);
+                if (currentItemType == ReportItemStrings.Model)
                 {
                     // Delete the folder
-                    this.reportingService2006.DeleteItem(modelName);
+                    this.reportingService2010.DeleteItem(modelName);
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteModel", 
@@ -248,20 +352,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Name of the report.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// The delete report.
         /// </returns>
         public bool DeleteReport(string reportName)
         {
             // Create the item and format the items
-            ItemTypeEnum currentItemType;
+            string currentItemType;
+            reportName = DeploymentMangerHelper.FormatFolderPath(reportName);
             try
             {
                 // get the item type.
-                currentItemType = this.reportingService2006.GetItemType(reportName);
-                if (currentItemType == ItemTypeEnum.Report)
+                currentItemType = this.reportingService2010.GetItemType(reportName);
+                if (currentItemType == ReportItemStrings.Report || currentItemType == ReportItemStrings.LinkedReport)
                 {
                     // Delete the folder
-                    this.reportingService2006.DeleteItem(reportName);
+                    this.reportingService2010.DeleteItem(reportName);
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteReport", 
@@ -293,19 +398,22 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The data source folder.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
         {
-            ItemTypeEnum currentItemType;
+            string currentItemType;
+
+            // make sure the item path is formated.
+            dataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSourceFolder);
             try
             {
                 // get the item type of the item check if datasource
                 currentItemType =
-                    this.reportingService2006.GetItemType(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
+                    this.reportingService2010.GetItemType(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
 
                 // If not a data source then send a warning
-                if (currentItemType != ItemTypeEnum.DataSource)
+                if (currentItemType != ReportItemStrings.DataSource)
                 {
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Warning, 
@@ -315,7 +423,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 }
 
                 // else Delete the data source
-                this.reportingService2006.DeleteItem(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
+                this.reportingService2010.DeleteItem(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
                 this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "DeleteReportDataSource", 
@@ -336,20 +444,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Name of the folder.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool DeleteReportFolder(string folderName)
         {
             // Create the item and format the items
-            ItemTypeEnum currentItemType;
+            string currentItemType;
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             try
             {
                 // get the item type.
-                currentItemType = this.reportingService2006.GetItemType(folderName);
-                if (currentItemType == ItemTypeEnum.Folder)
+                currentItemType = this.reportingService2010.GetItemType(folderName);
+                if (currentItemType == ReportItemStrings.Folder)
                 {
                     // Delete the folder
-                    this.reportingService2006.DeleteItem(folderName);
+                    this.reportingService2010.DeleteItem(folderName);
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteReportFolder", 
@@ -390,8 +499,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             try
             {
+                // formats the folder name.
+                reportFolder = DeploymentMangerHelper.FormatFolderPath(reportFolder);
+
                 // Get the access policies of the folder.
-                oldPolicy = this.reportingService2006.GetPolicies(reportFolder, out inheritParent);
+                oldPolicy = this.reportingService2010.GetPolicies(reportFolder, out inheritParent);
 
                 // Check to see if the user exists.
                 policyExists = this.DoesPolicyExists(oldPolicy, reportUserName);
@@ -399,7 +511,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     newPolicy = new Policy[oldPolicy.Length - 1];
                     this.RemovePolicy(reportUserName, oldPolicy, newPolicy);
-                    this.reportingService2006.SetPolicies(reportFolder, newPolicy);
+                    this.reportingService2010.SetPolicies(reportFolder, newPolicy);
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteReportUser", 
@@ -430,20 +542,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// Name of the resource.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// The delete resource.
         /// </returns>
         public bool DeleteResource(string resourceName)
         {
             // Create the item and format the items
-            ItemTypeEnum currentItemType;
+            string currentItemType;
+            resourceName = DeploymentMangerHelper.FormatFolderPath(resourceName);
             try
             {
                 // get the item type.
-                currentItemType = this.reportingService2006.GetItemType(resourceName);
-                if (currentItemType == ItemTypeEnum.Resource)
+                currentItemType = this.reportingService2010.GetItemType(resourceName);
+                if (currentItemType == ReportItemStrings.Resource)
                 {
                     // Delete the folder
-                    this.reportingService2006.DeleteItem(resourceName);
+                    this.reportingService2010.DeleteItem(resourceName);
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information, 
                         "DeleteResource", 
@@ -472,10 +585,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The report item.
         /// </param>
         /// <param name="destinationItem">
-        /// The destination item.
+        /// The destination of the Item.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool MoveReportItem(string reportItem, string destinationItem)
         {
@@ -486,7 +599,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 destinationItem = DeploymentMangerHelper.FormatItemPath(destinationItem);
 
                 // Call the move item method 
-                this.reportingService2006.MoveItem(reportItem, destinationItem);
+                this.reportingService2010.MoveItem(reportItem, destinationItem);
                 this.OnDeploymentMangerMessage(
                     DeploymentMangerMessageType.Information, 
                     "MoveReportItem", 
@@ -503,24 +616,56 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Reports the item exists.
         /// </summary>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
         /// <param name="reportItemName">
-        /// Name of the report item.
+        /// The report item.
         /// </param>
         /// <param name="reportItemType">
         /// Type of the report item.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// True if the item of that type exists.
         /// </returns>
-        public bool ReportItemExists(string folderName, string reportItemName, ItemTypeEnum reportItemType)
+        public bool ReportItemExists(string reportItemName, string reportItemType)
         {
+            return this.ReportItemExists(reportItemName, reportItemType, string.Empty);
+        }
+
+        /// <summary>
+        /// Reports the item exists.
+        /// </summary>
+        /// <param name="reportItemName">
+        /// The report item name.
+        /// </param>
+        /// <param name="reportItemType">
+        /// Type of the report item.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <returns>
+        /// True if the item of that type exists.
+        /// </returns>
+        public bool ReportItemExists(string reportItemName, string reportItemType, string folderName)
+        {
+            var searchProperties = new[] { new Property { Name = "Resursive", Value = "False" } };
+
+            // Create the search condition
+            var conditions = new[] { new SearchCondition() };
+
+            // Get formats the folder name
+            folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
+
             try
             {
+                // Set the search paramter
+                conditions[0].Condition = ConditionEnum.Equals;
+                conditions[0].ConditionSpecified = true;
+                conditions[0].Name = "Name";
+                conditions[0].Values = new[] { reportItemName };
+
                 // all the items that equal to the search parameter
-                CatalogItem[] items = this.reportingService2006.ListChildren(folderName);
+                CatalogItem[] items = this.reportingService2010.FindItems(
+                    folderName, BooleanOperatorEnum.And, searchProperties, conditions);
 
                 // Find the item of the that type
                 return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
@@ -542,15 +687,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The report folder.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool ReportUserExists(string reportUserName, string reportFolder)
         {
             bool inheritParent;
             Policy[] currentPolicies;
 
+            reportFolder = DeploymentMangerHelper.FormatFolderPath(reportFolder);
+
             // Get the access policies of the folder.
-            currentPolicies = this.reportingService2006.GetPolicies(reportFolder, out inheritParent);
+            currentPolicies = this.reportingService2010.GetPolicies(reportFolder, out inheritParent);
 
             // Check to see if the user exists.
             return this.DoesPolicyExists(currentPolicies, reportUserName);
@@ -563,16 +710,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// The report item.
         /// </param>
         /// <param name="recursive">
-        /// if set to <c>true</c> [recursive].
+        /// If set to. <c>True.</c> [recursive].
         /// </param>
         /// <param name="dataSources">
         /// The data sources.
         /// </param>
         /// <param name="useMatchCase">
-        /// if set to <c>true</c> [use match case].
+        /// If set to. <c>True.</c> [use match case].
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>.
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool SetReportDataSource(
             string reportItem, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
@@ -580,9 +727,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 // Create hashtable 
-                Hashtable reportDataSources = new Hashtable(dataSources.Length);
+                var reportDataSources = new Hashtable(dataSources.Length);
 
-                ItemTypeEnum currentItemType = this.reportingService2006.GetItemType(reportItem);
+                // format the Item path and get the item type
+                reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
+                string currentItemType = this.reportingService2010.GetItemType(reportItem);
 
                 // build table if there was error then stop
                 if (!this.BuildReportDataSourceTable(dataSources, reportDataSources, useMatchCase))
@@ -594,12 +743,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 switch (currentItemType)
                 {
                         // if folder then loop through the items to assgin the data source.
-                    case ItemTypeEnum.Folder:
+                    case ReportItemStrings.Folder:
                         this.AssginDataSourceToReports(reportItem, recursive, reportDataSources, useMatchCase);
                         break;
 
                         // assgin the data source item to the report it self.
-                    case ItemTypeEnum.Report:
+                    case ReportItemStrings.Report:
                         this.AssignReportDataSource(reportItem, reportDataSources, useMatchCase);
                         break;
 
@@ -621,20 +770,60 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Uploads the model.
+        /// Ups the load reports.
         /// </summary>
-        /// <param name="reportModelsFiles">
-        /// The report models files.
+        /// <param name="reportFiles">
+        /// The report files.
         /// </param>
         /// <param name="folderName">
         /// Name of the folder.
         /// </param>
         /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable
-        /// warnings].
+        /// The disable Warnings.
         /// </param>
         /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>./// 
+        /// Ture if the reports are uploaded.
+        /// </returns>
+        public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
+        {
+            Warning[] warnings;
+            Property[] properties;
+
+            // make sure the folder the name correct.
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            try
+            {
+                // loop through the array of reports.
+                foreach (ReportFile reportFile in reportFiles)
+                {
+                    // Create any reports properties that need to be set.
+                    this.UploadToReportServer(folderName, reportFile, ReportItemStrings.Report, disableWarnings);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Display any errors
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uploads the model.
+        /// </summary>
+        /// <param name="reportModelsFiles">
+        /// The reporting services models.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <param name="disableWarnings">
+        /// if set to <c>true</c> [disable warnings].
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
         /// </returns>
         public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
         {
@@ -649,22 +838,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // need to be set and display any warnings
                 foreach (ReportModelFiles model in reportModelsFiles)
                 {
-                    properties = this.CreateProperties(model.ReportServerProperties);
-                    this.reportingService2006.CreateModel(
-                        model.ModelName, folderName, model.GetBytes(), properties, out warnings);
-
-                    if (warnings != null && !disableWarnings)
-                    {
-                        if (warnings.Length > 0)
-                        {
-                            this.SendWarningsMessage(model.ModelName, warnings, "UploadModel");
-                        }
-                    }
-
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "UploadModel", 
-                        string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
+                    this.UploadToReportServer(folderName, model, ReportItemStrings.Model, disableWarnings);
                 }
 
                 // report true
@@ -674,67 +848,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 // Send message and set report fales
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Ups the load reports.
-        /// </summary>
-        /// <param name="reportFiles">
-        /// The report files.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable warnings].
-        /// </param>
-        /// <returns>
-        /// Ture if the reports are uploaded.
-        /// </returns>
-        public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
-        {
-            Warning[] warnings;
-            Property[] properties;
-
-            try
-            {
-                // loop through the array of reports.
-                foreach (ReportFile reportFile in reportFiles)
-                {
-                    // Create any reports properties that need to be set.
-                    properties = this.CreateProperties(reportFile.ReportServerProperties);
-
-                    // uploads reports then outputs that reports was uploaded.
-                    this.reportingService2006.CreateReport(
-                        reportFile.ReportFileInfo.Name, 
-                        folderName, 
-                        true, 
-                        reportFile.GetBytes(), 
-                        properties, 
-                        out warnings);
-
-                    if (warnings != null && !disableWarnings)
-                    {
-                        if (warnings.Length > 0)
-                        {
-                            this.SendWarningsMessage(reportFile.ReportName, warnings, "UpLoadReports");
-                        }
-                    }
-
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "UpLoadReports", 
-                        string.Format("Upload report: {0} to folder: {1}", reportFile.ReportName, folderName));
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // Display any errors
-                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
                 return false;
             }
         }
@@ -753,31 +866,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName)
         {
+            // make sure the folder the name correct.
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             Property[] properties;
             try
             {
                 // Upload each of the reportServerResoucre
                 foreach (ReportResourceFile reportServerResoucre in resourceFileFiles)
                 {
-                    // Get the bytes and properties 
-                    byte[] artefactBytes = reportServerResoucre.GetBytes();
-                    properties = this.CreateProperties(reportServerResoucre.ReportServerProperties);
-
-                    // If there are bytes then upload the resouce
-                    if (artefactBytes != null)
-                    {
-                        this.reportingService2006.CreateResource(
-                            reportServerResoucre.Name, 
-                            folderName, 
-                            true, 
-                            artefactBytes, 
-                            reportServerResoucre.MineType, 
-                            properties);
-                        this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Information, 
-                            "UploadResource", 
-                            string.Format("Upload artefact: {0} to folder: {1}", reportServerResoucre.Name, folderName));
-                    }
+                    this.UploadToReportServer(folderName, reportServerResoucre, ReportItemStrings.Resource, true);
                 }
 
                 return true;
@@ -837,13 +934,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         private void AssginDataSourceToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
         {
             // get list of all the items under the folder
-            CatalogItem[] reportFolderItems = this.reportingService2006.ListChildren(folder);
+            CatalogItem[] reportFolderItems = this.reportingService2010.ListChildren(folder, recursive);
 
             // loop through all items if they are a report then assgin the data source 
             // to the item.
             for (int index = 0; index < reportFolderItems.Length; index++)
             {
-                if (reportFolderItems[index].Type == ItemTypeEnum.Report)
+                if (reportFolderItems[index].TypeName == ReportItemStrings.Report)
                 {
                     this.AssignReportDataSource(reportFolderItems[index].Path, dataSources, useMatchCase);
                 }
@@ -865,12 +962,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         private void AssignReportDataSource(string report, Hashtable dataSources, bool useMatchCase)
         {
             // get the list of data source & creat a source reference
-            DataSource[] reportDataSources = this.reportingService2006.GetItemDataSources(report);
+            DataSource[] reportDataSources = this.reportingService2010.GetItemDataSources(report);
             DataSourceReference dataSourceRef;
 
             // check with method is used. list data of data soruce to match or straight 
             // assginment.
-            StringBuilder dataSourceUpdates = new StringBuilder();
+            var dataSourceUpdates = new StringBuilder();
 
             // loop through the report data sources
             for (int index = 0; index < reportDataSources.Length; index++)
@@ -896,7 +993,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
 
             // update the report with the new data sources.
-            this.reportingService2006.SetItemDataSources(report, reportDataSources);
+            this.reportingService2010.SetItemDataSources(report, reportDataSources);
             this.OnDeploymentMangerMessage(
                 DeploymentMangerMessageType.Warning, 
                 "SetReportDataSource", 
@@ -941,7 +1038,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                         reportDataSources.Add(
                             useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), 
-                            string.Format("{0}/{1}.rsds", dataSource.DataSourceFolder, dataSource.Name));
+                            DeploymentMangerHelper.FormatItemPath(
+                                string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
                     }
                 }
 
@@ -957,7 +1055,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     reportDataSources.Add(
                         useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), 
-                        string.Format("{0}/{1}.rsds", dataSource.DataSourceFolder, dataSource.Name));
+                        DeploymentMangerHelper.FormatItemPath(
+                            string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
                 }
 
                 if (!sucess)
@@ -1012,7 +1111,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         private string CreateCompleteMessage(string reportUserName, string[] reportingRoles, string reportFolder)
         {
-            StringBuilder completeMessage = new StringBuilder();
+            var completeMessage = new StringBuilder();
 
             // Build the starting string by add the report user name
             // and the folder 
@@ -1052,9 +1151,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // create array of properties to number of report properties
             // loop through the report properties and the key and value
-            Property[] properties = new Property[itemProperties.Count];
+            var properties = new Property[itemProperties.Count];
             int index = 0;
-            foreach (KeyValuePair<string, string> property in itemProperties)
+            foreach (var property in itemProperties)
             {
                 properties[index] = new Property { Value = property.Value, Name = property.Key };
                 index++;
@@ -1077,7 +1176,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 // formating the data source folder.
-                dataSource.DataSourceFolder = dataSource.DataSourceFolder;
+                dataSource.DataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSource.DataSourceFolder);
 
                 // check to see if the properties are define if then create the default which are needed
                 if (dataSource.ReportServerProperties.Count == 0)
@@ -1088,19 +1187,14 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 Property[] properties = this.CreateProperties(dataSource.ReportServerProperties);
 
                 // use SQL Connection String Build to break the connection string
-                SqlConnectionStringBuilder sqlConStringBuilder =
-                    new SqlConnectionStringBuilder(dataSource.ConnectionString);
+                var sqlConStringBuilder = new SqlConnectionStringBuilder(dataSource.ConnectionString);
 
                 // create the objects.
                 DataSourceDefinition definition = this.GetDataSourceDefinition(dataSource, sqlConStringBuilder);
 
                 // create the data source
-                this.reportingService2006.CreateDataSource(
-                    string.Format("{0}.rsds", dataSource.Name), 
-                    dataSource.DataSourceFolder, 
-                    dataSource.OverWrite, 
-                    definition, 
-                    properties);
+                this.reportingService2010.CreateDataSource(
+                    dataSource.Name, dataSource.DataSourceFolder, dataSource.OverWrite, definition, properties);
 
                 // message the data source was created
                 this.OnDeploymentMangerMessage(
@@ -1163,7 +1257,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             ReportServerDataSource dataSource, SqlConnectionStringBuilder sqlConStringBuilder)
         {
             // create a data source definition and apply default settings
-            DataSourceDefinition definition = new DataSourceDefinition();
+            var definition = new DataSourceDefinition();
             this.SetDefaultDefinition(definition);
 
             // setting the conection string bas up the type
@@ -1328,6 +1422,52 @@ namespace ssrsmsbuildtasks.DeploymentManger
             definition.Prompt = "Enter a user name and password to access the data source:";
             definition.Enabled = true;
             definition.EnabledSpecified = true;
+        }
+
+        /// <summary>
+        /// Uploads to report server.
+        /// </summary>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <param name="uploadItem">
+        /// The upload item.
+        /// </param>
+        /// <param name="UploadItemType">
+        /// Type of the upload item.
+        /// </param>
+        /// <param name="disableWarnings">
+        /// if set to <c>true</c> [disable warnings].
+        /// </param>
+        private void UploadToReportServer(
+            string folderName, IReportServerUploadItem uploadItem, string UploadItemType, bool disableWarnings)
+        {
+            Property[] properties;
+            Warning[] warnings;
+            properties = this.CreateProperties(uploadItem.ReportServerProperties);
+
+            // uploads reports then outputs that reports was uploaded.
+            this.reportingService2010.CreateCatalogItem(
+                UploadItemType, 
+                uploadItem.UploadItemName, 
+                folderName, 
+                true, 
+                uploadItem.GetBytes(), 
+                properties, 
+                out warnings);
+
+            if (warnings != null && !disableWarnings)
+            {
+                if (warnings.Length > 0)
+                {
+                    this.SendWarningsMessage(uploadItem.UploadItemName, warnings, "UpLoadReports");
+                }
+            }
+
+            this.OnDeploymentMangerMessage(
+                DeploymentMangerMessageType.Information, 
+                "UploadToReportServer", 
+                string.Format("Upload {0}: {1} to folder: {2}", UploadItemType, uploadItem.UploadItemName, folderName));
         }
 
         #endregion

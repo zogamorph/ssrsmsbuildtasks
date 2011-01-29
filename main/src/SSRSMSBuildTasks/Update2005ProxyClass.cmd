@@ -1,9 +1,9 @@
 @echo off
 
-SET ReportingServer=%1/ReportService2005.asmx
+IF "%1"=="?" GOTO :Error
+IF "%1"=="" GOTO :Error
 
-IF "%ReportingServer%"=="?" GOTO :Error
-IF "%ReportingServer%"=="" GOTO :Error
+SET ReportingServer=%1/ReportService2005.asmx
 
 @Wsdl /language:c#  /protocol:SOAP /namespace:ssrsmsbuildtasks.DeploymentManger.Proxy.Native  /out:.\ssrsmsbuildtasks\DeploymentManger\Proxy\Native\MSReportingService2005.cs %1
 

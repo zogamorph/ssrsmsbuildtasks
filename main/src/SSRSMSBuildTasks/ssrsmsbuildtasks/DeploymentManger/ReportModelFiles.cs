@@ -2,9 +2,6 @@
 // <copyright file="ReportModelFiles.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
-// <summary>
-//   Report Server Model project files.
-// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
@@ -16,12 +13,14 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.Text;
     using System.Xml;
 
+    using ssrsmsbuildtasks.DeploymentManger.InterFaces;
+
     #endregion
 
     /// <summary>
     /// Report Server Model project files.
     /// </summary>
-    public sealed class ReportModelFiles
+    public sealed class ReportModelFiles : IReportServerUploadItem
     {
         #region Constants and Fields
 
@@ -110,9 +109,22 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+        /// <summary>
+        /// Gets UploadItemName.
+        /// </summary>
+        string IReportServerUploadItem.UploadItemName
+        {
+            get
+            {
+                return this.ModelName;
+            }
+        }
+
         #endregion
 
-        #region Public Methods
+        #region Implemented Interfaces
+
+        #region IReportServerUploadItem
 
         /// <summary>
         /// Gets the bytes.
@@ -125,9 +137,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </exception>
         public byte[] GetBytes()
         {
-            XmlDocument xmlModel = new XmlDocument();
-            XmlDocument xmlDataSource = new XmlDocument();
-            FileInfo fileInfo = new FileInfo(this.FullPath);
+            var xmlModel = new XmlDocument();
+            var xmlDataSource = new XmlDocument();
+            var fileInfo = new FileInfo(this.FullPath);
 
             // load the xml files
             xmlModel.Load(fileInfo.FullName);
@@ -146,6 +158,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // return the bytes
             return new UTF8Encoding().GetBytes(documentElement.OuterXml);
         }
+
+        #endregion
 
         #endregion
     }
