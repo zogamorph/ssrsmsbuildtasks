@@ -1,12 +1,15 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ReportModelFiles.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
+// <summary>
+//   Report Server Model project files.
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.DeploymentManger
+namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region Directives
+    #region using directive
 
     using System.Collections.Generic;
     using System.IO;
@@ -25,7 +28,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// The reporting services properties
+        ///   The reporting services properties
         /// </summary>
         private readonly Dictionary<string, string> reportServerProperties;
 
@@ -34,7 +37,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the  class.
+        ///   Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the ReportModelFiles class. Initializes a new instance of the  class.
         /// </summary>
         public ReportModelFiles()
         {
@@ -80,25 +83,25 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Properties
 
         /// <summary>
-        /// Gets or sets the data source full path.
+        ///   Gets or sets the data source full path.
         /// </summary>
         /// <value>The data source full path.</value>
         public string DataSourceFullPath { get; set; }
 
         /// <summary>
-        /// Gets or sets the full path.
+        ///   Gets or sets the full path.
         /// </summary>
         /// <value>The full path.</value>
         public string FullPath { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the model.
+        ///   Gets or sets the name of the model.
         /// </summary>
         /// <value>The name of the model.</value>
         public string ModelName { get; set; }
 
         /// <summary>
-        /// Gets the model properties.
+        ///   Gets the model properties.
         /// </summary>
         /// <value>The model properties.</value>
         public Dictionary<string, string> ReportServerProperties
@@ -110,7 +113,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets UploadItemName.
+        ///   Gets UploadItemName.
         /// </summary>
         string IReportServerUploadItem.UploadItemName
         {
@@ -137,9 +140,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </exception>
         public byte[] GetBytes()
         {
-            var xmlModel = new XmlDocument();
-            var xmlDataSource = new XmlDocument();
-            var fileInfo = new FileInfo(this.FullPath);
+            XmlDocument xmlModel = new XmlDocument();
+            XmlDocument xmlDataSource = new XmlDocument();
+            FileInfo fileInfo = new FileInfo(this.FullPath);
 
             // load the xml files
             xmlModel.Load(fileInfo.FullName);

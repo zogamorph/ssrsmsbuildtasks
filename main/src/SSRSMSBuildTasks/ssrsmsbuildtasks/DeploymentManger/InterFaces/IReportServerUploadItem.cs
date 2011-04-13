@@ -2,11 +2,18 @@
 // <copyright file="IReportServerUploadItem.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
+// <summary>
+//   The Report upload services
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger.InterFaces
 {
+    #region using directive
+
     using System.Collections.Generic;
+
+    #endregion
 
     /// <summary>
     /// The Report upload services
@@ -16,13 +23,13 @@ namespace ssrsmsbuildtasks.DeploymentManger.InterFaces
         #region Properties
 
         /// <summary>
-        /// Gets the report server properties.
+        ///   Gets the report server properties.
         /// </summary>
         /// <value>The report server properties.</value>
         Dictionary<string, string> ReportServerProperties { get; }
 
         /// <summary>
-        /// Gets the name of the upload item.
+        ///   Gets the name of the upload item.
         /// </summary>
         /// <value>The name of the upload item.</value>
         string UploadItemName { get; }

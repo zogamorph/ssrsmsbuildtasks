@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,25 +28,25 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets the report folder path.
+        ///   Gets or sets the report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the share point site URL.
-        /// </summary>
-        /// <value>The share point site URL.</value>
-        [Required]
-        public string SharePointSiteUrl { get; set; }
-
-        /// <summary>
-        /// Gets or sets Report Server User name.
+        ///   Gets or sets Report Server User name.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
         public string ReportUserName { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the share point site URL.
+        /// </summary>
+        /// <value>The share point site URL.</value>
+        [Required]
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -61,7 +61,8 @@ namespace ssrsmsbuildtasks.Integrated
         public override bool Execute()
         {
             // Connecting to the reporting server
-            IntegratedDeploymentManager integratedDeploymentManager = new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
             integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {

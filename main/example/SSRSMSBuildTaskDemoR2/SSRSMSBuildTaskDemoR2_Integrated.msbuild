@@ -9,6 +9,7 @@
 		<ProjectReportFolder>SSRSMSBuildTeaskDemo</ProjectReportFolder>
 		<ProjectParnetReportDataSources>http://$(COMPUTERNAME)/sites/SSRS/Data%20Connections</ProjectParnetReportDataSources>
 		<ProjectReportDataSources>SSRSMSBuildTeaskDemo</ProjectReportDataSources>
+    <ProjectDataSetFolder>DataSet</ProjectDataSetFolder>
 	</PropertyGroup>
 	
 	<!--Databases-->
@@ -46,8 +47,21 @@
 			<OverWrite>True</OverWrite>
 		</ReportDataSourceToDeploy>
 	</ItemGroup>
-	
-	<Target Name="FullDepoly" DependsOnTargets="GetServerURL;DeleteFolders;CreateReportingFolders;CreateConnectionSources;DeployReports;SetReportsDataSource" />
+
+  <PropertyGroup>
+    <FullDeployDependsOn>
+      GetServerURL;
+      DeleteFolders;
+      CreateReportingFolders;
+      CreateConnectionSources;
+      CreateShareDataSet;
+      DeployReports;
+      SetReportDataSet;
+      SetReportsDataSource
+    </FullDeployDependsOn>
+  </PropertyGroup>
+  
+	<Target Name="FullDepoly"  DependsOnTargets="$(FullDeployDependsOn)" />
 
   <!--Get Full Server URL-->
   <Target Name="GetServerURL">
@@ -86,7 +100,11 @@
 		<!--This will upload the reports to folder name-->
 		<AddReports SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)/$(ProjectReportFolder)/" ReportFiles="@(ReportsToDeploy)" />
 	</Target>
-	
+
+  <Target Name="SetReportDataSet">
+    <SetReportDataSet ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" dataSources="@(DataSetToDeploy)" UseMatchCase="False" />
+  </Target>
+  
 	<Target Name="SetReportsDataSource">
 		<!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
 		<SetReportDataSource SharePointSiteUrl="$(SharePointSiteUrl)" Recursive="true" ReportItem="$(ProjectParnetReportFolder)/$(ProjectReportFolder)" dataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />

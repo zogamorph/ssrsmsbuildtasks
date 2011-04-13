@@ -1,13 +1,13 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AddReports.cs" company="SSRSMSBuildTasks Development Team">
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="AddShareDataSets.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild Task will upload a list of report files to the requested SharePoint report document library path.
+//   The add share data sets.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Integrated
+namespace ssrsmsbuildtasks.RS2008R2
 {
     #region using directive
 
@@ -22,89 +22,79 @@ namespace ssrsmsbuildtasks.Integrated
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will upload a list of report files to the requested SharePoint report document library path.
+    /// The add share data sets.
     /// </summary>
-    public class AddReports : Task
+    public class AddShareDataSets : Task
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        ///   Initializes a new instance of the <see cref = "AddReports" /> class.
-        /// </summary>
-        public AddReports()
-        {
-            this.DisableWarnings = false;
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
-        ///   Gets or sets a value indicating whether to disable warnings.
+        ///   Gets or sets a value indicating whether [disable warnings].
         /// </summary>
         /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
         public bool DisableWarnings { get; set; }
 
         /// <summary>
-        ///   Gets or sets the SharePoint report document library path.
+        ///   Gets or sets the folder.
         /// </summary>
-        /// <value>The SharePoint report document library path.</value>
-        [Required]
+        /// <value>The folder.</value>
         public string Folder { get; set; }
 
         /// <summary>
-        ///   Gets or sets the report files.
+        ///   Gets or sets the report server URL.
         /// </summary>
-        /// <value>The report files.</value>
+        /// <value>The report server URL.</value>
+        [Required]
+        public string ReportServerURL { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the share data set.
+        /// </summary>
+        /// <value>The share data set.</value>
         /// <remarks>
         ///   Adding the meta data ReportServerProperties will with comma
         ///   separated name value paired list will set the report server
         ///   properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
         /// </remarks>
         [Required]
-        public ITaskItem[] ReportFiles { get; set; }
-
-        /// <summary>
-        ///   Gets or sets SharePoint site Url.
-        /// </summary>
-        /// <value>The SharePoint site Url.</value>
-        [Required]
-        public string SharePointSiteUrl { get; set; }
+        public ITaskItem[] ShareDataSets { get; set; }
 
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// The execute method which is call MSBuild to run the task
+        /// When overridden in a derived class, executes the task.
         /// </summary>
         /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// true if the task successfully executed; otherwise, false.
         /// </returns>
         public override bool Execute()
         {
             // Creates the new instances of the reporting services.  
             // Use the current users windows credentials to connect to the report server.
-            IntegratedDeploymentManager integratedDeploymentManager =
-                new IntegratedDeploymentManager(this.SharePointSiteUrl);
-            ReportFile[] reportFiles = new ReportFile[this.ReportFiles.Length];
-            integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
+            R2DeploymentManger r2DeploymentManger = new R2DeploymentManger(this.ReportServerURL);
+            ReportDataSet[] reportDataSets = new ReportDataSet[this.ShareDataSets.Length];
+            r2DeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
 
             try
             {
                 // loop through the array of reports.
-                for (int index = 0; index < this.ReportFiles.Length; index++)
+                for (int index = 0; index < this.ShareDataSets.Length; index++)
                 {
-                    reportFiles[index] = new ReportFile(this.ReportFiles[index].GetMetadata("FullPath"));
-                    string propertiesString = this.ReportFiles[index].GetMetadata("ReportServerProperties");
+                    reportDataSets[index] = new ReportDataSet(
+                        this.ShareDataSets[index].GetMetadata("FullPath"), 
+                        this.ShareDataSets[index].GetMetadata("Filename"), 
+                        this.ShareDataSets[index].GetMetadata("Folder"));
+
+                    string propertiesString = this.ShareDataSets[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {
-                        this.AddReportProperties(reportFiles[index], propertiesString);
+                        this.AddReportProperties(reportDataSets[index], propertiesString);
                     }
                 }
 
-                return integratedDeploymentManager.UpLoadReports(reportFiles, this.Folder, this.DisableWarnings);
+                return r2DeploymentManger.UploadShareDataSet(reportDataSets, this.DisableWarnings);
             }
             catch (Exception ex)
             {
@@ -133,30 +123,30 @@ namespace ssrsmsbuildtasks.Integrated
         /// <summary>
         /// Adds the report properties.
         /// </summary>
-        /// <param name="reportFile">
-        /// The report server reports.
+        /// <param name="reportDataSet">
+        /// The report data set.
         /// </param>
         /// <param name="propertiesString">
         /// The properties string.
         /// </param>
-        private void AddReportProperties(ReportFile reportFile, string propertiesString)
+        private void AddReportProperties(ReportDataSet reportDataSet, string propertiesString)
         {
             string[] strings;
             foreach (string propertery in propertiesString.Split(new[] { ';' }))
             {
                 strings = propertery.Split(new[] { '=' });
-                reportFile.ReportServerProperties.Add(strings[0], strings[1]);
+                reportDataSet.ReportServerProperties.Add(strings[0], strings[1]);
             }
         }
 
         /// <summary>
-        /// The reporting services message.
+        /// Deployments the manger messages.
         /// </summary>
         /// <param name="sender">
         /// The sender.
         /// </param>
         /// <param name="eventArgs">
-        /// The event args.
+        /// The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.
         /// </param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {

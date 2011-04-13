@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will create a new report server user on the report server.
+//   This MSBuild Task will create a new report server user on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,34 +28,35 @@ namespace ssrsmsbuildtasks.RS2008R2
         #region Properties
 
         /// <summary>
-        /// Gets or sets the report folder path.
+        ///   Gets or sets the report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
-
         /// <summary>
-        /// Gets or sets the reporting roles.
-        /// </summary>
-        /// <value>The reporting roles.</value>
-        /// <remarks>The reporting roles need to match the role within the targeted report server</remarks>
-        [Required]
-        public string[] ReportingRoles { get; set; }
-
-        /// <summary>
-        /// Gets or sets the report server URL.
+        ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
 
         /// <summary>
-        /// Gets or sets Report Server User name.
+        ///   Gets or sets Report Server User name.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
         public string ReportUserName { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the reporting roles.
+        /// </summary>
+        /// <value>The reporting roles.</value>
+        /// <remarks>
+        ///   The reporting roles need to match the role within the targeted report server
+        /// </remarks>
+        [Required]
+        public string[] ReportingRoles { get; set; }
 
         #endregion
 

@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   Upload a report model to the report server
+//   This MSBuild Task will upload a list of report model files to the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -17,6 +17,7 @@ namespace ssrsmsbuildtasks.Integrated
     using Microsoft.Build.Utilities;
 
     using ssrsmsbuildtasks.DeploymentManger;
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
 
     #endregion
 
@@ -25,49 +26,54 @@ namespace ssrsmsbuildtasks.Integrated
     /// </summary>
     public class AddReportsModel : Task
     {
+        #region Constructors and Destructors
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddReportsModel"/> class.
+        ///   Initializes a new instance of the <see cref = "AddReportsModel" /> class.
         /// </summary>
         public AddReportsModel()
         {
             this.DisableWarnings = false;
         }
 
+        #endregion
+
         #region Properties
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        ///   Gets or sets a value indicating whether to disable warnings.
+        /// </summary>
+        /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
+        public bool DisableWarnings { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the SharePoint report document library path.
         /// </summary>
         /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report models.
+        ///   Gets or sets the report models.
         /// </summary>
         /// <value>The report models.</value>
-        /// <remarks>The following meta data are needed to for report models
-        ///     ModelName - Name of the model 
-        ///     DataSourceFullPath - Location of the Data Source View File  
-        /// Adding the meta data ReportServerProperties will with comma
-        /// separated name value paired list will set the report server
-        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// <remarks>
+        ///   The following meta data are needed to for report models
+        ///   ModelName - Name of the model 
+        ///   DataSourceFullPath - Location of the Data Source View File  
+        ///   Adding the meta data ReportServerProperties will with comma
+        ///   separated name value paired list will set the report server
+        ///   properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
         /// </remarks>
         [Required]
         public ITaskItem[] ReportModels { get; set; }
 
         /// <summary>
-        /// Gets or sets SharePoint site Url.
+        ///   Gets or sets SharePoint site Url.
         /// </summary>
         /// <value>The SharePoint site Url.</value>
         [Required]
         public string SharePointSiteUrl { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to disable warnings.
-        /// </summary>
-        /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
-        public bool DisableWarnings { get; set; }
 
         #endregion
 

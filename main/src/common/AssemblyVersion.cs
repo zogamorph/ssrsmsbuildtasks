@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-#region Directives
+#region using directive
 
 using System.Reflection;
 

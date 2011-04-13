@@ -9,43 +9,47 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    using System;
+    #region using directive
 
-    using DeploymentManger;
+    using System;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
+    using ssrsmsbuildtasks.DeploymentManger;
+
+    #endregion
+
     /// <summary>
     /// The report user exists.
     /// </summary>
-    public class ReportUserExists: Task
+    public class ReportUserExists : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportUserExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "ReportUserExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the report folder path.
+        ///   Gets or sets the report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
 
         /// <summary>
-        /// Gets or sets Report Server User name.
+        ///   Gets or sets Report Server User name.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
@@ -69,21 +73,21 @@ namespace ssrsmsbuildtasks.RS2008R2
             try
             {
                 this.Exists = r2DeploymentManger.ReportUserExists(this.ReportUserName, this.Folder);
-                return true; 
+                return true;
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting",
-                        "DeleteReportUser",
-                        this.BuildEngine.ProjectFileOfTaskNode,
-                        this.BuildEngine.LineNumberOfTaskNode,
-                        this.BuildEngine.ColumnNumberOfTaskNode,
-                        0,
-                        0,
-                        ex.Message,
-                        string.Empty,
+                        "Reporting", 
+                        "DeleteReportUser", 
+                        this.BuildEngine.ProjectFileOfTaskNode, 
+                        this.BuildEngine.LineNumberOfTaskNode, 
+                        this.BuildEngine.ColumnNumberOfTaskNode, 
+                        0, 
+                        0, 
+                        ex.Message, 
+                        string.Empty, 
                         this.ToString()));
                 return false;
             }

@@ -5,8 +5,10 @@
 	<!--ReportServer-->
 	<PropertyGroup>
 		<ServerURL>http://$(COMPUTERNAME)/reportserver</ServerURL>
-		<ProjectReportFolder>/SSRSMSBuildTeaskDemoR2/Reports</ProjectReportFolder>
-		<ProjectReportDataSources>/SSRSMSBuildTeaskDemoR2/Data Sources</ProjectReportDataSources>
+    <ProjectReportRoot>/SSRSMSBuildTeaskDemoR2</ProjectReportRoot>
+		<ProjectReportFolder>$(ProjectReportRoot)/Reports</ProjectReportFolder>
+    <ProjectDataSetFolder>$(ProjectReportRoot)/DataSet</ProjectDataSetFolder>
+		<ProjectReportDataSources>$(ProjectReportRoot)/Data Sources</ProjectReportDataSources>
 	</PropertyGroup>
 	
 	<!--Databases-->
@@ -24,6 +26,10 @@
 	<!--Reports-->
 	<ItemGroup>
 		<ReportsToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\*.rdl" />
+    <DataSetToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\ParametersDefaults.rsd">
+      <Folder>$(ProjectDataSetFolder)</Folder>
+      <DataSource>$(ProjectReportDataSources)/ReportServer</DataSource>
+    </DataSetToDeploy>
 	</ItemGroup>
 	
 	<!--DataSoucre-->
@@ -44,16 +50,27 @@
 			<OverWrite>True</OverWrite>
 		</ReportDataSourceToDeploy>
 	</ItemGroup>
-	
-	<Target Name="FullDepoly" DependsOnTargets="GetServerURL;DeleteFolders;CreateReportingFolders;CreateConnectionSources;DeployReports;SetReportsDataSource" />
+  
+  <PropertyGroup>
+    <FullDeployDependsOn>
+      GetServerURL;
+      DeleteFolders;
+      CreateReportingFolders;
+      CreateConnectionSources;
+      CreateShareDataSet;
+      DeployReports;
+      SetReportDataSet;
+      SetReportsDataSource
+    </FullDeployDependsOn>
+  </PropertyGroup>
+
+  <Target Name="FullDepoly" DependsOnTargets="$(FullDeployDependsOn)" />
 
   <!--Get Full Server URL-->
   <Target Name="GetServerURL">
-    <Message Text="Getting Server URL" Importance ="normal" />
     <GetFullURL ServerURL="$(ServerURL)" IsIntergatedMode="False">
       <Output TaskParameter="ReportServerUrl" PropertyName="ReportingServerURL" />
     </GetFullURL>
-    <Message Text="ReportServerURL: $(ReportingServerURL)" Importance ="normal" />
   </Target>
   
 	<Target Name="DeleteFolders">
@@ -68,20 +85,31 @@
 		<!-- Create the Report Folders -->
 		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectReportFolder)" />
 		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectReportDataSources)" />
+    <CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectDataSetFolder)" />
 	</Target>
 	
 	<Target Name="CreateConnectionSources">
 		<!--This will create the reporting data source -->
 		<CreateReportingDataSource ReportServerURL="$(ReportingServerURL)" DataSources="@(ReportDataSourceToDeploy)" />
 	</Target>
-	
-	<Target Name="DeployReports">
+
+  <Target Name="CreateShareDataSet">
+    <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+    <AddShareDataSets ReportServerURL="$(ReportingServerURL)" ShareDataSets="@(DataSetToDeploy)" />
+  </Target>
+
+  <Target Name="DeployReports">
 		<!--This will upload the reports to folder name-->
 		<AddReports ReportServerURL="$(ReportingServerURL)" Folder="$(ProjectReportFolder)" ReportFiles="@(ReportsToDeploy)" />
 	</Target>
-	
+
+  <Target Name="SetReportDataSet">
+    <SetReportDataSet ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" ShareDataSets="@(DataSetToDeploy)" UseMatchCase="False" />
+  </Target>
+  
 	<Target Name="SetReportsDataSource">
-		<!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
-		<SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" dataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
+    <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+    <SetDataSetDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectDataSetFolder)" ShareDataSets="@(DataSetToDeploy)" UseMatchCase="False" />
+		<SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" DataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
 	</Target>
 </Project>

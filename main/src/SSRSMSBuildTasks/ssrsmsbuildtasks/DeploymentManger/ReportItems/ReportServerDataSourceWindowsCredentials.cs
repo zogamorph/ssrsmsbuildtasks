@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ReportServerDataSourceWindowsCredentials.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.DeploymentManger
+namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
     /// <summary>
     /// This to create store windows credentials.
@@ -36,13 +36,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Properties
 
         /// <summary>
-        /// Gets or sets the pass word.
+        ///   Gets or sets the pass word.
         /// </summary>
         /// <value>The pass word.</value>
         public string PassWord { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the user.
+        ///   Gets or sets the name of the user.
         /// </summary>
         /// <value>The name of the user.</value>
         public string UserName { get; set; }

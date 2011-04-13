@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will create a new report server user on the report server.
+//   This MSBuild Task will create a new report user to the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,28 +28,28 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        ///   Gets or sets the SharePoint report document library path.
         /// </summary>
         /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the reporting roles.
-        /// </summary>
-        /// <value>The reporting roles.</value>
-        [Required]
-        public string[] ReportingRoles { get; set; }
-
-        /// <summary>
-        /// Gets or sets new report user name which need to added to the report document library path.
+        ///   Gets or sets new report user name which need to added to the report document library path.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
         public string ReportUserName { get; set; }
 
         /// <summary>
-        /// Gets or sets SharePoint site Url.
+        ///   Gets or sets the reporting roles.
+        /// </summary>
+        /// <value>The reporting roles.</value>
+        [Required]
+        public string[] ReportingRoles { get; set; }
+
+        /// <summary>
+        ///   Gets or sets SharePoint site Url.
         /// </summary>
         /// <value>The SharePoint site Url.</value>
         [Required]
