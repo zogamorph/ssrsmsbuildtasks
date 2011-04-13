@@ -5,19 +5,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ssrsmsbuildtasks", "ssrsmsb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasks.Build", "..\..\build\SSRSMSBuildTasks.Build.csproj", "{D0393E31-6D4B-4580-9718-A8A730CDCB69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasksDocProject", "SSRSMSBuildTasksDocProject\SSRSMSBuildTasksDocProject.csproj", "{8969FBB1-012B-451E-BF39-C1D249698BB2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1F60FB1B-D7D6-4C34-B2BB-EE39347011B0}"
 	ProjectSection(SolutionItems) = preProject
 		Update2005ProxyClass.cmd = Update2005ProxyClass.cmd
 		Update2006ProxyClass.cmd = Update2006ProxyClass.cmd
+		Update2010ProxyClass.cmd = Update2010ProxyClass.cmd
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSRSMSBuildTasksDocProject", "SSRSMSBuildTasksDocProject\SSRSMSBuildTasksDocProject.csproj", "{569CCE36-016D-4130-A5DB-DEA406B82C0D}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
 		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://tfs06.codeplex.com/
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs06
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = ssrsmsbuildtasks\\ssrsmsbuildtasks.csproj
 		SccProjectName1 = ssrsmsbuildtasks
@@ -40,10 +41,10 @@ Global
 		{22150B67-2F32-4DF3-976E-FDAA9866DA6F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D0393E31-6D4B-4580-9718-A8A730CDCB69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0393E31-6D4B-4580-9718-A8A730CDCB69}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8969FBB1-012B-451E-BF39-C1D249698BB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{569CCE36-016D-4130-A5DB-DEA406B82C0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{569CCE36-016D-4130-A5DB-DEA406B82C0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{569CCE36-016D-4130-A5DB-DEA406B82C0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{569CCE36-016D-4130-A5DB-DEA406B82C0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

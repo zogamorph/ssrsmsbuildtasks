@@ -9,7 +9,9 @@
     <Copy SourceFiles="$(SolutionsPath)\SSRSMSBuildTasks\ssrsmsbuildtasks\bin\Release\ssrsmsbuildtasks.dll;
                        $(SolutionsPath)\SSRSMSBuildTasks\SSRSMSBuildTasksDocProject\bin\Release\SSRSMSBuildTasksHelp.chm;
                        $(SolutionsPath)\..\example\SSRSMSBuildTaskDemo\ssrsmsbuildtasks.native.tasks;
-                       $(SolutionsPath)\..\example\SSRSMSBuildTaskDemo\ssrsmsbuildtasks.integrated.tasks;"
+                       $(SolutionsPath)\..\example\SSRSMSBuildTaskDemo\ssrsmsbuildtasks.integrated.tasks;
+                       $(SolutionsPath)\..\example\SSRSMSBuildTaskDemoR2\ssrsmsbuildtasks.R2.tasks"
+          
           DestinationFolder="$(DropsPath)\$(GlobalBuildVersionNumber)"
           SkipUnchangedFiles="false" />
 
