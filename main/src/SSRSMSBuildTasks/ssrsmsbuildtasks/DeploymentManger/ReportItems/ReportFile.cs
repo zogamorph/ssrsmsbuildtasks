@@ -1,12 +1,15 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ReportFile.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
+// <summary>
+//   Report Server Report Class.
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.DeploymentManger
+namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region Directives
+    #region using directive
 
     using System.Collections.Generic;
     using System.IO;
@@ -24,17 +27,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// The reporting services properties
+        ///   The reporting services properties
         /// </summary>
         private readonly Dictionary<string, string> reportServerProperties;
 
         /// <summary>
-        /// Report file information.
+        ///   Report file information.
         /// </summary>
         private FileInfo reportFileInfo;
 
         /// <summary>
-        /// Report name for report server.
+        ///   Report name for report server.
         /// </summary>
         private string reportName;
 
@@ -43,7 +46,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the ReportFile class.
+        ///   Initializes a new instance of the ReportFile class.
         /// </summary>
         public ReportFile()
         {
@@ -82,7 +85,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Properties
 
         /// <summary>
-        /// Gets the report file info.
+        ///   Gets the report file info.
         /// </summary>
         /// <value>The report file info.</value>
         public FileInfo ReportFileInfo
@@ -94,7 +97,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets or sets the report file path.
+        ///   Gets or sets the report file path.
         /// </summary>
         /// <value>The report file path.</value>
         public string ReportFilePath
@@ -111,7 +114,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets or sets the name of the report.
+        ///   Gets or sets the name of the report.
         /// </summary>
         /// <value>The name of the report.</value>
         public string ReportName
@@ -128,7 +131,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets the report properties.
+        ///   Gets the report properties.
         /// </summary>
         /// <value>The report properties.</value>
         public Dictionary<string, string> ReportServerProperties
@@ -140,7 +143,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets UploadItemName.
+        ///   Gets UploadItemName.
         /// </summary>
         string IReportServerUploadItem.UploadItemName
         {
@@ -165,9 +168,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         public byte[] GetBytes()
         {
             string rdlString;
-            StreamReader txtReader;
-
-            using (txtReader = this.reportFileInfo.OpenText())
+            using (StreamReader txtReader = this.reportFileInfo.OpenText())
             {
                 rdlString = txtReader.ReadToEnd();
             }

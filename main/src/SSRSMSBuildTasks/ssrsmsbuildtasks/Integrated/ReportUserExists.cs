@@ -9,47 +9,51 @@
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    using System;
+    #region using directive
 
-    using DeploymentManger;
+    using System;
 
     using Microsoft.Build.Framework;
     using Microsoft.Build.Utilities;
 
+    using ssrsmsbuildtasks.DeploymentManger;
+
+    #endregion
+
     /// <summary>
     /// The report user exists.
     /// </summary>
-    public class ReportUserExists: Task
+    public class ReportUserExists : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportUserExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "ReportUserExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the report folder path.
+        ///   Gets or sets the report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the share point site URL.
-        /// </summary>
-        /// <value>The share point site URL.</value>
-        [Required]
-        public string SharePointSiteUrl { get; set; }
-
-        /// <summary>
-        /// Gets or sets Report Server User name.
+        ///   Gets or sets Report Server User name.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
         public string ReportUserName { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the share point site URL.
+        /// </summary>
+        /// <value>The share point site URL.</value>
+        [Required]
+        public string SharePointSiteUrl { get; set; }
 
         #endregion
 
@@ -64,26 +68,27 @@ namespace ssrsmsbuildtasks.Integrated
         public override bool Execute()
         {
             // Connecting to the reporting server
-            IntegratedDeploymentManager integratedDeploymentManager = new IntegratedDeploymentManager(this.SharePointSiteUrl);
+            IntegratedDeploymentManager integratedDeploymentManager =
+                new IntegratedDeploymentManager(this.SharePointSiteUrl);
             integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
                 this.Exists = integratedDeploymentManager.ReportUserExists(this.ReportUserName, this.Folder);
-                return true; 
+                return true;
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting",
-                        "DeleteReportUser",
-                        this.BuildEngine.ProjectFileOfTaskNode,
-                        this.BuildEngine.LineNumberOfTaskNode,
-                        this.BuildEngine.ColumnNumberOfTaskNode,
-                        0,
-                        0,
-                        ex.Message,
-                        string.Empty,
+                        "Reporting", 
+                        "DeleteReportUser", 
+                        this.BuildEngine.ProjectFileOfTaskNode, 
+                        this.BuildEngine.LineNumberOfTaskNode, 
+                        this.BuildEngine.ColumnNumberOfTaskNode, 
+                        0, 
+                        0, 
+                        ex.Message, 
+                        string.Empty, 
                         this.ToString()));
                 return false;
             }

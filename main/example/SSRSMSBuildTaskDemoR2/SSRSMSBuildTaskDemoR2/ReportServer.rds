@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Name>ReportServer</Name>
-  <DataSourceID>f72bd3dc-6fe2-42d2-8b93-c23b48f45c4d</DataSourceID>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="ReportServer">
   <ConnectionProperties>
     <Extension>SQL</Extension>
-    <ConnectString>Data Source=10.64.199.199;Initial Catalog=ReportServer</ConnectString>
+    <ConnectString>Data Source=(local);Initial Catalog=ReportServer</ConnectString>
     <IntegratedSecurity>true</IntegratedSecurity>
   </ConnectionProperties>
+  <DataSourceID>f72bd3dc-6fe2-42d2-8b93-c23b48f45c4d</DataSourceID>
 </RptDataSource>

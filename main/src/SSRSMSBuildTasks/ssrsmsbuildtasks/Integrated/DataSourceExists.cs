@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   The report folder exists.
+//   This MSBuild Task will check for the existences of the data source a within the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,28 +28,28 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the data source.
+        ///   Gets or sets the name of the data source.
         /// </summary>
         /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="DataSourceExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "DataSourceExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        ///   Gets or sets the SharePoint report document library path.
         /// </summary>
         /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the share point site URL.
+        ///   Gets or sets the share point site URL.
         /// </summary>
         /// <value>The share point site URL.</value>
         [Required]
@@ -78,7 +78,7 @@ namespace ssrsmsbuildtasks.Integrated
                 }
 
                 this.Exists = integratedDeploymentManager.ReportItemExists(
-                     this.Folder, this.DataSourceName, IntegratedDeploymentManager.GetReportItemtype("DataSource"));
+                    this.Folder, this.DataSourceName, IntegratedDeploymentManager.GetReportItemtype("DataSource"));
                 return true;
             }
             catch (Exception exception)
@@ -106,8 +106,12 @@ namespace ssrsmsbuildtasks.Integrated
         /// <summary>
         /// Deployments the manger messages.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.</param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="eventArgs">
+        /// The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.
+        /// </param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());

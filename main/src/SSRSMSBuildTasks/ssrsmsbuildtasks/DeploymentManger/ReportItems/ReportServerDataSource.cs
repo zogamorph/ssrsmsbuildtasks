@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ReportServerDataSource.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
@@ -7,9 +7,9 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.DeploymentManger
+namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region Directives
+    #region using directive
 
     using System.Collections.Generic;
 
@@ -21,12 +21,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
     public enum DataProviderEnum
     {
         /// <summary>
-        /// SQL Server Provider.
+        ///   SQL Server Provider.
         /// </summary>
         SQL = 0, 
 
         /// <summary>
-        /// AS Provider.
+        ///   AS Provider.
         /// </summary>
         OLEDBMD = 1
     }
@@ -39,21 +39,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// The reporting services properties
+        ///   The reporting services properties
         /// </summary>
         private readonly Dictionary<string, string> reportServerProperties;
-
-        /// <summary>
-        /// data source report name
-        /// </summary>
-        private string[] _reportDataSourceNames;
 
         #endregion
 
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the ReportServerDataSource class. 
+        ///   Initializes a new instance of the ReportServerDataSource class.
         /// </summary>
         public ReportServerDataSource()
         {
@@ -94,7 +89,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             ReportServerDataSourceWindowsCredentials windowCredentials)
             : this()
         {
-            this._reportDataSourceNames = reportDataSourceNames;
             this.Name = name;
             this.Provider = provider;
             this.ConnectionString = connectionString;
@@ -133,7 +127,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             string dataSourceFolder)
             : this()
         {
-            this._reportDataSourceNames = reportDataSourceNames;
             this.Name = name;
             this.Provider = provider;
             this.ConnectionString = connectionString;
@@ -146,46 +139,46 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Properties
 
         /// <summary>
-        /// Gets or sets the connection string.
+        ///   Gets or sets the connection string.
         /// </summary>
         /// <value>The connection string.</value>
         public string ConnectionString { get; set; }
 
         /// <summary>
-        /// Gets or sets the data source folder.
+        ///   Gets or sets the data source folder.
         /// </summary>
         /// <value>The data source folder.</value>
         public string DataSourceFolder { get; set; }
 
         /// <summary>
-        /// Gets or sets the Data Source name.
+        ///   Gets or sets the Data Source name.
         /// </summary>
         /// <value>The Data Source name.</value>
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether [over write].
+        ///   Gets or sets a value indicating whether [over write].
         /// </summary>
         /// <value>
-        /// 	<c>True.</c>If [over write]; otherwise,.
-        /// <c>False.</c>
+        ///   <c>True.</c>If [over write]; otherwise,.
+        ///   <c>False.</c>
         /// </value>
         public bool OverWrite { get; set; }
 
         /// <summary>
-        /// Gets or sets the provider.
+        ///   Gets or sets the provider.
         /// </summary>
         /// <value>The data provider.</value>
         public DataProviderEnum Provider { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the report.
+        ///   Gets or sets the name of the report.
         /// </summary>
         /// <value>The name of the report.</value>
         public string[] ReportDataSourceNames { get; set; }
 
         /// <summary>
-        /// Gets the report properties.
+        ///   Gets the report properties.
         /// </summary>
         /// <value>The report properties.</value>
         public Dictionary<string, string> ReportServerProperties
@@ -197,7 +190,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets or sets the window credentials.
+        ///   Gets or sets the window credentials.
         /// </summary>
         /// <value>The window credentials.</value>
         public ReportServerDataSourceWindowsCredentials WindowCredentials { get; set; }

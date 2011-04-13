@@ -2,11 +2,14 @@
 // <copyright file="R2DeploymentManger.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
+// <summary>
+//   Report Server class.
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
 {
-    #region Directives
+    #region using directive
 
     using System;
     using System.Collections;
@@ -17,6 +20,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
     using ssrsmsbuildtasks.DeploymentManger.InterFaces;
     using ssrsmsbuildtasks.DeploymentManger.Proxy.R2;
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
 
     #endregion
 
@@ -28,17 +32,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// The reportservic e 2010 asmx.
+        ///   The reportservic e 2010 asmx.
         /// </summary>
         private const string REPORTSERVICE2010ASMX = "ReportService2010.asmx";
 
         /// <summary>
-        /// The vtibinreportserver.
+        ///   The vtibinreportserver.
         /// </summary>
         private const string VTIBINREPORTSERVER = "/_vti_bin/ReportServer/";
 
         /// <summary>
-        /// MS Reporting Services Web Services Class
+        ///   MS Reporting Services Web Services Class
         /// </summary>
         private readonly ReportingService2010 reportingService2010;
 
@@ -48,7 +52,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
         /// <summary>
         /// Initializes a new instance of the <see cref="R2DeploymentManger"/> class. 
-        /// Initializes a new instance of the NativeDeploymentManger class.
+        ///   Initializes a new instance of the NativeDeploymentManger class.
         /// </summary>
         /// <param name="reportServerURL">
         /// The report server URL.
@@ -66,7 +70,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Events
 
         /// <summary>
-        /// Occurs when [reporting services message].
+        ///   Occurs when [reporting services message].
         /// </summary>
         public event DeploymentMangerMessage DeploymentMangerMessages;
 
@@ -234,8 +238,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // Connecting to the reporting server
             try
             {
-
-                findProperites[0] = new Property() { Name = "Resursive", Value = "False"};
+                findProperites[0] = new Property { Name = "Resursive", Value = "False" };
 
                 // Remove the root path
                 folderName = folderName.StartsWith("/") ? folderName.Substring(1) : folderName;
@@ -267,12 +270,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         {
                             folderProperites = new Property[reportFolderProperites.Count];
                             int folderProperiteIndex = 0;
-                            foreach (var folderProperite in reportFolderProperites)
+                            foreach (KeyValuePair<string, string> folderProperite in reportFolderProperites)
                             {
                                 folderProperites[folderProperiteIndex] = new Property
                                     {
-                                        Name = folderProperite.Key,
-                                        Value = folderProperite.Value
+                                       Name = folderProperite.Key, Value = folderProperite.Value 
                                     };
                                 folderProperiteIndex++;
                             }
@@ -647,10 +649,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public bool ReportItemExists(string reportItemName, string reportItemType, string folderName)
         {
-            var searchProperties = new[] { new Property { Name = "Resursive", Value = "False" } };
+            Property[] searchProperties = new[] { new Property { Name = "Resursive", Value = "False" } };
 
             // Create the search condition
-            var conditions = new[] { new SearchCondition() };
+            SearchCondition[] conditions = new[] { new SearchCondition() };
 
             // Get formats the folder name
             folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
@@ -706,6 +708,137 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Sets the report data source.
         /// </summary>
+        /// <param name="dataSetItem">
+        /// The report item.
+        /// </param>
+        /// <param name="recursive">
+        /// If set to. <c>True.</c> [recursive].
+        /// </param>
+        /// <param name="dataSets">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// </returns>
+        public bool SetDataSetDataSource(
+            string dataSetItem, bool recursive, ReportDataSet[] dataSets, bool useMatchCase)
+        {
+            try
+            {
+                // Create hashtable 
+                Hashtable reportDataSets = new Hashtable();
+
+                // format the Item path and get the item type
+                dataSetItem = DeploymentMangerHelper.FormatItemPath(dataSetItem);
+                string currentItemType = this.reportingService2010.GetItemType(dataSetItem);
+
+                // build table if there was error then stop
+                if (!this.BuildDataSetDataSourceTable(dataSets, reportDataSets, useMatchCase))
+                {
+                    return false;
+                }
+
+                // depending on the type call the correct assgin function
+                switch (currentItemType)
+                {
+                        // if folder then loop through the items to assgin the data source.
+                    case ReportItemStrings.Folder:
+                        this.AssginDataSourceToDataSet(dataSetItem, recursive, reportDataSets, useMatchCase);
+                        break;
+
+                        // assgin the data source item to the report it self.
+                    case ReportItemStrings.DataSet:
+                        this.AssignDataSetSource(dataSetItem, reportDataSets, useMatchCase);
+                        break;
+
+                    default:
+                        this.OnDeploymentMangerMessage(
+                            DeploymentMangerMessageType.Warning, 
+                            "SetDataSetDataSource", 
+                            string.Format("Report Item:{0} is not support for the method", dataSetItem));
+                        break;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "SetDataSetDataSource", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets the report data source.
+        /// </summary>
+        /// <param name="reportItem">
+        /// The report item.
+        /// </param>
+        /// <param name="recursive">
+        /// If set to. <c>True.</c> [recursive].
+        /// </param>
+        /// <param name="dataSets">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// </returns>
+        public bool SetReportDataSet(string reportItem, bool recursive, ReportDataSet[] dataSets, bool useMatchCase)
+        {
+            try
+            {
+                // Create hashtable 
+                Hashtable reportDataSets = new Hashtable();
+
+                // format the Item path and get the item type
+                reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
+                string currentItemType = this.reportingService2010.GetItemType(reportItem);
+
+                // build table if there was error then stop
+                if (!this.BuildReportDataSetTable(dataSets, reportDataSets, useMatchCase))
+                {
+                    return false;
+                }
+
+                // depending on the type call the correct assgin function
+                switch (currentItemType)
+                {
+                        // if folder then loop through the items to assgin the data source.
+                    case ReportItemStrings.Folder:
+                        this.AssginDataSetToReports(reportItem, recursive, reportDataSets, useMatchCase);
+                        break;
+
+                        // assgin the data source item to the report it self.
+                    case ReportItemStrings.Report:
+                        this.AssignReportDataSet(reportItem, reportDataSets, useMatchCase);
+                        break;
+
+                    default:
+                        this.OnDeploymentMangerMessage(
+                            DeploymentMangerMessageType.Warning, 
+                            "SetReportDataSource", 
+                            string.Format("Report Item:{0} is not support for the method", reportItem));
+                        break;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "SetReportDataSource", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets the report data source.
+        /// </summary>
         /// <param name="reportItem">
         /// The report item.
         /// </param>
@@ -727,7 +860,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 // Create hashtable 
-                var reportDataSources = new Hashtable(dataSources.Length);
+                Hashtable reportDataSources = new Hashtable();
 
                 // format the Item path and get the item type
                 reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
@@ -786,9 +919,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
         {
-            Warning[] warnings;
-            Property[] properties;
-
             // make sure the folder the name correct.
             folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             try
@@ -827,9 +957,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </returns>
         public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
         {
-            Warning[] warnings;
-            Property[] properties;
-
             // Make sure the folder name is formated correctly
             folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
             try
@@ -868,7 +995,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             // make sure the folder the name correct.
             folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
-            Property[] properties;
             try
             {
                 // Upload each of the reportServerResoucre
@@ -883,6 +1009,40 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 // catches the error and then reports out via msbuild.
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadResource", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The upload share data set.
+        /// </summary>
+        /// <param name="reportDataSets">
+        /// The report data sets.
+        /// </param>
+        /// <param name="disableWarnings">
+        /// if set to <c>true</c> [disable warnings].
+        /// </param>
+        /// <returns>
+        /// The upload share data set.
+        /// </returns>
+        public bool UploadShareDataSet(ReportDataSet[] reportDataSets, bool disableWarnings)
+        {
+            try
+            {
+                // Upload each of the reportServerResoucre
+                foreach (ReportDataSet reportDataSet in reportDataSets)
+                {
+                    // make sure the folder the name correct.
+                    string folderName = DeploymentMangerHelper.FormatFolderPath(reportDataSet.DateSetFolder);
+                    this.UploadToReportServer(folderName, reportDataSet, ReportItemStrings.DataSet, disableWarnings);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // catches the error and then reports out via msbuild.
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadShareDataSet", ex.Message);
                 return false;
             }
         }
@@ -931,6 +1091,127 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="useMatchCase">
         /// If set to. <c>True.</c> [use match case].
         /// </param>
+        private void AssginDataSetToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
+        {
+            // get list of all the items under the folder
+            CatalogItem[] reportFolderItems = this.reportingService2010.ListChildren(folder, recursive);
+
+            // loop through all items if they are a report then assgin the data source 
+            // to the item.
+            for (int index = 0; index < reportFolderItems.Length; index++)
+            {
+                if (reportFolderItems[index].TypeName == ReportItemStrings.Report)
+                {
+                    this.AssginDataSetToReports(reportFolderItems[index].Path, dataSources, useMatchCase);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The assgin data set to reports.
+        /// </summary>
+        /// <param name="report">
+        /// The report.
+        /// </param>
+        /// <param name="dataSets">
+        /// The data sets.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// The use match case.
+        /// </param>
+        private void AssginDataSetToReports(string report, Hashtable dataSets, bool useMatchCase)
+        {
+            // get the list of data source & creat a source reference
+            ItemReferenceData[] reportDataSets = this.reportingService2010.GetItemReferences(
+                report, ReportItemStrings.DataSet);
+            if (reportDataSets.Length > 0)
+            {
+                ItemReference[] itemReferences = new ItemReference[reportDataSets.Length];
+                ItemReference itemReference;
+
+                // check with method is used. list data of data soruce to match or straight 
+                // assginment.
+                StringBuilder dataSourceUpdates = new StringBuilder();
+
+                // loop through the report data sources
+                for (int index = 0; index < reportDataSets.Length; index++)
+                {
+                    // look for match in the list of data sources 
+                    if (
+                        dataSets.ContainsKey(
+                            useMatchCase ? reportDataSets[index].Name : reportDataSets[index].Name.ToLower()))
+                    {
+                        // assgin the matched data source reference to the report.
+                        itemReference = new ItemReference
+                            {
+                                Name = reportDataSets[index].Name, 
+                                Reference =
+                                    dataSets[
+                                        useMatchCase ? reportDataSets[index].Name : reportDataSets[index].Name.ToLower()]
+                                    as string
+                            };
+                        itemReferences[index] = itemReference;
+                        dataSourceUpdates.Append(
+                            string.Format("{0}:{1};", reportDataSets[index].Name, itemReference.Reference));
+                    }
+                }
+
+                // update the report with the new data sources.
+                this.reportingService2010.SetItemReferences(report, itemReferences);
+                this.OnDeploymentMangerMessage(
+                    DeploymentMangerMessageType.Warning, 
+                    "SetReportDataSource", 
+                    string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
+            }
+        }
+
+        /// <summary>
+        /// The assgin data source to data set.
+        /// </summary>
+        /// <param name="folder">
+        /// The folder.
+        /// </param>
+        /// <param name="recursive">
+        /// The recursive.
+        /// </param>
+        /// <param name="reportDataSets">
+        /// The report data sets.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// The use match case.
+        /// </param>
+        private void AssginDataSourceToDataSet(
+            string folder, bool recursive, Hashtable reportDataSets, bool useMatchCase)
+        {
+            // get list of all the items under the folder
+            CatalogItem[] reportFolderItems = this.reportingService2010.ListChildren(folder, recursive);
+
+            // loop through all items if they are a report then assgin the data source 
+            // to the item.
+            for (int index = 0; index < reportFolderItems.Length; index++)
+            {
+                if (reportFolderItems[index].TypeName == ReportItemStrings.DataSet)
+                {
+                    this.AssignDataSetSource(reportFolderItems[index].Path, reportDataSets, useMatchCase);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Assgins the data source to reports.
+        /// </summary>
+        /// <param name="folder">
+        /// The folder.
+        /// </param>
+        /// <param name="recursive">
+        /// If set to. <c>True.</c> [recursive].
+        /// </param>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
         private void AssginDataSourceToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
         {
             // get list of all the items under the folder
@@ -950,6 +1231,64 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Assigns the report data source.
         /// </summary>
+        /// <param name="dataSet">
+        /// The report.
+        /// </param>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        private void AssignDataSetSource(string dataSet, Hashtable dataSources, bool useMatchCase)
+        {
+            bool updatedReferences = false;
+            // get the list of data source & creat a source reference
+            ItemReferenceData[] dataSetSources = this.reportingService2010.GetItemReferences(
+                dataSet, ReportItemStrings.DataSet);
+            ItemReference[] itemReferences = new ItemReference[dataSetSources.Length];
+            if (itemReferences.Length > 0)
+            {
+                // check with method is used. list data of data soruce to match or straight 
+                // assginment.
+                StringBuilder dataSourceUpdates = new StringBuilder();
+
+                // loop through the report data sources
+                ItemReference itemReference;
+                for (int index = 0; index < dataSetSources.Length; index++)
+                {
+                    // look for match in the list of data sources 
+                    if (dataSources.ContainsKey(useMatchCase ? dataSet : dataSet.ToLower()))
+                    {
+                        updatedReferences = true;
+                        // assgin the matched data source reference to the report.
+                        itemReference = new ItemReference
+                            {
+                                Name = dataSetSources[index].Name, 
+                                Reference = dataSources[useMatchCase ? dataSet : dataSet.ToLower()] as string
+                            };
+                        itemReferences[index] = itemReference;
+                        dataSourceUpdates.Append(
+                            string.Format("{0}:{1};", dataSetSources[index].Name, itemReference.Reference));
+                    }
+                }
+
+                if (updatedReferences)
+                {
+                    // update the report with the new data sources.
+                    this.reportingService2010.SetItemReferences(dataSet, itemReferences);
+                }
+
+                this.OnDeploymentMangerMessage(
+                    DeploymentMangerMessageType.Warning, 
+                    "SetReportDataSource", 
+                    string.Format("Updated report: {0} data source(s):{1}", dataSet, dataSourceUpdates));
+            }
+        }
+
+        /// <summary>
+        /// Assigns the report data source.
+        /// </summary>
         /// <param name="report">
         /// The report.
         /// </param>
@@ -959,7 +1298,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="useMatchCase">
         /// If set to. <c>True.</c> [use match case].
         /// </param>
-        private void AssignReportDataSource(string report, Hashtable dataSources, bool useMatchCase)
+        private void AssignReportDataSet(string report, Hashtable dataSources, bool useMatchCase)
         {
             // get the list of data source & creat a source reference
             DataSource[] reportDataSources = this.reportingService2010.GetItemDataSources(report);
@@ -967,7 +1306,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // check with method is used. list data of data soruce to match or straight 
             // assginment.
-            var dataSourceUpdates = new StringBuilder();
+            StringBuilder dataSourceUpdates = new StringBuilder();
 
             // loop through the report data sources
             for (int index = 0; index < reportDataSources.Length; index++)
@@ -998,6 +1337,178 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 DeploymentMangerMessageType.Warning, 
                 "SetReportDataSource", 
                 string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
+        }
+
+        /// <summary>
+        /// Assigns the report data source.
+        /// </summary>
+        /// <param name="report">
+        /// The report.
+        /// </param>
+        /// <param name="dataSources">
+        /// The data sources.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// If set to. <c>True.</c> [use match case].
+        /// </param>
+        private void AssignReportDataSource(string report, Hashtable dataSources, bool useMatchCase)
+        {
+            // get the list of data source & creat a source reference
+            DataSource[] reportDataSources = this.reportingService2010.GetItemDataSources(report);
+            DataSourceReference dataSourceRef;
+
+            // check with method is used. list data of data soruce to match or straight 
+            // assginment.
+            StringBuilder dataSourceUpdates = new StringBuilder();
+
+            // loop through the report data sources
+            for (int index = 0; index < reportDataSources.Length; index++)
+            {
+                // look for match in the list of data sources 
+                if (
+                    dataSources.ContainsKey(
+                        useMatchCase ? reportDataSources[index].Name : reportDataSources[index].Name.ToLower()))
+                {
+                    // assgin the matched data source reference to the report.
+                    dataSourceRef = new DataSourceReference
+                        {
+                            Reference =
+                                dataSources[
+                                    useMatchCase
+                                        ? reportDataSources[index].Name
+                                        : reportDataSources[index].Name.ToLower()] as string
+                        };
+                    reportDataSources[index].Item = dataSourceRef;
+                    dataSourceUpdates.Append(
+                        string.Format("{0}:{1};", reportDataSources[index].Name, dataSourceRef.Reference));
+                }
+            }
+
+            // update the report with the new data sources.
+            this.reportingService2010.SetItemDataSources(report, reportDataSources);
+            this.OnDeploymentMangerMessage(
+                DeploymentMangerMessageType.Warning, 
+                "SetReportDataSource", 
+                string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
+        }
+
+        /// <summary>
+        /// The build data set data source table.
+        /// </summary>
+        /// <param name="dataSets">
+        /// The data sets.
+        /// </param>
+        /// <param name="reportDataSets">
+        /// The report data sets.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// The use match case.
+        /// </param>
+        /// <returns>
+        /// The build data set data source table.
+        /// </returns>
+        private bool BuildDataSetDataSourceTable(ReportDataSet[] dataSets, Hashtable reportDataSets, bool useMatchCase)
+        {
+            bool sucess = true;
+            foreach (ReportDataSet dataSet in dataSets)
+            {
+                if (
+                    reportDataSets.ContainsKey(
+                        string.Format(
+                            "{0}/{1}",
+                            useMatchCase ? dataSet.DateSetFolder : dataSet.DateSetFolder.ToLower(),
+                            useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower())))
+                {
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Error, 
+                        "SetReportDataSource", 
+                        string.Format("Duplicate Data Source Name: {0}", dataSet.ShareDataSetName));
+                    sucess = false;
+                }
+                else
+                {
+                    reportDataSets.Add(
+                        string.Format(
+                            "{0}/{1}",
+                            useMatchCase ? dataSet.DateSetFolder : dataSet.DateSetFolder.ToLower(), 
+                            useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower()), 
+                        DeploymentMangerHelper.FormatItemPath(dataSet.DataSource));
+                }
+
+                if (!sucess)
+                {
+                    break;
+                }
+            }
+
+            return sucess;
+        }
+
+        /// <summary>
+        /// The build report data set table.
+        /// </summary>
+        /// <param name="dataSets">
+        /// The data sets.
+        /// </param>
+        /// <param name="reportDataSets">
+        /// The report data sets.
+        /// </param>
+        /// <param name="useMatchCase">
+        /// The use match case.
+        /// </param>
+        /// <returns>
+        /// The build report data set table.
+        /// </returns>
+        private bool BuildReportDataSetTable(ReportDataSet[] dataSets, Hashtable reportDataSets, bool useMatchCase)
+        {
+            bool sucess = true;
+            foreach (ReportDataSet dataSet in dataSets)
+            {
+                if (dataSet.ReportDataSetNames != null)
+                {
+                    foreach (string reportDataSetName in dataSet.ReportDataSetNames)
+                    {
+                        if (reportDataSets.ContainsKey(reportDataSetName))
+                        {
+                            this.OnDeploymentMangerMessage(
+                                DeploymentMangerMessageType.Error, 
+                                "SetReportDataSource", 
+                                string.Format("Duplicate Data Source Name: {0}", dataSet.ReportDataSetNames));
+                            sucess = false;
+                            break;
+                        }
+
+                        reportDataSets.Add(
+                            useMatchCase ? reportDataSetName : reportDataSetName.ToLower(), 
+                            DeploymentMangerHelper.FormatItemPath(
+                                string.Format("{0}/{1}", dataSet.DateSetFolder, dataSet.ShareDataSetName)));
+                    }
+                }
+
+                // make sure that no duplicates reporting data source names 
+                if (reportDataSets.ContainsKey(dataSet.ShareDataSetName))
+                {
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Error, 
+                        "SetDataSetDataSource", 
+                        string.Format("Duplicate Data Source Name: {0}", dataSet.ShareDataSetName));
+                    sucess = false;
+                }
+                else
+                {
+                    reportDataSets.Add(
+                        useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower(), 
+                        DeploymentMangerHelper.FormatItemPath(
+                            string.Format("{0}/{1}", dataSet.DateSetFolder, dataSet.ShareDataSetName)));
+                }
+
+                if (!sucess)
+                {
+                    break;
+                }
+            }
+
+            return sucess;
         }
 
         /// <summary>
@@ -1071,12 +1582,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Copies the old policy.
         /// </summary>
-        /// <param name="oldPolicy">
-        /// The old policy.
-        /// </param>
-        /// <param name="newPolicy">
-        /// The new policy.
-        /// </param>
+        /// <param name="oldPolicy">The old policy.</param>
+        /// <param name="newPolicy">The new policy.</param>
         /// <returns>
         /// Position of the free new policy which needs to be added.
         /// </returns>
@@ -1097,21 +1604,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Creates the complete message.
         /// </summary>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <param name="reportingRoles">
-        /// The reporting roles.
-        /// </param>
-        /// <param name="reportFolder">
-        /// The report folder.
-        /// </param>
-        /// <returns>
-        /// A complete string message.
-        /// </returns>
+        /// <param name="reportUserName">Name of the report user.</param>
+        /// <param name="reportingRoles">The reporting roles.</param>
+        /// <param name="reportFolder">The report folder.</param>
+        /// <returns>A complete string message.</returns>
         private string CreateCompleteMessage(string reportUserName, string[] reportingRoles, string reportFolder)
         {
-            var completeMessage = new StringBuilder();
+            StringBuilder completeMessage = new StringBuilder();
 
             // Build the starting string by add the report user name
             // and the folder 
@@ -1151,9 +1650,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // create array of properties to number of report properties
             // loop through the report properties and the key and value
-            var properties = new Property[itemProperties.Count];
+            Property[] properties = new Property[itemProperties.Count];
             int index = 0;
-            foreach (var property in itemProperties)
+            foreach (KeyValuePair<string, string> property in itemProperties)
             {
                 properties[index] = new Property { Value = property.Value, Name = property.Key };
                 index++;
@@ -1187,7 +1686,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 Property[] properties = this.CreateProperties(dataSource.ReportServerProperties);
 
                 // use SQL Connection String Build to break the connection string
-                var sqlConStringBuilder = new SqlConnectionStringBuilder(dataSource.ConnectionString);
+                SqlConnectionStringBuilder sqlConStringBuilder =
+                    new SqlConnectionStringBuilder(dataSource.ConnectionString);
 
                 // create the objects.
                 DataSourceDefinition definition = this.GetDataSourceDefinition(dataSource, sqlConStringBuilder);
@@ -1257,7 +1757,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             ReportServerDataSource dataSource, SqlConnectionStringBuilder sqlConStringBuilder)
         {
             // create a data source definition and apply default settings
-            var definition = new DataSourceDefinition();
+            DataSourceDefinition definition = new DataSourceDefinition();
             this.SetDefaultDefinition(definition);
 
             // setting the conection string bas up the type

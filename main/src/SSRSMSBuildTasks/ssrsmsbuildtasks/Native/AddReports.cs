@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will upload a list of a reports to the requested report server.
+//   This MSBuild Task will upload a list of a reports files to the requested report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -17,6 +17,7 @@ namespace ssrsmsbuildtasks.Native
     using Microsoft.Build.Utilities;
 
     using ssrsmsbuildtasks.DeploymentManger;
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
 
     #endregion
 
@@ -25,46 +26,51 @@ namespace ssrsmsbuildtasks.Native
     /// </summary>
     public class AddReports : Task
     {
+        #region Constructors and Destructors
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="AddReports"/> class.
+        ///   Initializes a new instance of the <see cref = "AddReports" /> class.
         /// </summary>
         public AddReports()
         {
             this.DisableWarnings = false;
         }
 
+        #endregion
+
         #region Properties
 
         /// <summary>
-        /// Gets or sets the report folder path.
+        ///   Gets or sets a value indicating whether to disable warnings.
+        /// </summary>
+        /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
+        public bool DisableWarnings { get; set; }
+
+        /// <summary>
+        ///   Gets or sets the report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report files.
+        ///   Gets or sets the report files.
         /// </summary>
         /// <value>The report files.</value>
-        /// <remarks>Adding the meta data ReportServerProperties will with comma
-        /// separated name value paired list will set the report server
-        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// <remarks>
+        ///   Adding the meta data ReportServerProperties will with comma
+        ///   separated name value paired list will set the report server
+        ///   properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
         /// </remarks>
         [Required]
         public ITaskItem[] ReportFiles { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to disable warnings.
-        /// </summary>
-        /// <value><c>true</c> if [disable warnings]; otherwise, <c>false</c>.</value>
-        public bool DisableWarnings { get; set; }
 
         #endregion
 

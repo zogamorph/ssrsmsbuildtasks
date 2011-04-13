@@ -2,10 +2,18 @@
 // <copyright file="DeploymentMangerHelper.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
+// <summary>
+//   Deployment Manger Helper
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger
 {
+    #region using directive
+
+    using ssrsmsbuildtasks.DeploymentManger.Proxy.Itergrated;
+
+    #endregion
 
     /// <summary>
     /// Deployment Manger Helper
@@ -15,12 +23,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// The reportservic e 2005 asmx.
+        ///   The reportservic e 2005 asmx.
         /// </summary>
         private const string REPORTSERVICE2005ASMX = "ReportService2005.asmx";
 
         /// <summary>
-        /// The vtibinreportserverreportservic e 2006 asmx.
+        ///   The vtibinreportserverreportservic e 2006 asmx.
         /// </summary>
         private const string VTIBINREPORTSERVERREPORTSERVICE2006ASMX = @"/_vti_bin/ReportServer/ReportService2006.asmx";
 
@@ -91,7 +99,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if exists; otherwise, <c>false</c>.
         /// </returns>
-        public static bool FindItemType(Proxy.Itergrated.CatalogItem[] items, string reportItemName, Proxy.Itergrated.ItemTypeEnum itemFindType)
+        public static bool FindItemType(CatalogItem[] items, string reportItemName, ItemTypeEnum itemFindType)
         {
             bool flag = false;
             for (int i = 0; (i < items.Length) && !flag; i++)

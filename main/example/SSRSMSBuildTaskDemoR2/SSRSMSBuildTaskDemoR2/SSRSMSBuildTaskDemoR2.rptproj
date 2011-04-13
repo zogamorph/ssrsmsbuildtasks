@@ -11,7 +11,12 @@
       <FullPath>SQLConnection.rds</FullPath>
     </ProjectItem>
   </DataSources>
-  <DataSets />
+  <DataSets>
+    <ProjectItem>
+      <Name>ParametersDefaults.rsd</Name>
+      <FullPath>ParametersDefaults.rsd</FullPath>
+    </ProjectItem>
+  </DataSets>
   <Reports>
     <ProjectItem>
       <Name>Execution Log Report.rdl</Name>

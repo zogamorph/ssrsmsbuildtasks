@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <Description />
+  <DataSet Name="ParametersDefaults">
+    <Query>
+      <DataSourceReference>ReportServer</DataSourceReference>
+      <CommandText>SELECT  MIN(el.[TimeStart]) DefaultTimeStart,
+	   MAX(el.[TimeEnd]) DefaultTimeEnd
+FROM dbo.[ExecutionLog] AS el</CommandText>
+      <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+    </Query>
+    <Fields>
+      <Field Name="DefaultTimeStart">
+        <DataField>DefaultTimeStart</DataField>
+        <rd:TypeName>System.DateTime</rd:TypeName>
+      </Field>
+      <Field Name="DefaultTimeEnd">
+        <DataField>DefaultTimeEnd</DataField>
+        <rd:TypeName>System.DateTime</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

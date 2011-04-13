@@ -1,12 +1,15 @@
-// --------------------------------------------------------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ReportResourceFile.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
+// <summary>
+//   Report Server Resource class.
+// </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.DeploymentManger
+namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region Directives
+    #region using directive
 
     using System;
     using System.Collections.Generic;
@@ -24,12 +27,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// fileInfo field
+        ///   fileInfo field
         /// </summary>
         private readonly FileInfo fileInfo;
 
         /// <summary>
-        /// The reporting services properties
+        ///   The reporting services properties
         /// </summary>
         private readonly Dictionary<string, string> reportServerProperties;
 
@@ -54,13 +57,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Properties
 
         /// <summary>
-        /// Gets or sets the type of the mine.
+        ///   Gets or sets the type of the mine.
         /// </summary>
         /// <value>The type of the mine.</value>
         public string MineType { get; set; }
 
         /// <summary>
-        /// Gets the resource name.
+        ///   Gets the resource name.
         /// </summary>
         /// <value>The Resource name.</value>
         public string Name
@@ -72,7 +75,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets the resource properties.
+        ///   Gets the resource properties.
         /// </summary>
         /// <value>The resource  properties.</value>
         public Dictionary<string, string> ReportServerProperties
@@ -84,9 +87,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets UploadItemName.
+        ///   Gets UploadItemName.
         /// </summary>
-        /// <exception cref="NotImplementedException">
+        /// <exception cref = "NotImplementedException">
         /// </exception>
         string IReportServerUploadItem.UploadItemName
         {

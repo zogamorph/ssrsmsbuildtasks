@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   The report item exists.
+//   This MSBuild Task will check for the existences of the report item a within the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,35 +28,37 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "ReportItemExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        ///   Gets or sets the SharePoint report document library path.
         /// </summary>
         /// <value>The SharePoint report document library path.</value>
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report item.
+        ///   Gets or sets the report item.
         /// </summary>
         /// <value>The report item.</value>
         [Required]
         public string ReportItemName { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the report item type.
+        ///   Gets or sets the name of the report item type.
         /// </summary>
         /// <value>The name of the report item type.</value>
-        /// <remarks>Report Item Type Name are names used within reporting services ItemTypeEnum</remarks>
+        /// <remarks>
+        ///   Report Item Type Name are names used within reporting services ItemTypeEnum
+        /// </remarks>
         [Required]
         public string ReportItemTypeName { get; set; }
 
         /// <summary>
-        /// Gets or sets the share point site URL.
+        ///   Gets or sets the share point site URL.
         /// </summary>
         /// <value>The share point site URL.</value>
         [Required]
@@ -84,7 +86,8 @@ namespace ssrsmsbuildtasks.Integrated
                     this.Folder = "/";
                 }
 
-                this.Exists = integratedDeploymentManager.ReportItemExists(this.Folder,
+                this.Exists = integratedDeploymentManager.ReportItemExists(
+                    this.Folder, 
                     this.ReportItemName, 
                     IntegratedDeploymentManager.GetReportItemtype(this.ReportItemTypeName));
                 return true;

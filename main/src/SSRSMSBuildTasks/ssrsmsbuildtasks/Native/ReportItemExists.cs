@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   The report item exists.
+//   This MSBuild Task will check for the existences of the report item a within the report server folder on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -21,42 +21,44 @@ namespace ssrsmsbuildtasks.Native
     #endregion
 
     /// <summary>
-    /// This MSBuild Task will check for the existences of the report item a within the report server folder on the report server. 
+    /// This MSBuild Task will check for the existences of the report item a within the report server folder on the report server.
     /// </summary>
     public class ReportItemExists : Task
     {
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "ReportItemExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server folder path.
+        ///   Gets or sets the report server folder path.
         /// </summary>
         /// <value>The report server folder path.</value>
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report item.
+        ///   Gets or sets the report item.
         /// </summary>
         /// <value>The report item.</value>
         [Required]
         public string ReportItemName { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the report item type.
+        ///   Gets or sets the name of the report item type.
         /// </summary>
         /// <value>The name of the report item type.</value>
-        /// <remarks>Report Item Type Name are names used within reporting services ItemTypeEnum</remarks>
+        /// <remarks>
+        ///   Report Item Type Name are names used within reporting services ItemTypeEnum
+        /// </remarks>
         [Required]
         public string ReportItemTypeName { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]

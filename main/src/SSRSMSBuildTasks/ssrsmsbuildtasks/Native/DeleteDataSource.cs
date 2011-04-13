@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,21 +28,21 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the data source.
+        ///   Gets or sets the name of the data source.
         /// </summary>
         /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
-        
+
         /// <summary>
-        /// Gets or sets report folder path.
+        ///   Gets or sets report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets report server URL.
+        ///   Gets or sets report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]

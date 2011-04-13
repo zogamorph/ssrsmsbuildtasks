@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="SetReportDataSource.cs" company="SSRSMSBuildTasks Development Team">
+// <copyright file="SetDataSetDataSource.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace ssrsmsbuildtasks.Native
+namespace ssrsmsbuildtasks.RS2008R2
 {
     #region using directive
 
@@ -24,22 +24,9 @@ namespace ssrsmsbuildtasks.Native
     /// <summary>
     /// The set report data source.
     /// </summary>
-    public class SetReportDataSource : Task
+    public class SetDataSetDataSource : Task
     {
         #region Properties
-
-        /// <summary>
-        ///   Gets or sets the data sources list.
-        /// </summary>
-        /// <value>The data sources list.</value>
-        /// <remarks>
-        ///   The following meta data is required:  Folder - Folder of
-        ///   there the data source is stored within the report server. If the
-        ///   Reports use different data source name to refer to data source then
-        ///   add the refer name to following meta data on comma separated list:
-        ///   ReportDataSourceNames
-        /// </remarks>
-        public ITaskItem[] DataSources { get; set; }
 
         /// <summary>
         ///   Gets or sets a value indicating whether this <see cref = "SetReportDataSource" /> is recursive.
@@ -67,6 +54,19 @@ namespace ssrsmsbuildtasks.Native
         public string ReportServerURL { get; set; }
 
         /// <summary>
+        /// Gets or sets the share data sets.
+        /// </summary>
+        /// <value>The share data sets.</value>
+        /// <remarks>
+        /// The following meta data is required:  Folder - Folder of
+        /// there the data source is stored within the report server. If the
+        /// Reports use different data source name to refer to data source then
+        /// add the refer name to following meta data on comma separated list:
+        /// ReportDataSetNames
+        /// </remarks>
+        public ITaskItem[] ShareDataSets { get; set; }
+
+        /// <summary>
         ///   Gets or sets a value indicating whether [use match case].
         /// </summary>
         /// <value><c>true</c> if [use match case]; otherwise, <c>false</c>.</value>
@@ -84,34 +84,31 @@ namespace ssrsmsbuildtasks.Native
         /// </returns>
         public override bool Execute()
         {
-            NativeDeploymentManger nativeDeploymentManger = new NativeDeploymentManger(this.ReportServerURL);
-            nativeDeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
-            ReportServerDataSource[] reportServerDataSources = new ReportServerDataSource[this.DataSources.Length];
+            R2DeploymentManger r2DeploymentManger = new R2DeploymentManger(this.ReportServerURL);
+            r2DeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
+            ReportDataSet[] reportDataSets = new ReportDataSet[this.ShareDataSets.Length];
             try
             {
                 // loop through the array of reports.
-                for (int index = 0; index < this.DataSources.Length; index++)
+                for (int index = 0; index < this.ShareDataSets.Length; index++)
                 {
-                    reportServerDataSources[index] = new ReportServerDataSource
+                    reportDataSets[index] = new ReportDataSet
                         {
-                            DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
-                            Name = this.DataSources[index].ItemSpec, 
-                            ReportDataSourceNames =
-                                string.IsNullOrEmpty(this.DataSources[index].GetMetadata("ReportDataSourceNames"))
-                                    ? null
-                                    : this.DataSources[index].GetMetadata("ReportDataSourceNames").Split(new[] { ';' })
+                            DateSetFolder = this.ShareDataSets[index].GetMetadata("Folder"), 
+                            ShareDataSetName = this.ShareDataSets[index].GetMetadata("Filename"), 
+                            DataSource = this.ShareDataSets[index].GetMetadata("DataSource")
                         };
                 }
 
-                return nativeDeploymentManger.SetReportDataSource(
-                    this.ReportItem, this.Recursive, reportServerDataSources, this.UseMatchCase);
+                return r2DeploymentManger.SetDataSetDataSource(
+                    this.ReportItem, this.Recursive, reportDataSets, this.UseMatchCase);
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
                         "Reporting", 
-                        "SetReportDataSource", 
+                        "SetDataSetDataSource", 
                         this.BuildEngine.ProjectFileOfTaskNode, 
                         this.BuildEngine.LineNumberOfTaskNode, 
                         this.BuildEngine.ColumnNumberOfTaskNode, 

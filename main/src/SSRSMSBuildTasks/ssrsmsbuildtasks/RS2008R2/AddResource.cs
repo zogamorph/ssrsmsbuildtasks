@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will upload a list of a reports to the requested report server.
+//   This MSBuild Task will upload a list of a resource files to the requested report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -17,6 +17,7 @@ namespace ssrsmsbuildtasks.RS2008R2
     using Microsoft.Build.Utilities;
 
     using ssrsmsbuildtasks.DeploymentManger;
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
 
     #endregion
 
@@ -28,27 +29,28 @@ namespace ssrsmsbuildtasks.RS2008R2
         #region Properties
 
         /// <summary>
-        /// Gets or sets the files.
+        ///   Gets or sets the files.
         /// </summary>
         /// <value>The files.</value>
-        /// <remarks> The following meta data is require to upload resource file:
-        ///      MineType - The file mine type
-        /// Adding the meta data ReportServerProperties will with comma
-        /// separated name value paired list will set the report server
-        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// <remarks>
+        ///   The following meta data is require to upload resource file:
+        ///   MineType - The file mine type
+        ///   Adding the meta data ReportServerProperties will with comma
+        ///   separated name value paired list will set the report server
+        ///   properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
         /// </remarks>
         [Required]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
-        /// Gets or sets the report folder path.
+        ///   Gets or sets the report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]

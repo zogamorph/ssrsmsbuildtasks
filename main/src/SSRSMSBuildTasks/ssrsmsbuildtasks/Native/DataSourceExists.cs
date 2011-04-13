@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   The report folder exists.
+//   This MSBuild Task will check for the existences of the data source a within the requested report server folder.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,27 +28,27 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the data source.
+        ///   Gets or sets the name of the data source.
         /// </summary>
         /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="DataSourceExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "DataSourceExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets report folder path.
+        ///   Gets or sets report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the report server URL.
+        ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
         [Required]

@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will upload a list of a reports to the requested report server.
+//   This MSBuild Task will upload a list of resources files to the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -17,6 +17,7 @@ namespace ssrsmsbuildtasks.Integrated
     using Microsoft.Build.Utilities;
 
     using ssrsmsbuildtasks.DeploymentManger;
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
 
     #endregion
 
@@ -28,28 +29,28 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets the files.
+        ///   Gets or sets the files.
         /// </summary>
         /// <value>The files.</value>
-        /// <remarks> The following meta data is require to upload resource file:
-        ///      MineType - The file mine type
-        /// Adding the meta data ReportServerProperties will with comma
-        /// separated name value paired list will set the report server
-        /// properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// <remarks>
+        ///   The following meta data is require to upload resource file:
+        ///   MineType - The file mine type
+        ///   Adding the meta data ReportServerProperties will with comma
+        ///   separated name value paired list will set the report server
+        ///   properties I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
         /// </remarks>
-
         [Required]
         public ITaskItem[] Files { get; set; }
 
         /// <summary>
-        /// Gets or sets new report user name which need to added to the report document library path.
+        ///   Gets or sets new report user name which need to added to the report document library path.
         /// </summary>
         /// <value>The name of the report user.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets SharePoint site Url.
+        ///   Gets or sets SharePoint site Url.
         /// </summary>
         /// <value>The SharePoint site Url.</value>
         [Required]

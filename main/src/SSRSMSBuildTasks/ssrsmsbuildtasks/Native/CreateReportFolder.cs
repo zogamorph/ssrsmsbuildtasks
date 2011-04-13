@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will create a new report server folder on the report server.
+//   This MSBuild Task will create a new report server folder on the report server.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region Directives
+    #region using directive
 
     using System;
     using System.Collections.Generic;
@@ -29,22 +29,23 @@ namespace ssrsmsbuildtasks.Native
         #region Properties
 
         /// <summary>
-        /// Gets or sets the folder report properties.
+        ///   Gets or sets the folder report properties.
         /// </summary>
         /// <value>The folder report properties.</value>
-        /// <remarks>The folder properties need to be set as a comma separated
-        /// list I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
+        /// <remarks>
+        ///   The folder properties need to be set as a comma separated
+        ///   list I.E.: [Properties Name]=[Value];[Properties Name]=[Value]
         /// </remarks>
         public string FolderReportProperties { get; set; }
 
         /// <summary>
-        /// The path to the folder which needs to be created.
+        ///   The path to the folder which needs to be created.
         /// </summary>
         [Required]
         public string NewFolderPath { get; set; }
 
         /// <summary>
-        /// The url of the report server.
+        ///   The url of the report server.
         /// </summary>
         [Required]
         public string ReportServerURL { get; set; }

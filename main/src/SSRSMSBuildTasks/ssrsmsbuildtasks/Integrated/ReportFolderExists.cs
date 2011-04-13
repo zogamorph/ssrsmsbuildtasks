@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   The report folder exists.
+//   This MSBuild Task will check for the existences of the report folder a within the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,29 +28,31 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="ReportItemExists"/> is exists.
+        ///   Gets or sets a value indicating whether this <see cref = "ReportItemExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
         [Output]
         public bool Exists { get; set; }
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        ///   Gets or sets the SharePoint report document library path.
         /// </summary>
         /// <value>The SharePoint report document library path.</value>
-        /// <remarks>The folder is the SharePoint report document library path that the folder</remarks>
+        /// <remarks>
+        ///   The folder is the SharePoint report document library path that the folder
+        /// </remarks>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the name of the folder.
+        ///   Gets or sets the name of the folder.
         /// </summary>
         /// <value>The name of the folder.</value>
         [Required]
         public string FolderName { get; set; }
 
         /// <summary>
-        /// Gets or sets the share point site URL.
+        ///   Gets or sets the share point site URL.
         /// </summary>
         /// <value>The share point site URL.</value>
         [Required]
@@ -73,9 +75,8 @@ namespace ssrsmsbuildtasks.Integrated
             integratedDeploymentManager.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-               
                 this.Exists = integratedDeploymentManager.ReportItemExists(
-                     this.Folder, this.FolderName, IntegratedDeploymentManager.GetReportItemtype("Folder"));
+                    this.Folder, this.FolderName, IntegratedDeploymentManager.GetReportItemtype("Folder"));
                 return true;
             }
             catch (Exception exception)

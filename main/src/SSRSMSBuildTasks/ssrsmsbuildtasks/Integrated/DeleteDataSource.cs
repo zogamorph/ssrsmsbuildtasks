@@ -3,13 +3,13 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   This MSBuild  Task will delete report server data source on the report server.
+//   This MSBuild Task will delete reporting data source to the requested SharePoint report document library path.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region Directives
+    #region using directive
 
     using System;
 
@@ -28,21 +28,21 @@ namespace ssrsmsbuildtasks.Integrated
         #region Properties
 
         /// <summary>
-        /// Gets or sets the name of the data source.
+        ///   Gets or sets the name of the data source.
         /// </summary>
         /// <value>The name of the data source.</value>
         [Required]
         public string DataSourceName { get; set; }
 
         /// <summary>
-        /// Gets or sets the SharePoint report document library path.
+        ///   Gets or sets the SharePoint report document library path.
         /// </summary>
         /// <value>The SharePoint report document library path.</value>
         [Required]
         public string Folder { get; set; }
 
         /// <summary>
-        /// Gets or sets the share point site URL.
+        ///   Gets or sets the share point site URL.
         /// </summary>
         /// <value>The share point site URL.</value>
         [Required]
@@ -92,8 +92,12 @@ namespace ssrsmsbuildtasks.Integrated
         /// <summary>
         /// Deployments the manger messages.
         /// </summary>
-        /// <param name="sender">The sender.</param>
-        /// <param name="eventArgs">The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.</param>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="eventArgs">
+        /// The <see cref="ssrsmsbuildtasks.DeploymentManger.DeploymentMangerMessageEventArgs"/> instance containing the event data.
+        /// </param>
         private void deploymentMangerMessages(object sender, DeploymentMangerMessageEventArgs eventArgs)
         {
             RSBuildHelper.SendDeploymentMangerMessage(eventArgs, this.BuildEngine, this.ToString());

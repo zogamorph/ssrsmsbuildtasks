@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.DeploymentManger
 {
-    #region Directives
+    #region using directive
 
     using System;
     using System.Collections;
@@ -18,7 +18,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.Net;
     using System.Text;
 
-    using Proxy.Native;
+    using ssrsmsbuildtasks.DeploymentManger.Proxy.Native;
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
 
     #endregion
 
@@ -30,7 +31,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constants and Fields
 
         /// <summary>
-        /// MS Reporting Services Web Services Class
+        ///   MS Reporting Services Web Services Class
         /// </summary>
         private readonly ReportingService2005 reportingService2005;
 
@@ -49,7 +50,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             reportServerURL = DeploymentMangerHelper.AddNativeWebServiceToUrl(reportServerURL);
             this.reportingService2005 = new ReportingService2005(reportServerURL)
                 {
-                    Credentials = CredentialCache.DefaultCredentials 
+                   Credentials = CredentialCache.DefaultCredentials 
                 };
         }
 
@@ -58,7 +59,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Events
 
         /// <summary>
-        /// Occurs when [reporting services message].
+        ///   Occurs when [reporting services message].
         /// </summary>
         public event DeploymentMangerMessage DeploymentMangerMessages;
 
@@ -221,9 +222,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
                             int folderProperiteIndex = 0;
                             foreach (KeyValuePair<string, string> folderProperite in reportFolderProperites)
                             {
-                                folderProperites[folderProperiteIndex] = new Property()
+                                folderProperites[folderProperiteIndex] = new Property
                                     {
-                                        Name = folderProperite.Key, Value = folderProperite.Value 
+                                       Name = folderProperite.Key, Value = folderProperite.Value 
                                     };
                                 folderProperiteIndex++;
                             }
@@ -676,7 +677,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 // Create hashtable 
-                Hashtable reportDataSources = new Hashtable(dataSources.Length);
+                Hashtable reportDataSources = new Hashtable();
 
                 // format the Item path and get the item type
                 reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
@@ -714,63 +715,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             catch (Exception ex)
             {
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "SetReportDataSource", ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Uploads the model.
-        /// </summary>
-        /// <param name="reportModelsFiles">
-        /// The reporting services models.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable warnings].
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
-        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
-        {
-            Warning[] warnings;
-            Property[] properties;
-
-            // Make sure the folder name is formated correctly
-            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
-            try
-            {
-                // loop through all the models create the properties which
-                // need to be set and display any warnings
-                foreach (ReportModelFiles model in reportModelsFiles)
-                {
-                    properties = this.CreateProperties(model.ReportServerProperties);
-                    warnings = this.reportingService2005.CreateModel(
-                        model.ModelName, folderName, model.GetBytes(), properties);
-
-                    if (warnings != null && !disableWarnings)
-                    {
-                        if (warnings.Length > 0)
-                        {
-                            this.SendWarningsMessage(model.ModelName, warnings, "UploadModel");
-                        }
-                    }
-
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "UploadModel", 
-                        string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
-                }
-
-                // report true
-                return true;
-            }
-            catch (Exception exception)
-            {
-                // Send message and set report fales
-                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
                 return false;
             }
         }
@@ -829,6 +773,63 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 // Display any errors
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Uploads the model.
+        /// </summary>
+        /// <param name="reportModelsFiles">
+        /// The reporting services models.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <param name="disableWarnings">
+        /// if set to <c>true</c> [disable warnings].
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if successful ; otherwise, <c>false</c>.
+        /// </returns>
+        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
+        {
+            Warning[] warnings;
+            Property[] properties;
+
+            // Make sure the folder name is formated correctly
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            try
+            {
+                // loop through all the models create the properties which
+                // need to be set and display any warnings
+                foreach (ReportModelFiles model in reportModelsFiles)
+                {
+                    properties = this.CreateProperties(model.ReportServerProperties);
+                    warnings = this.reportingService2005.CreateModel(
+                        model.ModelName, folderName, model.GetBytes(), properties);
+
+                    if (warnings != null && !disableWarnings)
+                    {
+                        if (warnings.Length > 0)
+                        {
+                            this.SendWarningsMessage(model.ModelName, warnings, "UploadModel");
+                        }
+                    }
+
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "UploadModel", 
+                        string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
+                }
+
+                // report true
+                return true;
+            }
+            catch (Exception exception)
+            {
+                // Send message and set report fales
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
                 return false;
             }
         }
