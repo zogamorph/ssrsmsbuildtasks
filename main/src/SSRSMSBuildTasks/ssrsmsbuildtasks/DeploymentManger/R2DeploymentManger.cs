@@ -1121,6 +1121,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// </param>
         private void AssginDataSetToReports(string report, Hashtable dataSets, bool useMatchCase)
         {
+            bool updateReports = false;
             // get the list of data source & creat a source reference
             ItemReferenceData[] reportDataSets = this.reportingService2010.GetItemReferences(
                 report, ReportItemStrings.DataSet);
@@ -1141,6 +1142,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         dataSets.ContainsKey(
                             useMatchCase ? reportDataSets[index].Name : reportDataSets[index].Name.ToLower()))
                     {
+                        updateReports = true;
                         // assgin the matched data source reference to the report.
                         itemReference = new ItemReference
                             {
@@ -1156,12 +1158,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     }
                 }
 
-                // update the report with the new data sources.
-                this.reportingService2010.SetItemReferences(report, itemReferences);
-                this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "SetReportDataSource", 
-                    string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
+                if (updateReports)
+                {
+                    // update the report with the new data sources.
+                    this.reportingService2010.SetItemReferences(report, itemReferences);
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Warning,
+                        "SetReportDataSource",
+                        string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
+                }
             }
         }
 
