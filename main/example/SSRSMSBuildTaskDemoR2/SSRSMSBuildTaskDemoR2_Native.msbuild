@@ -29,6 +29,7 @@
     <DataSetToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\ParametersDefaults.rsd">
       <Folder>$(ProjectDataSetFolder)</Folder>
       <DataSource>$(ProjectReportDataSources)/ReportServer</DataSource>
+      <ReportDataSetNames>ParametersDefault</ReportDataSetNames>
     </DataSetToDeploy>
 	</ItemGroup>
 	
