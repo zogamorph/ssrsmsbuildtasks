@@ -816,7 +816,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                         // assgin the data source item to the report it self.
                     case ReportItemStrings.Report:
-                        this.AssignReportDataSet(reportItem, reportDataSets, useMatchCase);
+                        this.AssginDataSetToReports(reportItem, reportDataSets, useMatchCase);
                         break;
 
                     default:
@@ -1289,59 +1289,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     "SetReportDataSource", 
                     string.Format("Updated report: {0} data source(s):{1}", dataSet, dataSourceUpdates));
             }
-        }
-
-        /// <summary>
-        /// Assigns the report data source.
-        /// </summary>
-        /// <param name="report">
-        /// The report.
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        private void AssignReportDataSet(string report, Hashtable dataSources, bool useMatchCase)
-        {
-            // get the list of data source & creat a source reference
-            DataSource[] reportDataSources = this.reportingService2010.GetItemDataSources(report);
-            DataSourceReference dataSourceRef;
-
-            // check with method is used. list data of data soruce to match or straight 
-            // assginment.
-            StringBuilder dataSourceUpdates = new StringBuilder();
-
-            // loop through the report data sources
-            for (int index = 0; index < reportDataSources.Length; index++)
-            {
-                // look for match in the list of data sources 
-                if (
-                    dataSources.ContainsKey(
-                        useMatchCase ? reportDataSources[index].Name : reportDataSources[index].Name.ToLower()))
-                {
-                    // assgin the matched data source reference to the report.
-                    dataSourceRef = new DataSourceReference
-                        {
-                            Reference =
-                                dataSources[
-                                    useMatchCase
-                                        ? reportDataSources[index].Name
-                                        : reportDataSources[index].Name.ToLower()] as string
-                        };
-                    reportDataSources[index].Item = dataSourceRef;
-                    dataSourceUpdates.Append(
-                        string.Format("{0}:{1};", reportDataSources[index].Name, dataSourceRef.Reference));
-                }
-            }
-
-            // update the report with the new data sources.
-            this.reportingService2010.SetItemDataSources(report, reportDataSources);
-            this.OnDeploymentMangerMessage(
-                DeploymentMangerMessageType.Warning, 
-                "SetReportDataSource", 
-                string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
         }
 
         /// <summary>
