@@ -41,39 +41,33 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// <param name="shareDataSetFilePath">The share data set file path.</param>
         /// <param name="shareDataSetName">Name of the share data set.</param>
         /// <param name="dateSetFolder">The date set folder.</param>
-        /// <param name="reportDataSetNames">The report data set names.</param>
         /// <param name="dataSource">The data source.</param>
+        /// <param name="reportDataSetNames">The report data set names.</param>
         public ReportDataSet(
             string shareDataSetFilePath, 
             string shareDataSetName, 
             string dateSetFolder, 
-            string[] reportDataSetNames, 
-            string dataSource)
-            : this(dateSetFolder, shareDataSetFilePath, shareDataSetName, reportDataSetNames)
+            string dataSource,
+            string[] reportDataSetNames
+            )
+            : this(shareDataSetFilePath, shareDataSetName, dateSetFolder, dataSource)
         {
-            this.DataSource = dataSource;
+            this.ReportDataSetNames = reportDataSetNames;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportDataSet"/> class.
         /// </summary>
-        /// <param name="shareDataSetFilePath">
-        /// The share data set file path.
-        /// </param>
-        /// <param name="shareDataSetName">
-        /// Name of the share data set.
-        /// </param>
-        /// <param name="dateSetFolder">
-        /// The date set folder.
-        /// </param>
-        /// <param name="reportDataSetNames">
-        /// The report data set names.
-        /// </param>
+        /// <param name="shareDataSetFilePath">The share data set file path.</param>
+        /// <param name="shareDataSetName">Name of the share data set.</param>
+        /// <param name="dateSetFolder">The date set folder.</param>
+        /// <param name="dataSource">The data source.</param>
         public ReportDataSet(
-            string shareDataSetFilePath, string shareDataSetName, string dateSetFolder, string[] reportDataSetNames)
-            : this(dateSetFolder, shareDataSetFilePath, shareDataSetName)
+            string shareDataSetFilePath, string shareDataSetName, string dateSetFolder, string dataSource)
+            : this(shareDataSetFilePath, shareDataSetName, dateSetFolder)
         {
-            this.ReportDataSetNames = reportDataSetNames;
+            this.DataSource = dataSource;
+        
         }
 
         /// <summary>

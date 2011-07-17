@@ -708,72 +708,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Sets the report data source.
         /// </summary>
-        /// <param name="dataSetItem">
-        /// The report item.
-        /// </param>
-        /// <param name="recursive">
-        /// If set to. <c>True.</c> [recursive].
-        /// </param>
-        /// <param name="dataSets">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
-        public bool SetDataSetDataSource(
-            string dataSetItem, bool recursive, ReportDataSet[] dataSets, bool useMatchCase)
-        {
-            try
-            {
-                // Create hashtable 
-                Hashtable reportDataSets = new Hashtable();
-
-                // format the Item path and get the item type
-                dataSetItem = DeploymentMangerHelper.FormatItemPath(dataSetItem);
-                string currentItemType = this.reportingService2010.GetItemType(dataSetItem);
-
-                // build table if there was error then stop
-                if (!this.BuildDataSetDataSourceTable(dataSets, reportDataSets, useMatchCase))
-                {
-                    return false;
-                }
-
-                // depending on the type call the correct assgin function
-                switch (currentItemType)
-                {
-                        // if folder then loop through the items to assgin the data source.
-                    case ReportItemStrings.Folder:
-                        this.AssginDataSourceToDataSet(dataSetItem, recursive, reportDataSets, useMatchCase);
-                        break;
-
-                        // assgin the data source item to the report it self.
-                    case ReportItemStrings.DataSet:
-                        this.AssignDataSetSource(dataSetItem, reportDataSets, useMatchCase);
-                        break;
-
-                    default:
-                        this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Warning, 
-                            "SetDataSetDataSource", 
-                            string.Format("Report Item:{0} is not support for the method", dataSetItem));
-                        break;
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "SetDataSetDataSource", ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Sets the report data source.
-        /// </summary>
         /// <param name="reportItem">
         /// The report item.
         /// </param>
@@ -1025,16 +959,33 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// The upload share data set.
         /// </returns>
-        public bool UploadShareDataSet(ReportDataSet[] reportDataSets, bool disableWarnings)
+        public bool UploadShareDataSets(ReportDataSet[] reportDataSets, bool disableWarnings)
         {
             try
             {
+                CatalogItem catalogItem;
+                ItemReferenceData[] dataSetSources;
+                ItemReference[] itemReferences;
+                ItemReference itemReference;
                 // Upload each of the reportServerResoucre
                 foreach (ReportDataSet reportDataSet in reportDataSets)
                 {
                     // make sure the folder the name correct.
                     string folderName = DeploymentMangerHelper.FormatFolderPath(reportDataSet.DateSetFolder);
-                    this.UploadToReportServer(folderName, reportDataSet, ReportItemStrings.DataSet, disableWarnings);
+                    catalogItem = this.UploadToReportServer(folderName, reportDataSet, ReportItemStrings.DataSet, disableWarnings);
+                    dataSetSources = this.reportingService2010.GetItemReferences(catalogItem.Path, ReportItemStrings.DataSource);
+                    itemReferences = new ItemReference[1];
+                    itemReference = new ItemReference
+                                {
+                                    Name = dataSetSources[0].Name,
+                                    Reference =  DeploymentMangerHelper.FormatItemPath(reportDataSet.DataSource)                                 
+                                };
+
+                    itemReferences[0] = itemReference;
+
+                    // update the report with the new data sources.
+                    this.reportingService2010.SetItemReferences(catalogItem.Path, itemReferences);
+
                 }
 
                 return true;
@@ -1171,38 +1122,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// The assgin data source to data set.
-        /// </summary>
-        /// <param name="folder">
-        /// The folder.
-        /// </param>
-        /// <param name="recursive">
-        /// The recursive.
-        /// </param>
-        /// <param name="reportDataSets">
-        /// The report data sets.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// The use match case.
-        /// </param>
-        private void AssginDataSourceToDataSet(
-            string folder, bool recursive, Hashtable reportDataSets, bool useMatchCase)
-        {
-            // get list of all the items under the folder
-            CatalogItem[] reportFolderItems = this.reportingService2010.ListChildren(folder, recursive);
-
-            // loop through all items if they are a report then assgin the data source 
-            // to the item.
-            for (int index = 0; index < reportFolderItems.Length; index++)
-            {
-                if (reportFolderItems[index].TypeName == ReportItemStrings.DataSet)
-                {
-                    this.AssignDataSetSource(reportFolderItems[index].Path, reportDataSets, useMatchCase);
-                }
-            }
-        }
-
-        /// <summary>
         /// Assgins the data source to reports.
         /// </summary>
         /// <param name="folder">
@@ -1230,64 +1149,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     this.AssignReportDataSource(reportFolderItems[index].Path, dataSources, useMatchCase);
                 }
-            }
-        }
-
-        /// <summary>
-        /// Assigns the report data source.
-        /// </summary>
-        /// <param name="dataSet">
-        /// The report.
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        private void AssignDataSetSource(string dataSet, Hashtable dataSources, bool useMatchCase)
-        {
-            bool updatedReferences = false;
-            // get the list of data source & creat a source reference
-            ItemReferenceData[] dataSetSources = this.reportingService2010.GetItemReferences(
-                dataSet, ReportItemStrings.DataSet);
-            ItemReference[] itemReferences = new ItemReference[dataSetSources.Length];
-            if (itemReferences.Length > 0)
-            {
-                // check with method is used. list data of data soruce to match or straight 
-                // assginment.
-                StringBuilder dataSourceUpdates = new StringBuilder();
-
-                // loop through the report data sources
-                ItemReference itemReference;
-                for (int index = 0; index < dataSetSources.Length; index++)
-                {
-                    // look for match in the list of data sources 
-                    if (dataSources.ContainsKey(useMatchCase ? dataSet : dataSet.ToLower()))
-                    {
-                        updatedReferences = true;
-                        // assgin the matched data source reference to the report.
-                        itemReference = new ItemReference
-                            {
-                                Name = dataSetSources[index].Name, 
-                                Reference = dataSources[useMatchCase ? dataSet : dataSet.ToLower()] as string
-                            };
-                        itemReferences[index] = itemReference;
-                        dataSourceUpdates.Append(
-                            string.Format("{0}:{1};", dataSetSources[index].Name, itemReference.Reference));
-                    }
-                }
-
-                if (updatedReferences)
-                {
-                    // update the report with the new data sources.
-                    this.reportingService2010.SetItemReferences(dataSet, itemReferences);
-                }
-
-                this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "SetReportDataSource", 
-                    string.Format("Updated report: {0} data source(s):{1}", dataSet, dataSourceUpdates));
             }
         }
 
@@ -1342,58 +1203,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 DeploymentMangerMessageType.Warning, 
                 "SetReportDataSource", 
                 string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
-        }
-
-        /// <summary>
-        /// The build data set data source table.
-        /// </summary>
-        /// <param name="dataSets">
-        /// The data sets.
-        /// </param>
-        /// <param name="reportDataSets">
-        /// The report data sets.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// The use match case.
-        /// </param>
-        /// <returns>
-        /// The build data set data source table.
-        /// </returns>
-        private bool BuildDataSetDataSourceTable(ReportDataSet[] dataSets, Hashtable reportDataSets, bool useMatchCase)
-        {
-            bool sucess = true;
-            foreach (ReportDataSet dataSet in dataSets)
-            {
-                if (
-                    reportDataSets.ContainsKey(
-                        string.Format(
-                            "{0}/{1}",
-                            useMatchCase ? dataSet.DateSetFolder : dataSet.DateSetFolder.ToLower(),
-                            useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower())))
-                {
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetReportDataSource", 
-                        string.Format("Duplicate Data Source Name: {0}", dataSet.ShareDataSetName));
-                    sucess = false;
-                }
-                else
-                {
-                    reportDataSets.Add(
-                        string.Format(
-                            "{0}/{1}",
-                            useMatchCase ? dataSet.DateSetFolder : dataSet.DateSetFolder.ToLower(), 
-                            useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower()), 
-                        DeploymentMangerHelper.FormatItemPath(dataSet.DataSource));
-                }
-
-                if (!sucess)
-                {
-                    break;
-                }
-            }
-
-            return sucess;
         }
 
         /// <summary>
@@ -1879,19 +1688,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Uploads to report server.
         /// </summary>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="uploadItem">
-        /// The upload item.
-        /// </param>
-        /// <param name="UploadItemType">
-        /// Type of the upload item.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable warnings].
-        /// </param>
-        private void UploadToReportServer(
+        /// <param name="folderName">Name of the folder.</param>
+        /// <param name="uploadItem">The upload item.</param>
+        /// <param name="UploadItemType">Type of the upload item.</param>
+        /// <param name="disableWarnings">if set to <c>true</c> [disable warnings].</param>
+        /// <returns>The Report Server CatalogItem</returns>
+        private CatalogItem UploadToReportServer(
             string folderName, IReportServerUploadItem uploadItem, string UploadItemType, bool disableWarnings)
         {
             Property[] properties;
@@ -1899,7 +1701,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             properties = this.CreateProperties(uploadItem.ReportServerProperties);
 
             // uploads reports then outputs that reports was uploaded.
-            this.reportingService2010.CreateCatalogItem(
+            CatalogItem catalogItem = this.reportingService2010.CreateCatalogItem(
                 UploadItemType, 
                 uploadItem.UploadItemName, 
                 folderName, 
@@ -1920,6 +1722,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 DeploymentMangerMessageType.Information, 
                 "UploadToReportServer", 
                 string.Format("Upload {0}: {1} to folder: {2}", UploadItemType, uploadItem.UploadItemName, folderName));
+            
+            return catalogItem;
         }
 
         #endregion
