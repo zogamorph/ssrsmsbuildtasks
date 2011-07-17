@@ -83,9 +83,12 @@ namespace ssrsmsbuildtasks.RS2008R2
                 for (int index = 0; index < this.ShareDataSets.Length; index++)
                 {
                     reportDataSets[index] = new ReportDataSet(
-                        this.ShareDataSets[index].GetMetadata("FullPath"), 
+                        this.ShareDataSets[index].GetMetadata("FullPath"),
                         this.ShareDataSets[index].GetMetadata("Filename"), 
-                        this.ShareDataSets[index].GetMetadata("Folder"));
+                        this.ShareDataSets[index].GetMetadata("Folder"),
+                        this.ShareDataSets[index].GetMetadata("DataSource")
+                        );
+
 
                     string propertiesString = this.ShareDataSets[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
@@ -94,7 +97,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                     }
                 }
 
-                return r2DeploymentManger.UploadShareDataSet(reportDataSets, this.DisableWarnings);
+                return r2DeploymentManger.UploadShareDataSets(reportDataSets, this.DisableWarnings);
             }
             catch (Exception ex)
             {

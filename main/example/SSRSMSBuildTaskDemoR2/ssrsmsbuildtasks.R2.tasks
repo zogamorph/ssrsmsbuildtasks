@@ -22,5 +22,4 @@
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.GetFullURL" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.AddShareDataSets" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.SetReportDataSet" AssemblyFile="$(SSRSMSBuildTasksPath)" />
-  <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.SetDataSetDataSource" AssemblyFile="$(SSRSMSBuildTasksPath)" />
 </Project>
