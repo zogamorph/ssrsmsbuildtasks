@@ -100,18 +100,24 @@
 		<!--This will create the reporting data source -->
 		<CreateReportingDataSource SharePointSiteUrl="$(SharePointSiteUrl)" DataSources="@(ReportDataSourceToDeploy)" />
 	</Target>
-	
-	<Target Name="DeployReports">
-		<!--This will upload the reports to folder name-->
-		<AddReports SharePointSiteUrl="$(SharePointSiteUrl)" Folder="$(ProjectParnetReportFolder)/$(ProjectReportFolder)/" ReportFiles="@(ReportsToDeploy)" />
-	</Target>
+
+  <Target Name="CreateShareDataSet">
+    <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+    <AddShareDataSets ReportServerURL="$(ReportingServerURL)" ShareDataSets="@(DataSetToDeploy)" />
+  </Target>
+
+  <Target Name="DeployReports">
+    <!--This will upload the reports to folder name-->
+    <AddReports ReportServerURL="$(ReportingServerURL)" Folder="$(ProjectReportFolder)" ReportFiles="@(ReportsToDeploy)" />
+  </Target>
 
   <Target Name="SetReportDataSet">
-    <SetReportDataSet ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" dataSources="@(DataSetToDeploy)" UseMatchCase="False" />
+    <SetReportDataSet ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" ShareDataSets="@(DataSetToDeploy)" UseMatchCase="False" />
+  </Target>
+
+  <Target Name="SetReportsDataSource">
+    <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+    <SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" DataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
   </Target>
   
-	<Target Name="SetReportsDataSource">
-		<!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
-		<SetReportDataSource SharePointSiteUrl="$(SharePointSiteUrl)" Recursive="true" ReportItem="$(ProjectParnetReportFolder)/$(ProjectReportFolder)" dataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
-	</Target>
 </Project>

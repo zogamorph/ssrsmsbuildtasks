@@ -33,13 +33,6 @@
     </DataSetToDeploy>
   </ItemGroup>
   
-  <!--Images-->
-  <ItemGroup>
-    <ImagesToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\dm.jpg">
-      <MineType>image/jpg</MineType>
-    </ImagesToDeploy>
-  </ItemGroup>
-	
 	<!--DataSoucre-->
 	<ItemGroup>
 		<!--The Include is the Name of the DataSet to create-->
@@ -120,9 +113,5 @@
     <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
 		<SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" DataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
 	</Target>
-
-  <Target Name="UploadResource">
-    <AddResource ReportServerURL="$(ReportingServerURL)" Folder="$(ProjectReportFolder)" Files="@(ImagesToDeploy)" />
-  </Target>
   
 </Project>
