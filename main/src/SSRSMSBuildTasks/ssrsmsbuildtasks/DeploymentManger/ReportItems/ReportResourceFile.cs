@@ -60,7 +60,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         ///   Gets or sets the type of the mine.
         /// </summary>
         /// <value>The type of the mine.</value>
-        public string MineType { get; set; }
+        public string MimeType { get; set; }
 
         /// <summary>
         ///   Gets the resource name.
@@ -95,7 +95,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         {
             get
             {
-                throw new NotImplementedException();
+                return this.Name;
             }
         }
 

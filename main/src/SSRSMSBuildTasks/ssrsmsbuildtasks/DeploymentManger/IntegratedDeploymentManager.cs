@@ -771,7 +771,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                             folderName, 
                             true, 
                             artefactBytes, 
-                            reportServerResoucre.MineType, 
+                            reportServerResoucre.MimeType, 
                             properties);
                         this.OnDeploymentMangerMessage(
                             DeploymentMangerMessageType.Information, 
