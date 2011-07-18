@@ -24,14 +24,21 @@
 	</PropertyGroup>
 	
 	<!--Reports-->
-	<ItemGroup>
-		<ReportsToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\*.rdl" />
+  <ItemGroup>
+    <ReportsToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\*.rdl" />
     <DataSetToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\ParametersDefaults.rsd">
       <Folder>$(ProjectDataSetFolder)</Folder>
       <DataSource>$(ProjectReportDataSources)/ReportServer</DataSource>
       <ReportDataSetNames>ParametersDefault</ReportDataSetNames>
     </DataSetToDeploy>
-	</ItemGroup>
+  </ItemGroup>
+  
+  <!--Images-->
+  <ItemGroup>
+    <ImagesToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\dm.jpg">
+      <MineType>image/jpg</MineType>
+    </ImagesToDeploy>
+  </ItemGroup>
 	
 	<!--DataSoucre-->
 	<ItemGroup>
@@ -61,7 +68,8 @@
       CreateShareDataSet;
       DeployReports;
       SetReportDataSet;
-      SetReportsDataSource
+      SetReportsDataSource;
+      UploadResource
     </FullDeployDependsOn>
   </PropertyGroup>
 
@@ -110,7 +118,11 @@
   
 	<Target Name="SetReportsDataSource">
     <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
-    <SetDataSetDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectDataSetFolder)" ShareDataSets="@(DataSetToDeploy)" UseMatchCase="False" />
 		<SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" DataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
 	</Target>
+
+  <Target Name="UploadResource">
+    <AddResource ReportServerURL="$(ReportingServerURL)" Folder="$(ProjectReportFolder)" Files="@(ImagesToDeploy)" />
+  </Target>
+  
 </Project>

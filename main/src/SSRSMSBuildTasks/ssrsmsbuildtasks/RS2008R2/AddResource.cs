@@ -80,7 +80,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                 for (int index = 0; index < this.Files.Length; index++)
                 {
                     reportResourcesFile[index] = new ReportResourceFile(this.Files[index].GetMetadata("FullPath"));
-                    reportResourcesFile[index].MineType = this.Files[index].GetMetadata("MineType");
+                    reportResourcesFile[index].MimeType = this.Files[index].GetMetadata("MimeType");
+                    reportResourcesFile[index].ReportServerProperties.Add("MimeType", reportResourcesFile[index].MimeType);
                     string propertiesString = this.Files[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {
