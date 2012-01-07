@@ -96,6 +96,9 @@
     <Compile Include="DeploymentManger\ReportItems\ReportItemStrings.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportModelFiles.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportResourceFile.cs" />
+    <Compile Include="DeploymentManger\ReportItems\ReportSchedule.cs" />
+    <Compile Include="DeploymentManger\ReportItems\ReportScheduleMonths.cs" />
+    <Compile Include="DeploymentManger\ReportItems\ReportScheduleWeekDays.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportServerDataSource.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportServerDataSourceWindowsCredentials.cs" />
     <Compile Include="RS2008R2\AddReports.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="RS2008R2\AddShareDataSets.cs" />
     <Compile Include="RS2008R2\CreateReportFolder.cs" />
     <Compile Include="RS2008R2\CreateReportingDataSource.cs" />
+    <Compile Include="RS2008R2\CreateReportSchedule.cs" />
     <Compile Include="RS2008R2\DataSourceExists.cs" />
     <Compile Include="RS2008R2\DeleteDataSource.cs" />
     <Compile Include="RS2008R2\DeleteReportFolder.cs" />
@@ -113,7 +117,6 @@
     <Compile Include="RS2008R2\ReportFolderExists.cs" />
     <Compile Include="RS2008R2\ReportItemExists.cs" />
     <Compile Include="RS2008R2\ReportUserExists.cs" />
-    <Compile Include="RS2008R2\SetDataSetDataSource.cs" />
     <Compile Include="RS2008R2\SetReportDataSet.cs" />
     <Compile Include="RS2008R2\SetReportDataSource.cs" />
     <Compile Include="DeploymentManger\InterFaces\IReportServerUploadItem.cs" />
