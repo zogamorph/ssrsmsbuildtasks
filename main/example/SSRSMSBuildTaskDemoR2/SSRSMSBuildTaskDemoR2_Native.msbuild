@@ -52,18 +52,58 @@
 		</ReportDataSourceToDeploy>
 	</ItemGroup>
   
+	<ItemGroup>
+
+	<!--The Include is the Report Server Schedules-->
+		<ReportServerSchedule Include="MinuteRecurrence">
+			<Interval>02:30</Interval>
+			<StartDateTime>01/02/2012</StartDateTime>
+			<ScheduleRecurrence>Min</ScheduleRecurrence>
+		</ReportServerSchedule >
+		
+		<ReportServerSchedule Include="DailyRecurrence">
+			<Interval>2</Interval>
+			<StartDateTime>01/02/2012</StartDateTime>
+			<ScheduleRecurrence>Daily</ScheduleRecurrence>
+		</ReportServerSchedule >
+		
+		<ReportServerSchedule Include="WeeklyRecurrence">
+			<StartDateTime>01/02/2012</StartDateTime>
+			<ScheduleRecurrence>Weekly</ScheduleRecurrence>
+			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
+		</ReportServerSchedule >
+
+		<ReportServerSchedule Include="MonthlyRecurrence">
+			<Interval>1,10,20</Interval>
+			<StartDateTime>01/02/2012</StartDateTime>
+			<ScheduleRecurrence>Monthly</ScheduleRecurrence>
+			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
+		</ReportServerSchedule >
+		
+		<ReportServerSchedule Include="MonthlyDOWRecurrence">
+			<StartDateTime>01/02/2012</StartDateTime>
+			<ScheduleRecurrence>MonthlyDOW</ScheduleRecurrence>
+			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
+			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
+		</ReportServerSchedule >
+		
+	</ItemGroup>
+  
   <PropertyGroup>
     <FullDeployDependsOn>
-      GetServerURL;
-      DeleteFolders;
+	  GetServerURL;
+	  CreateSchedules
+    </FullDeployDependsOn>
+	
+	<!--DeleteFolders;
       CreateReportingFolders;
       CreateConnectionSources;
       CreateShareDataSet;
       DeployReports;
       SetReportDataSet;
       SetReportsDataSource;
-      UploadResource
-    </FullDeployDependsOn>
+      UploadResource-->
+	
   </PropertyGroup>
 
   <Target Name="FullDepoly" DependsOnTargets="$(FullDeployDependsOn)" />
@@ -74,6 +114,10 @@
       <Output TaskParameter="ReportServerUrl" PropertyName="ReportingServerURL" />
     </GetFullURL>
   </Target>
+  
+	<Target Name="CreateSchedules">
+		<CreateReportSchedule ReportServerURL="$(ReportingServerURL)" ReportSchedules="@(ReportServerSchedule)" />
+	</Target>
   
 	<Target Name="DeleteFolders">
 		<!--Checking and deleteing Project Report Folder-->

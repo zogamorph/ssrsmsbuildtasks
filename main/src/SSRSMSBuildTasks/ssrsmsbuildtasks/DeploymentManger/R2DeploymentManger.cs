@@ -1,12 +1,3 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="R2DeploymentManger.cs" company="SSRSMSBuildTasks Development Team">
-//   Copyright (c) 2009
-// </copyright>
-// <summary>
-//   Report Server class.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
 namespace ssrsmsbuildtasks.DeploymentManger
 {
     #region using directive
@@ -15,8 +6,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
     using System.Collections;
     using System.Collections.Generic;
     using System.Data.SqlClient;
+    using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Text.RegularExpressions;
 
     using ssrsmsbuildtasks.DeploymentManger.InterFaces;
     using ssrsmsbuildtasks.DeploymentManger.Proxy.R2;
@@ -25,7 +18,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
     #endregion
 
     /// <summary>
-    /// Report Server class.
+    ///   Report Server class.
     /// </summary>
     public class R2DeploymentManger
     {
@@ -51,23 +44,18 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="R2DeploymentManger"/> class. 
-        ///   Initializes a new instance of the NativeDeploymentManger class.
+        ///   Initializes a new instance of the <see cref="R2DeploymentManger" /> class. Initializes a new instance of the NativeDeploymentManger class.
         /// </summary>
-        /// <param name="reportServerURL">
-        /// The report server URL.
-        /// </param>
+        /// <param name="reportServerURL"> The report server URL. </param>
         public R2DeploymentManger(string reportServerURL)
         {
             this.reportingService2010 = new ReportingService2010(reportServerURL)
-                {
-                   Credentials = CredentialCache.DefaultCredentials 
-                };
+                { Credentials = CredentialCache.DefaultCredentials };
         }
 
         #endregion
 
-        #region Events
+        #region Public Events
 
         /// <summary>
         ///   Occurs when [reporting services message].
@@ -79,14 +67,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         #region Public Methods
 
         /// <summary>
-        /// Gets the native URL.
+        ///   Gets the native URL.
         /// </summary>
-        /// <param name="serverAddress">
-        /// The server address.
-        /// </param>
-        /// <returns>
-        /// The get native url.
-        /// </returns>
+        /// <param name="serverAddress"> The server address. </param>
+        /// <returns> The get native url. </returns>
         public static string GetNativeURL(string serverAddress)
         {
             if (serverAddress.EndsWith(REPORTSERVICE2010ASMX))
@@ -103,14 +87,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Gets the sharepoint.
+        ///   Gets the sharepoint.
         /// </summary>
-        /// <param name="serverAddress">
-        /// The server address.
-        /// </param>
-        /// <returns>
-        /// The get sharepoint.
-        /// </returns>
+        /// <param name="serverAddress"> The server address. </param>
+        /// <returns> The get sharepoint. </returns>
         public static string GetSharepoint(string serverAddress)
         {
             string sharePointPrefix = string.Format("{0}{1}", VTIBINREPORTSERVER, REPORTSERVICE2010ASMX);
@@ -128,20 +108,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Adds the report user.
+        ///   Adds the report user.
         /// </summary>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <param name="reportingRoles">
-        /// The reporting roles.
-        /// </param>
-        /// <param name="reportFolder">
-        /// The report folder.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportUserName"> Name of the report user. </param>
+        /// <param name="reportingRoles"> The reporting roles. </param>
+        /// <param name="reportFolder"> The report folder. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool AddReportUser(string reportUserName, string[] reportingRoles, string reportFolder)
         {
             int index;
@@ -180,8 +152,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // Updating the policies of the folder.
                 this.reportingService2010.SetPolicies(reportFolder, newPolicy);
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "AddReportUser", 
+                    DeploymentMangerMessageType.Information,
+                    "AddReportUser",
                     this.CreateCompleteMessage(reportUserName, reportingRoles, reportFolder));
                 return true;
             }
@@ -193,14 +165,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Creates the data source.
+        ///   Creates the data source.
         /// </summary>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="dataSources"> The data sources. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool CreateDataSource(ReportServerDataSource[] dataSources)
         {
             bool success = false;
@@ -217,17 +185,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Creates the folder.
+        ///   Creates the folder.
         /// </summary>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="reportFolderProperites">
-        /// The report Folder Properites.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <param name="reportFolderProperites"> The report Folder Properites. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool CreateFolder(string folderName, Dictionary<string, string> reportFolderProperites)
         {
             CatalogItem[] items;
@@ -236,6 +198,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             Property[] folderProperites = new Property[0];
 
             // Connecting to the reporting server
+
             try
             {
                 findProperites[0] = new Property { Name = "Resursive", Value = "False" };
@@ -253,9 +216,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Create the search condition
                     conditions[0] = new SearchCondition
                         {
-                            Condition = ConditionEnum.Equals, 
-                            ConditionSpecified = true, 
-                            Name = "Name", 
+                            Condition = ConditionEnum.Equals,
+                            ConditionSpecified = true,
+                            Name = "Name",
                             Values = new[] { folderNames[index] }
                         };
 
@@ -273,20 +236,18 @@ namespace ssrsmsbuildtasks.DeploymentManger
                             foreach (KeyValuePair<string, string> folderProperite in reportFolderProperites)
                             {
                                 folderProperites[folderProperiteIndex] = new Property
-                                    {
-                                       Name = folderProperite.Key, Value = folderProperite.Value 
-                                    };
+                                    { Name = folderProperite.Key, Value = folderProperite.Value };
                                 folderProperiteIndex++;
                             }
                         }
 
                         this.reportingService2010.CreateFolder(folderNames[index], folderPath, folderProperites);
                         this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Information, 
-                            "CreateFolder", 
+                            DeploymentMangerMessageType.Information,
+                            "CreateFolder",
                             string.Format(
-                                "Created Report Folder: {0}/{1}", 
-                                folderPath != "/" ? folderPath : string.Empty, 
+                                "Created Report Folder: {0}/{1}",
+                                folderPath != "/" ? folderPath : string.Empty,
                                 folderNames[index]));
                     }
 
@@ -300,19 +261,36 @@ namespace ssrsmsbuildtasks.DeploymentManger
             catch (Exception ex)
             {
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "CreateFolder", ex.Message);
+
                 return false;
             }
         }
 
         /// <summary>
-        /// Deletes the model.
+        ///   Creates the folder.
         /// </summary>
-        /// <param name="modelName">
-        /// Name of the model.
-        /// </param>
-        /// <returns>
-        /// The delete model.
-        /// </returns>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <param name="reportFolderProperites"> The report Folder Properites. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
+        public bool CreateSchedules(ReportSchedule[] reportSchedules,string reportingSite)
+        {
+            bool success = false;
+            foreach (ReportSchedule reportSchedule in reportSchedules)
+            {
+                success = this.CreateSchedule(reportSchedule, reportingSite);
+                if (!success)
+                {
+                    break;
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
+        ///   Deletes the model.
+        /// </summary>
+        /// <param name="modelName"> Name of the model. </param>
+        /// <returns> The delete model. </returns>
         public bool DeleteModel(string modelName)
         {
             // Create the item and format the items
@@ -327,16 +305,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(modelName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteModel", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteModel",
                         string.Format("Deleted Report Item Source: {0}", modelName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteModel", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteModel",
                     string.Format("Item not a Report: {0}", modelName));
                 return false;
             }
@@ -348,14 +326,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Deletes the report.
+        ///   Deletes the report.
         /// </summary>
-        /// <param name="reportName">
-        /// Name of the report.
-        /// </param>
-        /// <returns>
-        /// The delete report.
-        /// </returns>
+        /// <param name="reportName"> Name of the report. </param>
+        /// <returns> The delete report. </returns>
         public bool DeleteReport(string reportName)
         {
             // Create the item and format the items
@@ -370,16 +344,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(reportName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteReport", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteReport",
                         string.Format("Deleted Report Item Source: {0}", reportName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteReport", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteReport",
                     string.Format("Item not a Report: {0}", reportName));
                 return false;
             }
@@ -391,17 +365,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Deletes the report data source.
+        ///   Deletes the report data source.
         /// </summary>
-        /// <param name="dataSourceName">
-        /// Name of the data source.
-        /// </param>
-        /// <param name="dataSourceFolder">
-        /// The data source folder.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="dataSourceName"> Name of the data source. </param>
+        /// <param name="dataSourceFolder"> The data source folder. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
         {
             string currentItemType;
@@ -418,8 +386,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 if (currentItemType != ReportItemStrings.DataSource)
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Warning, 
-                        "DeleteReportDataSource", 
+                        DeploymentMangerMessageType.Warning,
+                        "DeleteReportDataSource",
                         string.Format("Report Item is not a data source:{0}/{1}", dataSourceFolder, dataSourceName));
                     return false;
                 }
@@ -427,8 +395,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // else Delete the data source
                 this.reportingService2010.DeleteItem(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "DeleteReportDataSource", 
+                    DeploymentMangerMessageType.Information,
+                    "DeleteReportDataSource",
                     string.Format("Deleted Data Source {1}/{0}", dataSourceName, dataSourceFolder));
                 return true;
             }
@@ -440,14 +408,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Deletes the report folder.
+        ///   Deletes the report folder.
         /// </summary>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool DeleteReportFolder(string folderName)
         {
             // Create the item and format the items
@@ -462,16 +426,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(folderName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteReportFolder", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteReportFolder",
                         string.Format("Deleted Report Folder Source: {0}", folderName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteReportFolder", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteReportFolder",
                     string.Format("Item not a folder: {0}", folderName));
                 return false;
             }
@@ -483,17 +447,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Deletes the report user.
+        ///   Deletes the report user.
         /// </summary>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <param name="reportFolder">
-        /// The report folder.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportUserName"> Name of the report user. </param>
+        /// <param name="reportFolder"> The report folder. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool DeleteReportUser(string reportUserName, string reportFolder)
         {
             bool inheritParent, policyExists, scusess = true;
@@ -515,15 +473,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     this.RemovePolicy(reportUserName, oldPolicy, newPolicy);
                     this.reportingService2010.SetPolicies(reportFolder, newPolicy);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteReportUser", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteReportUser",
                         string.Format("Deleted User:{0} from folder:{1}", reportUserName, reportFolder));
                 }
                 else
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "DeleteReportUser", 
+                        DeploymentMangerMessageType.Error,
+                        "DeleteReportUser",
                         string.Format("User:{0} not found for folder:{1}", reportUserName, reportFolder));
                     scusess = false;
                 }
@@ -538,14 +496,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Deletes the resource.
+        ///   Deletes the resource.
         /// </summary>
-        /// <param name="resourceName">
-        /// Name of the resource.
-        /// </param>
-        /// <returns>
-        /// The delete resource.
-        /// </returns>
+        /// <param name="resourceName"> Name of the resource. </param>
+        /// <returns> The delete resource. </returns>
         public bool DeleteResource(string resourceName)
         {
             // Create the item and format the items
@@ -560,16 +514,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(resourceName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteResource", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteResource",
                         string.Format("Deleted Report Item Source: {0}", resourceName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteResource", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteResource",
                     string.Format("Item not a Resource: {0}", resourceName));
                 return false;
             }
@@ -581,17 +535,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Moves the report item.
+        ///   Moves the report item.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="destinationItem">
-        /// The destination of the Item.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportItem"> The report item. </param>
+        /// <param name="destinationItem"> The destination of the Item. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool MoveReportItem(string reportItem, string destinationItem)
         {
             try
@@ -603,8 +551,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // Call the move item method 
                 this.reportingService2010.MoveItem(reportItem, destinationItem);
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "MoveReportItem", 
+                    DeploymentMangerMessageType.Information,
+                    "MoveReportItem",
                     string.Format("Moved {0} to {1}", reportItem, destinationItem));
                 return true;
             }
@@ -616,37 +564,23 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Reports the item exists.
+        ///   Reports the item exists.
         /// </summary>
-        /// <param name="reportItemName">
-        /// The report item.
-        /// </param>
-        /// <param name="reportItemType">
-        /// Type of the report item.
-        /// </param>
-        /// <returns>
-        /// True if the item of that type exists.
-        /// </returns>
+        /// <param name="reportItemName"> The report item. </param>
+        /// <param name="reportItemType"> Type of the report item. </param>
+        /// <returns> True if the item of that type exists. </returns>
         public bool ReportItemExists(string reportItemName, string reportItemType)
         {
             return this.ReportItemExists(reportItemName, reportItemType, string.Empty);
         }
 
         /// <summary>
-        /// Reports the item exists.
+        ///   Reports the item exists.
         /// </summary>
-        /// <param name="reportItemName">
-        /// The report item name.
-        /// </param>
-        /// <param name="reportItemType">
-        /// Type of the report item.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// True if the item of that type exists.
-        /// </returns>
+        /// <param name="reportItemName"> The report item name. </param>
+        /// <param name="reportItemType"> Type of the report item. </param>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <returns> True if the item of that type exists. </returns>
         public bool ReportItemExists(string reportItemName, string reportItemType, string folderName)
         {
             Property[] searchProperties = new[] { new Property { Name = "Resursive", Value = "False" } };
@@ -680,17 +614,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Reports the user exists.
+        ///   Reports the user exists.
         /// </summary>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <param name="reportFolder">
-        /// The report folder.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportUserName"> Name of the report user. </param>
+        /// <param name="reportFolder"> The report folder. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool ReportUserExists(string reportUserName, string reportFolder)
         {
             bool inheritParent;
@@ -706,23 +634,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Sets the report data source.
+        ///   Sets the report data source.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="recursive">
-        /// If set to. <c>True.</c> [recursive].
-        /// </param>
-        /// <param name="dataSets">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportItem"> The report item. </param>
+        /// <param name="recursive"> If set to. <c>True.</c> [recursive]. </param>
+        /// <param name="dataSets"> The data sources. </param>
+        /// <param name="useMatchCase"> If set to. <c>True.</c> [use match case]. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool SetReportDataSet(string reportItem, bool recursive, ReportDataSet[] dataSets, bool useMatchCase)
         {
             try
@@ -755,8 +673,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                     default:
                         this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Warning, 
-                            "SetReportDataSource", 
+                            DeploymentMangerMessageType.Warning,
+                            "SetReportDataSource",
                             string.Format("Report Item:{0} is not support for the method", reportItem));
                         break;
                 }
@@ -771,23 +689,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Sets the report data source.
+        ///   Sets the report data source.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="recursive">
-        /// If set to. <c>True.</c> [recursive].
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportItem"> The report item. </param>
+        /// <param name="recursive"> If set to. <c>True.</c> [recursive]. </param>
+        /// <param name="dataSources"> The data sources. </param>
+        /// <param name="useMatchCase"> If set to. <c>True.</c> [use match case]. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool SetReportDataSource(
             string reportItem, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
         {
@@ -821,8 +729,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                     default:
                         this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Warning, 
-                            "SetReportDataSource", 
+                            DeploymentMangerMessageType.Warning,
+                            "SetReportDataSource",
                             string.Format("Report Item:{0} is not support for the method", reportItem));
                         break;
                 }
@@ -837,20 +745,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Ups the load reports.
+        ///   Ups the load reports.
         /// </summary>
-        /// <param name="reportFiles">
-        /// The report files.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// The disable Warnings.
-        /// </param>
-        /// <returns>
-        /// Ture if the reports are uploaded.
-        /// </returns>
+        /// <param name="reportFiles"> The report files. </param>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <param name="disableWarnings"> The disable Warnings. </param>
+        /// <returns> Ture if the reports are uploaded. </returns>
         public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
         {
             // make sure the folder the name correct.
@@ -875,20 +775,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Uploads the model.
+        ///   Uploads the model.
         /// </summary>
-        /// <param name="reportModelsFiles">
-        /// The reporting services models.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable warnings].
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="reportModelsFiles"> The reporting services models. </param>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <param name="disableWarnings"> if set to <c>true</c> [disable warnings]. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
         {
             // Make sure the folder name is formated correctly
@@ -914,17 +806,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Uploads the resoucre.
+        ///   Uploads the resoucre.
         /// </summary>
-        /// <param name="resourceFileFiles">
-        /// The resoucre files.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="resourceFileFiles"> The resoucre files. </param>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName)
         {
             // make sure the folder the name correct.
@@ -948,17 +834,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// The upload share data set.
+        ///   The upload share data set.
         /// </summary>
-        /// <param name="reportDataSets">
-        /// The report data sets.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable warnings].
-        /// </param>
-        /// <returns>
-        /// The upload share data set.
-        /// </returns>
+        /// <param name="reportDataSets"> The report data sets. </param>
+        /// <param name="disableWarnings"> if set to <c>true</c> [disable warnings]. </param>
+        /// <returns> The upload share data set. </returns>
         public bool UploadShareDataSets(ReportDataSet[] reportDataSets, bool disableWarnings)
         {
             try
@@ -972,20 +852,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     // make sure the folder the name correct.
                     string folderName = DeploymentMangerHelper.FormatFolderPath(reportDataSet.DateSetFolder);
-                    catalogItem = this.UploadToReportServer(folderName, reportDataSet, ReportItemStrings.DataSet, disableWarnings);
-                    dataSetSources = this.reportingService2010.GetItemReferences(catalogItem.Path, ReportItemStrings.DataSource);
+                    catalogItem = this.UploadToReportServer(
+                        folderName, reportDataSet, ReportItemStrings.DataSet, disableWarnings);
+                    dataSetSources = this.reportingService2010.GetItemReferences(
+                        catalogItem.Path, ReportItemStrings.DataSource);
                     itemReferences = new ItemReference[1];
                     itemReference = new ItemReference
-                                {
-                                    Name = dataSetSources[0].Name,
-                                    Reference =  DeploymentMangerHelper.FormatItemPath(reportDataSet.DataSource)                                 
-                                };
+                        {
+                            Name = dataSetSources[0].Name,
+                            Reference = DeploymentMangerHelper.FormatItemPath(reportDataSet.DataSource)
+                        };
 
                     itemReferences[0] = itemReference;
 
                     // update the report with the new data sources.
                     this.reportingService2010.SetItemReferences(catalogItem.Path, itemReferences);
-
                 }
 
                 return true;
@@ -1002,18 +883,26 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
         #region Methods
 
+        private static DaysOfWeekSelector GetDaysOfWeekSelector(ReportScheduleWeekDays scheduleWeekDays)
+        {
+            return new DaysOfWeekSelector
+                {
+                    Monday = scheduleWeekDays.Mon,
+                    Tuesday = scheduleWeekDays.Tue,
+                    Wednesday = scheduleWeekDays.Wed,
+                    Thursday = scheduleWeekDays.Thu,
+                    Friday = scheduleWeekDays.Fri,
+                    Saturday = scheduleWeekDays.Sat,
+                    Sunday = scheduleWeekDays.Sun
+                };
+        }
+
         /// <summary>
-        /// Adds the reporting roles.
+        ///   Adds the reporting roles.
         /// </summary>
-        /// <param name="index">
-        /// The index.
-        /// </param>
-        /// <param name="newPolicy">
-        /// The new policy.
-        /// </param>
-        /// <param name="reportingRoles">
-        /// The reporting roles.
-        /// </param>
+        /// <param name="index"> The index. </param>
+        /// <param name="newPolicy"> The new policy. </param>
+        /// <param name="reportingRoles"> The reporting roles. </param>
         private void AddReportingRoles(int index, Policy[] newPolicy, string[] reportingRoles)
         {
             // looping through the roles and assgin them.
@@ -1021,27 +910,19 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 newPolicy[index].Roles[roleIndex] = new Role
                     {
-                        Name = reportingRoles[roleIndex], 
+                        Name = reportingRoles[roleIndex],
                         Description = string.Format("Reporting {0} User / Group", reportingRoles[roleIndex])
                     };
             }
         }
 
         /// <summary>
-        /// Assgins the data source to reports.
+        ///   Assgins the data source to reports.
         /// </summary>
-        /// <param name="folder">
-        /// The folder.
-        /// </param>
-        /// <param name="recursive">
-        /// If set to. <c>True.</c> [recursive].
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
+        /// <param name="folder"> The folder. </param>
+        /// <param name="recursive"> If set to. <c>True.</c> [recursive]. </param>
+        /// <param name="dataSources"> The data sources. </param>
+        /// <param name="useMatchCase"> If set to. <c>True.</c> [use match case]. </param>
         private void AssginDataSetToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
         {
             // get list of all the items under the folder
@@ -1059,17 +940,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// The assgin data set to reports.
+        ///   The assgin data set to reports.
         /// </summary>
-        /// <param name="report">
-        /// The report.
-        /// </param>
-        /// <param name="dataSets">
-        /// The data sets.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// The use match case.
-        /// </param>
+        /// <param name="report"> The report. </param>
+        /// <param name="dataSets"> The data sets. </param>
+        /// <param name="useMatchCase"> The use match case. </param>
         private void AssginDataSetToReports(string report, Hashtable dataSets, bool useMatchCase)
         {
             bool updateReports = false;
@@ -1097,7 +972,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         // assgin the matched data source reference to the report.
                         itemReference = new ItemReference
                             {
-                                Name = reportDataSets[index].Name, 
+                                Name = reportDataSets[index].Name,
                                 Reference =
                                     dataSets[
                                         useMatchCase ? reportDataSets[index].Name : reportDataSets[index].Name.ToLower()]
@@ -1122,20 +997,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Assgins the data source to reports.
+        ///   Assgins the data source to reports.
         /// </summary>
-        /// <param name="folder">
-        /// The folder.
-        /// </param>
-        /// <param name="recursive">
-        /// If set to. <c>True.</c> [recursive].
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
+        /// <param name="folder"> The folder. </param>
+        /// <param name="recursive"> If set to. <c>True.</c> [recursive]. </param>
+        /// <param name="dataSources"> The data sources. </param>
+        /// <param name="useMatchCase"> If set to. <c>True.</c> [use match case]. </param>
         private void AssginDataSourceToReports(string folder, bool recursive, Hashtable dataSources, bool useMatchCase)
         {
             // get list of all the items under the folder
@@ -1153,17 +1020,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Assigns the report data source.
+        ///   Assigns the report data source.
         /// </summary>
-        /// <param name="report">
-        /// The report.
-        /// </param>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
+        /// <param name="report"> The report. </param>
+        /// <param name="dataSources"> The data sources. </param>
+        /// <param name="useMatchCase"> If set to. <c>True.</c> [use match case]. </param>
         private void AssignReportDataSource(string report, Hashtable dataSources, bool useMatchCase)
         {
             // get the list of data source & creat a source reference
@@ -1200,26 +1061,18 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // update the report with the new data sources.
             this.reportingService2010.SetItemDataSources(report, reportDataSources);
             this.OnDeploymentMangerMessage(
-                DeploymentMangerMessageType.Warning, 
-                "SetReportDataSource", 
+                DeploymentMangerMessageType.Warning,
+                "SetReportDataSource",
                 string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
         }
 
         /// <summary>
-        /// The build report data set table.
+        ///   The build report data set table.
         /// </summary>
-        /// <param name="dataSets">
-        /// The data sets.
-        /// </param>
-        /// <param name="reportDataSets">
-        /// The report data sets.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// The use match case.
-        /// </param>
-        /// <returns>
-        /// The build report data set table.
-        /// </returns>
+        /// <param name="dataSets"> The data sets. </param>
+        /// <param name="reportDataSets"> The report data sets. </param>
+        /// <param name="useMatchCase"> The use match case. </param>
+        /// <returns> The build report data set table. </returns>
         private bool BuildReportDataSetTable(ReportDataSet[] dataSets, Hashtable reportDataSets, bool useMatchCase)
         {
             bool sucess = true;
@@ -1232,15 +1085,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         if (reportDataSets.ContainsKey(reportDataSetName))
                         {
                             this.OnDeploymentMangerMessage(
-                                DeploymentMangerMessageType.Error, 
-                                "SetReportDataSource", 
+                                DeploymentMangerMessageType.Error,
+                                "SetReportDataSource",
                                 string.Format("Duplicate Data Source Name: {0}", dataSet.ReportDataSetNames));
                             sucess = false;
                             break;
                         }
 
                         reportDataSets.Add(
-                            useMatchCase ? reportDataSetName : reportDataSetName.ToLower(), 
+                            useMatchCase ? reportDataSetName : reportDataSetName.ToLower(),
                             DeploymentMangerHelper.FormatItemPath(
                                 string.Format("{0}/{1}", dataSet.DateSetFolder, dataSet.ShareDataSetName)));
                     }
@@ -1250,15 +1103,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 if (reportDataSets.ContainsKey(dataSet.ShareDataSetName))
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetDataSetDataSource", 
+                        DeploymentMangerMessageType.Error,
+                        "SetDataSetDataSource",
                         string.Format("Duplicate Data Source Name: {0}", dataSet.ShareDataSetName));
                     sucess = false;
                 }
                 else
                 {
                     reportDataSets.Add(
-                        useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower(), 
+                        useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower(),
                         DeploymentMangerHelper.FormatItemPath(
                             string.Format("{0}/{1}", dataSet.DateSetFolder, dataSet.ShareDataSetName)));
                 }
@@ -1273,20 +1126,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Builds the report data source table.
+        ///   Builds the report data source table.
         /// </summary>
-        /// <param name="dataSources">
-        /// The data sources.
-        /// </param>
-        /// <param name="reportDataSources">
-        /// The report data sources.
-        /// </param>
-        /// <param name="useMatchCase">
-        /// If set to. <c>True.</c> [use match case].
-        /// </param>
-        /// <returns>
-        /// True if table was built.
-        /// </returns>
+        /// <param name="dataSources"> The data sources. </param>
+        /// <param name="reportDataSources"> The report data sources. </param>
+        /// <param name="useMatchCase"> If set to. <c>True.</c> [use match case]. </param>
+        /// <returns> True if table was built. </returns>
         private bool BuildReportDataSourceTable(
             ReportServerDataSource[] dataSources, Hashtable reportDataSources, bool useMatchCase)
         {
@@ -1301,15 +1146,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         if (reportDataSources.ContainsKey(reportDataSourceName))
                         {
                             this.OnDeploymentMangerMessage(
-                                DeploymentMangerMessageType.Error, 
-                                "SetReportDataSource", 
+                                DeploymentMangerMessageType.Error,
+                                "SetReportDataSource",
                                 string.Format("Duplicate Data Source Name: {0}", dataSource.ReportDataSourceNames));
                             sucess = false;
                             break;
                         }
 
                         reportDataSources.Add(
-                            useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), 
+                            useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(),
                             DeploymentMangerHelper.FormatItemPath(
                                 string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
                     }
@@ -1318,15 +1163,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 if (reportDataSources.ContainsKey(dataSource.Name))
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetReportDataSource", 
+                        DeploymentMangerMessageType.Error,
+                        "SetReportDataSource",
                         string.Format("Duplicate Data Source Name: {0}", dataSource.Name));
                     sucess = false;
                 }
                 else
                 {
                     reportDataSources.Add(
-                        useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), 
+                        useMatchCase ? dataSource.Name : dataSource.Name.ToLower(),
                         DeploymentMangerHelper.FormatItemPath(
                             string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
                 }
@@ -1341,13 +1186,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Copies the old policy.
+        ///   Copies the old policy.
         /// </summary>
-        /// <param name="oldPolicy">The old policy.</param>
-        /// <param name="newPolicy">The new policy.</param>
-        /// <returns>
-        /// Position of the free new policy which needs to be added.
-        /// </returns>
+        /// <param name="oldPolicy"> The old policy. </param>
+        /// <param name="newPolicy"> The new policy. </param>
+        /// <returns> Position of the free new policy which needs to be added. </returns>
         private int CopyOldPolicy(Policy[] oldPolicy, Policy[] newPolicy)
         {
             int index;
@@ -1363,12 +1206,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Creates the complete message.
+        ///   Creates the complete message.
         /// </summary>
-        /// <param name="reportUserName">Name of the report user.</param>
-        /// <param name="reportingRoles">The reporting roles.</param>
-        /// <param name="reportFolder">The report folder.</param>
-        /// <returns>A complete string message.</returns>
+        /// <param name="reportUserName"> Name of the report user. </param>
+        /// <param name="reportingRoles"> The reporting roles. </param>
+        /// <param name="reportFolder"> The report folder. </param>
+        /// <returns> A complete string message. </returns>
         private string CreateCompleteMessage(string reportUserName, string[] reportingRoles, string reportFolder)
         {
             StringBuilder completeMessage = new StringBuilder();
@@ -1393,14 +1236,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Creates the report server properties.
+        ///   Creates the report server properties.
         /// </summary>
-        /// <param name="itemProperties">
-        /// The report properties.
-        /// </param>
-        /// <returns>
-        /// A array report server properties.
-        /// </returns>
+        /// <param name="itemProperties"> The report properties. </param>
+        /// <returns> A array report server properties. </returns>
         private Property[] CreateProperties(Dictionary<string, string> itemProperties)
         {
             // if no properties then return null
@@ -1423,14 +1262,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Creates the report data source.
+        ///   Creates the report data source.
         /// </summary>
-        /// <param name="dataSource">
-        /// The data source.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c>.
-        /// </returns>
+        /// <param name="dataSource"> The data source. </param>
+        /// <returns> <c>true</c> if successful ; otherwise, <c>false</c> . </returns>
         private bool CreateReportDataSource(ReportServerDataSource dataSource)
         {
             try
@@ -1459,13 +1294,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // message the data source was created
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "CreateDataSource", 
+                    DeploymentMangerMessageType.Information,
+                    "CreateDataSource",
                     string.Format(
-                        "Created Data Source {0}/{1} Connecting to Server:{2}, Database:{3}", 
+                        "Created Data Source {0}/{1} Connecting to Server:{2}, Database:{3}",
                         new[]
                             {
-                                dataSource.DataSourceFolder, dataSource.Name, sqlConStringBuilder.DataSource, 
+                                dataSource.DataSourceFolder, dataSource.Name, sqlConStringBuilder.DataSource,
                                 sqlConStringBuilder.InitialCatalog
                             }));
                 return true;
@@ -1478,17 +1313,96 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Does the policy exists.
+        ///   Creates the schedule.
         /// </summary>
-        /// <param name="oldPolicy">
-        /// The old policy.
-        /// </param>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <returns>
-        /// Flag if the policy does exists.
-        /// </returns>
+        /// <param name="reportSchedule"> The report schedule. </param>
+        /// <returns> true if the report schedule created </returns>
+        private bool CreateSchedule(ReportSchedule reportSchedule,string reportingSite)
+        {
+            try
+            {
+                ScheduleDefinition scheduleDefinition = new ScheduleDefinition();
+                scheduleDefinition.StartDateTime = reportSchedule.StartDateTime;
+                if (reportSchedule.EndDateTime != DateTime.MinValue)
+                {
+                    scheduleDefinition.EndDateSpecified = true;
+                    scheduleDefinition.EndDate = reportSchedule.EndDateTime;
+                }
+                else
+                {
+                    scheduleDefinition.EndDateSpecified = false;
+                }
+                switch (reportSchedule.ScheduleRecurrence)
+                {
+                    case ScheduleRecurrenceEnum.Min:
+                        scheduleDefinition.Item = this.MinuteRecurrence(reportSchedule);
+                        break;
+                    case ScheduleRecurrenceEnum.Daily:
+                        scheduleDefinition.Item = this.DailyRecurrence(reportSchedule);
+                        break;
+                    case ScheduleRecurrenceEnum.Weekly:
+                        scheduleDefinition.Item = this.WeeklyRecurrence(reportSchedule);
+                        break;
+                    case ScheduleRecurrenceEnum.Monthly:
+                        scheduleDefinition.Item = this.MonthlyRecurrence(reportSchedule);
+                        break;
+                    case ScheduleRecurrenceEnum.MonthlyDOW:
+                        scheduleDefinition.Item = this.MonthlyDOWRecurrence(reportSchedule);
+                        break;
+                    default:
+                        throw new NotSupportedException("Report Schedule Recurrence");
+                }
+
+                Schedule[] reportServerSchedules =
+                    this.reportingService2010.ListSchedules(reportingSite);
+                Schedule schedule =
+                    reportServerSchedules.FirstOrDefault(
+                        reportServerSchedule => reportServerSchedule.Name.Equals(reportSchedule.Name));
+                if (schedule == null)
+                {
+                    this.reportingService2010.CreateSchedule(reportSchedule.Name, scheduleDefinition, reportingSite);
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Information,
+                        "CreateSchedule",
+                        string.Format("Created Report Schedule: {0}", reportSchedule.Name));
+                }
+                else
+                {
+                    this.reportingService2010.SetScheduleProperties(schedule.Name, schedule.ScheduleID, scheduleDefinition);
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Information,
+                        "CreateSchedule",
+                        string.Format("Updated Report Schedule: {0}", reportSchedule.Name));
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // catches the error and then reports out via msbuild.
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "CreateSchedule", ex.Message);
+                return false;
+            }
+        }
+
+        private DailyRecurrence DailyRecurrence(ReportSchedule reportSchedule)
+        {
+            int daysInterval;
+
+            if (!int.TryParse(reportSchedule.Interval, out daysInterval))
+            {
+                throw new FormatException("Report Schedule Interval for Daily Recurrence is not a vaild number");
+            }
+
+            return new DailyRecurrence { DaysInterval = daysInterval };
+        }
+
+        /// <summary>
+        ///   Does the policy exists.
+        /// </summary>
+        /// <param name="oldPolicy"> The old policy. </param>
+        /// <param name="reportUserName"> Name of the report user. </param>
+        /// <returns> Flag if the policy does exists. </returns>
         private bool DoesPolicyExists(Policy[] oldPolicy, string reportUserName)
         {
             bool returnValue = false;
@@ -1502,18 +1416,31 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return returnValue;
         }
 
+        private MonthsOfYearSelector GeMonthsOfYearSelector(ReportScheduleMonths reportScheduleMonths)
+        {
+            return new MonthsOfYearSelector
+                {
+                    January = reportScheduleMonths.Jan,
+                    February = reportScheduleMonths.Feb,
+                    March = reportScheduleMonths.Mar,
+                    April = reportScheduleMonths.Apr,
+                    May = reportScheduleMonths.May,
+                    June = reportScheduleMonths.Jun,
+                    July = reportScheduleMonths.Jul,
+                    August = reportScheduleMonths.Aug,
+                    September = reportScheduleMonths.Sep,
+                    October = reportScheduleMonths.Oct,
+                    November = reportScheduleMonths.Nov,
+                    December = reportScheduleMonths.Dec
+                };
+        }
+
         /// <summary>
-        /// Gets the data source definition.
+        ///   Gets the data source definition.
         /// </summary>
-        /// <param name="dataSource">
-        /// The data source.
-        /// </param>
-        /// <param name="sqlConStringBuilder">
-        /// The SQL con string builder.
-        /// </param>
-        /// <returns>
-        /// DataSourceDefinition with default setting created.
-        /// </returns>
+        /// <param name="dataSource"> The data source. </param>
+        /// <param name="sqlConStringBuilder"> The SQL con string builder. </param>
+        /// <returns> DataSourceDefinition with default setting created. </returns>
         private DataSourceDefinition GetDataSourceDefinition(
             ReportServerDataSource dataSource, SqlConnectionStringBuilder sqlConStringBuilder)
         {
@@ -1534,8 +1461,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // get the Data Source and Catalogs 
             definition.ConnectString = string.Format(
-                "Data Source={0};Initial Catalog={1}", 
-                sqlConStringBuilder.DataSource, 
+                "Data Source={0};Initial Catalog={1}",
+                sqlConStringBuilder.DataSource,
                 sqlConStringBuilder.InitialCatalog);
 
             // check to if windows security is used or in the provicer is AS
@@ -1568,18 +1495,77 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return definition;
         }
 
+        private MinuteRecurrence MinuteRecurrence(ReportSchedule reportSchedule)
+        {
+            if (!Regex.IsMatch(reportSchedule.Interval, @"^[0-2][0-9]:[0-5][0-9]$"))
+            {
+                throw new FormatException(
+                    "Report Schedule Interval for Minute Recurrence is not a vaild time format: (hh:mm)");
+            }
+
+            string[] times = reportSchedule.Interval.Split(new[] { ':' });
+            int hours = int.Parse(times[0]);
+            int mins = int.Parse(times[1]);
+
+            return new MinuteRecurrence { MinutesInterval = (hours * 60) + mins };
+        }
+
+        private MonthlyDOWRecurrence MonthlyDOWRecurrence(ReportSchedule reportSchedule)
+        {
+            MonthlyDOWRecurrence monthlyDowRecurrence = new MonthlyDOWRecurrence
+                {
+                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days),
+                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months)
+                };
+
+            if (string.IsNullOrEmpty(reportSchedule.Interval))
+            {
+                monthlyDowRecurrence.WhichWeekSpecified = false;
+            }
+            else
+            {
+                switch (reportSchedule.Interval)
+                {
+                    case "1st":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.FirstWeek;
+                        break;
+                    case "2nd":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.SecondWeek;
+                        break;
+                    case "3rd":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.ThirdWeek;
+                        break;
+                    case "4th":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.FourthWeek;
+                        break;
+                    case "Last":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.LastWeek;
+                        break;
+                }
+                monthlyDowRecurrence.WhichWeekSpecified = true;
+            }
+            return monthlyDowRecurrence;
+        }
+
+        private MonthlyRecurrence MonthlyRecurrence(ReportSchedule reportSchedule)
+        {
+            MonthlyRecurrence monthlyRecurrence = new MonthlyRecurrence
+                { MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months), Days = reportSchedule.Interval };
+
+            //if (!Regex.IsMatch(reportSchedule.Interval, @"^\d+,?\d-\d?,\d+$"))
+            //{
+            //    throw new FormatException("Report Schedule Interval for MonthlyRecurrence is not a vaild time format: (hh:mm)");
+            //}
+
+            return monthlyRecurrence;
+        }
+
         /// <summary>
-        /// The reporting services message.
+        ///   The reporting services message.
         /// </summary>
-        /// <param name="reportMessageType">
-        /// Type of the reporting message.
-        /// </param>
-        /// <param name="method">
-        /// The method.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
+        /// <param name="reportMessageType"> Type of the reporting message. </param>
+        /// <param name="method"> The method. </param>
+        /// <param name="message"> The message. </param>
         private void OnDeploymentMangerMessage(
             DeploymentMangerMessageType reportMessageType, string method, string message)
         {
@@ -1592,20 +1578,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Removes the policy.
+        ///   Removes the policy.
         /// </summary>
-        /// <param name="reportUserName">
-        /// Name of the report user.
-        /// </param>
-        /// <param name="oldPolicy">
-        /// The old policy.
-        /// </param>
-        /// <param name="newPolicy">
-        /// The new policy.
-        /// </param>
-        /// <returns>
-        /// Number to the free array space.
-        /// </returns>
+        /// <param name="reportUserName"> Name of the report user. </param>
+        /// <param name="oldPolicy"> The old policy. </param>
+        /// <param name="newPolicy"> The new policy. </param>
+        /// <returns> Number to the free array space. </returns>
         private int RemovePolicy(string reportUserName, Policy[] oldPolicy, Policy[] newPolicy)
         {
             bool foundOldPolicy = false;
@@ -1645,35 +1623,27 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Sends the warnings message.
+        ///   Sends the warnings message.
         /// </summary>
-        /// <param name="reportItem">
-        /// The report item.
-        /// </param>
-        /// <param name="warnings">
-        /// The warnings.
-        /// </param>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
+        /// <param name="reportItem"> The report item. </param>
+        /// <param name="warnings"> The warnings. </param>
+        /// <param name="sender"> The sender. </param>
         private void SendWarningsMessage(string reportItem, Warning[] warnings, string sender)
         {
             // loop through each warning and send out a message
             foreach (Warning warning in warnings)
             {
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    sender, 
+                    DeploymentMangerMessageType.Warning,
+                    sender,
                     string.Format("{0}:Warning:{1} ", reportItem, warning.Message));
             }
         }
 
         /// <summary>
-        /// Sets the default definition.
+        ///   Sets the default definition.
         /// </summary>
-        /// <param name="definition">
-        /// The definition.
-        /// </param>
+        /// <param name="definition"> The definition. </param>
         private void SetDefaultDefinition(DataSourceDefinition definition)
         {
             definition.UseOriginalConnectString = false;
@@ -1686,13 +1656,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Uploads to report server.
+        ///   Uploads to report server.
         /// </summary>
-        /// <param name="folderName">Name of the folder.</param>
-        /// <param name="uploadItem">The upload item.</param>
-        /// <param name="UploadItemType">Type of the upload item.</param>
-        /// <param name="disableWarnings">if set to <c>true</c> [disable warnings].</param>
-        /// <returns>The Report Server CatalogItem</returns>
+        /// <param name="folderName"> Name of the folder. </param>
+        /// <param name="uploadItem"> The upload item. </param>
+        /// <param name="UploadItemType"> Type of the upload item. </param>
+        /// <param name="disableWarnings"> if set to <c>true</c> [disable warnings]. </param>
+        /// <returns> The Report Server CatalogItem </returns>
         private CatalogItem UploadToReportServer(
             string folderName, IReportServerUploadItem uploadItem, string UploadItemType, bool disableWarnings)
         {
@@ -1702,12 +1672,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // uploads reports then outputs that reports was uploaded.
             CatalogItem catalogItem = this.reportingService2010.CreateCatalogItem(
-                UploadItemType, 
-                uploadItem.UploadItemName, 
-                folderName, 
-                true, 
-                uploadItem.GetBytes(), 
-                properties, 
+                UploadItemType,
+                uploadItem.UploadItemName,
+                folderName,
+                true,
+                uploadItem.GetBytes(),
+                properties,
                 out warnings);
 
             if (warnings != null && !disableWarnings)
@@ -1719,11 +1689,34 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
 
             this.OnDeploymentMangerMessage(
-                DeploymentMangerMessageType.Information, 
-                "UploadToReportServer", 
+                DeploymentMangerMessageType.Information,
+                "UploadToReportServer",
                 string.Format("Upload {0}: {1} to folder: {2}", UploadItemType, uploadItem.UploadItemName, folderName));
-            
+
             return catalogItem;
+        }
+
+        private WeeklyRecurrence WeeklyRecurrence(ReportSchedule reportSchedule)
+        {
+            WeeklyRecurrence weeklyRecurrence = new WeeklyRecurrence
+                { DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days) };
+
+            if (!string.IsNullOrEmpty(reportSchedule.Interval))
+            {
+                int weekInterval;
+                if (!int.TryParse(reportSchedule.Interval, out weekInterval))
+                {
+                    throw new FormatException("Report Schedule Interval for Weekly Recurrence is not a vaild number");
+                }
+                weeklyRecurrence.WeeksIntervalSpecified = true;
+                weeklyRecurrence.WeeksInterval = weekInterval;
+            }
+            else
+            {
+                weeklyRecurrence.WeeksIntervalSpecified = false;
+            }
+
+            return weeklyRecurrence;
         }
 
         #endregion
