@@ -1,3 +1,5 @@
+using System.Web.Services.Protocols;
+
 namespace ssrsmsbuildtasks.DeploymentManger
 {
     #region using directive
@@ -883,6 +885,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
         #region Methods
 
+        /// <summary>
+        /// Gets the days of week selector.
+        /// </summary>
+        /// <param name="scheduleWeekDays">The schedule week days.</param>
+        /// <returns>The Get Days Of Week Selector object</returns>
         private static DaysOfWeekSelector GetDaysOfWeekSelector(ReportScheduleWeekDays scheduleWeekDays)
         {
             return new DaysOfWeekSelector
@@ -1385,6 +1392,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
         }
 
+        /// <summary>
+        /// Dailies the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">The report schedule.</param>
+        /// <returns>The Daily Recurrence object</returns>
         private DailyRecurrence DailyRecurrence(ReportSchedule reportSchedule)
         {
             int daysInterval;
@@ -1416,6 +1428,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return returnValue;
         }
 
+        /// <summary>
+        /// Ges the months of year selector.
+        /// </summary>
+        /// <param name="reportScheduleMonths">The report schedule months.</param>
+        /// <returns>The Months Of Year Selector object</returns>
         private MonthsOfYearSelector GeMonthsOfYearSelector(ReportScheduleMonths reportScheduleMonths)
         {
             return new MonthsOfYearSelector
@@ -1486,15 +1503,38 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
             else
             {
-                // llse use SQL Server security
-                definition.UserName = sqlConStringBuilder.UserID;
-                definition.Password = sqlConStringBuilder.Password;
-                definition.CredentialRetrieval = CredentialRetrievalEnum.Store;
+                if (!string.IsNullOrEmpty(sqlConStringBuilder.UserID))
+                {
+                    // llse use SQL Server security
+                    definition.UserName = sqlConStringBuilder.UserID;
+                    definition.Password = sqlConStringBuilder.Password;
+                    definition.CredentialRetrieval = CredentialRetrievalEnum.Store;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(dataSource.CredentialsPrompt))
+                    {
+                        // Prompt the user for security credentials
+                        definition.Prompt = dataSource.CredentialsPrompt;
+                        definition.CredentialRetrieval = CredentialRetrievalEnum.Prompt;
+                    }
+                    else
+                    {
+                        // No security credentials required
+                        definition.CredentialRetrieval = CredentialRetrievalEnum.None;
+                    }
+                }
+
             }
 
             return definition;
         }
 
+        /// <summary>
+        /// Minutes the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">The report schedule.</param>
+        /// <returns>The Minute Recurrence object</returns>
         private MinuteRecurrence MinuteRecurrence(ReportSchedule reportSchedule)
         {
             if (!Regex.IsMatch(reportSchedule.Interval, @"^[0-2][0-9]:[0-5][0-9]$"))
@@ -1510,6 +1550,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return new MinuteRecurrence { MinutesInterval = (hours * 60) + mins };
         }
 
+        /// <summary>
+        /// Monthlies the DOW recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">The report schedule.</param>
+        /// <returns>THe Monthly Day Off Week Recurrence object</returns>
         private MonthlyDOWRecurrence MonthlyDOWRecurrence(ReportSchedule reportSchedule)
         {
             MonthlyDOWRecurrence monthlyDowRecurrence = new MonthlyDOWRecurrence
@@ -1547,6 +1592,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return monthlyDowRecurrence;
         }
 
+        /// <summary>
+        /// Monthlies the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">The report schedule.</param>
+        /// <returns>The Monthly Recurrence object</returns>
         private MonthlyRecurrence MonthlyRecurrence(ReportSchedule reportSchedule)
         {
             MonthlyRecurrence monthlyRecurrence = new MonthlyRecurrence
@@ -1696,6 +1746,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return catalogItem;
         }
 
+        /// <summary>
+        /// Weeklies the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">The report schedule.</param>
+        /// <returns>The Weekly Recurrence object</returns>
         private WeeklyRecurrence WeeklyRecurrence(ReportSchedule reportSchedule)
         {
             WeeklyRecurrence weeklyRecurrence = new WeeklyRecurrence

@@ -112,6 +112,13 @@ namespace ssrsmsbuildtasks.RS2008R2
                     {
                         this.AddReportProperties(reportServerDataSources[index], propertiesString);
                     }
+
+                    if (!String.IsNullOrEmpty(this.DataSources[index].GetMetadata("Prompt")))
+                    {
+                        reportServerDataSources[index].CredentialsPrompt = this.DataSources[index].GetMetadata("Prompt");
+                    }
+
+
                 }
 
                 return r2DeploymentManger.CreateDataSource(reportServerDataSources);
