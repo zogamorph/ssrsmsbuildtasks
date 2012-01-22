@@ -139,6 +139,13 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         #region Properties
 
         /// <summary>
+        /// Gets or sets the prompt displayed to the user when asking for security credentials.
+        /// </summary>
+        /// <value>A string containing the text to use to prompt the user for credentials.</value>
+        public string CredentialsPrompt { get; set; }
+
+
+        /// <summary>
         ///   Gets or sets the connection string.
         /// </summary>
         /// <value>The connection string.</value>
