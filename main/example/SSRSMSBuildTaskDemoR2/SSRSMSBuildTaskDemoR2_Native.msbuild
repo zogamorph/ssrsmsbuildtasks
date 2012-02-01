@@ -91,19 +91,17 @@
   
   <PropertyGroup>
     <FullDeployDependsOn>
-	  GetServerURL;
-	  CreateSchedules
-    </FullDeployDependsOn>
-	
-	<!--DeleteFolders;
+      GetServerURL;
+      CreateSchedules;
+      DeleteFolders;
       CreateReportingFolders;
       CreateConnectionSources;
       CreateShareDataSet;
       DeployReports;
       SetReportDataSet;
       SetReportsDataSource;
-      UploadResource-->
-	
+      UploadResource
+    </FullDeployDependsOn>
   </PropertyGroup>
 
   <Target Name="FullDepoly" DependsOnTargets="$(FullDeployDependsOn)" />
