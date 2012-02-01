@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks
 {
-    #region using directive
+    #region Directives
 
     using Microsoft.Build.Framework;
 
@@ -63,7 +63,7 @@ namespace ssrsmsbuildtasks
 
                     buildEngine.LogErrorEvent(
                         new BuildErrorEventArgs(
-                            "Reporting",
+                            "Reporting", 
                             eventArgs.Method, 
                             buildEngine.ProjectFileOfTaskNode, 
                             buildEngine.LineNumberOfTaskNode, 

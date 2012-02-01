@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region using directive
+    #region Directives
 
     using System;
 
@@ -35,6 +35,16 @@ namespace ssrsmsbuildtasks.RS2008R2
         public string Folder { get; set; }
 
         /// <summary>
+        ///   Gets or sets the reporting roles.
+        /// </summary>
+        /// <value>The reporting roles.</value>
+        /// <remarks>
+        ///   The reporting roles need to match the role within the targeted report server
+        /// </remarks>
+        [Required]
+        public string[] ReportingRoles { get; set; }
+
+        /// <summary>
         ///   Gets or sets the report server URL.
         /// </summary>
         /// <value>The report server URL.</value>
@@ -47,16 +57,6 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value>The name of the report user.</value>
         [Required]
         public string ReportUserName { get; set; }
-
-        /// <summary>
-        ///   Gets or sets the reporting roles.
-        /// </summary>
-        /// <value>The reporting roles.</value>
-        /// <remarks>
-        ///   The reporting roles need to match the role within the targeted report server
-        /// </remarks>
-        [Required]
-        public string[] ReportingRoles { get; set; }
 
         #endregion
 

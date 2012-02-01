@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region using directive
+    #region Directives
 
     using System;
 
@@ -81,7 +81,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                 {
                     reportResourcesFile[index] = new ReportResourceFile(this.Files[index].GetMetadata("FullPath"));
                     reportResourcesFile[index].MimeType = this.Files[index].GetMetadata("MimeType");
-                    reportResourcesFile[index].ReportServerProperties.Add("MimeType", reportResourcesFile[index].MimeType);
+                    reportResourcesFile[index].ReportServerProperties.Add(
+                        "MimeType", reportResourcesFile[index].MimeType);
                     string propertiesString = this.Files[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {

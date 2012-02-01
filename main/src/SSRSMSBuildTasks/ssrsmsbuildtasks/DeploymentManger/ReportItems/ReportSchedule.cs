@@ -1,12 +1,15 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="ReportScheduleWeekDays.cs" company="">
-// TODO: Update copyright text.
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ReportSchedule.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
-// -----------------------------------------------------------------------
+// <summary>
+//   Schedule Recurrence Enum
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region using directive
+    #region Directives
 
     using System;
 
@@ -20,22 +23,22 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// <summary>
         ///   Minute Recurrence
         /// </summary>
-        Min = 0,
+        Min = 0, 
 
         /// <summary>
         ///   Daily Recurrence
         /// </summary>
-        Daily = 1,
+        Daily = 1, 
 
         /// <summary>
         ///   Weekly Recurrence
         /// </summary>
-        Weekly = 2,
+        Weekly = 2, 
 
         /// <summary>
         ///   Monthly Recurrence
         /// </summary>
-        Monthly = 3,
+        Monthly = 3, 
 
         /// <summary>
         ///   Monthly DOW Recurrence
@@ -44,12 +47,15 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
     }
 
     /// <summary>
-    ///   TODO: Update summary.
+    /// TODO: Update summary.
     /// </summary>
     public class ReportSchedule
     {
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReportSchedule"/> class.
+        /// </summary>
         public ReportSchedule()
         {
             this.EndDateTime = DateTime.MinValue;
@@ -60,7 +66,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 
         #endregion
 
-        #region Public Properties
+        #region Properties
 
         /// <summary>
         /// Gets or sets the days.

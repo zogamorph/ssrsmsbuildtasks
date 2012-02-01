@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region using directive
+    #region Directives
 
     using System;
     using System.Text;
@@ -117,8 +117,6 @@ namespace ssrsmsbuildtasks.RS2008R2
                     {
                         reportServerDataSources[index].CredentialsPrompt = this.DataSources[index].GetMetadata("Prompt");
                     }
-
-
                 }
 
                 return r2DeploymentManger.CreateDataSource(reportServerDataSources);

@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.Native
 {
-    #region using directive
+    #region Directives
 
     using System;
     using System.Text;

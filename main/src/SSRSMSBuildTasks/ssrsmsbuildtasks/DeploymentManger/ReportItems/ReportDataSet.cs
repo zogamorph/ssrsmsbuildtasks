@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ReportDataSet.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region using directive
+    #region Directives
 
     using System.Collections.Generic;
     using System.IO;
@@ -38,18 +38,27 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportDataSet"/> class.
         /// </summary>
-        /// <param name="shareDataSetFilePath">The share data set file path.</param>
-        /// <param name="shareDataSetName">Name of the share data set.</param>
-        /// <param name="dateSetFolder">The date set folder.</param>
-        /// <param name="dataSource">The data source.</param>
-        /// <param name="reportDataSetNames">The report data set names.</param>
+        /// <param name="shareDataSetFilePath">
+        /// The share data set file path.
+        /// </param>
+        /// <param name="shareDataSetName">
+        /// Name of the share data set.
+        /// </param>
+        /// <param name="dateSetFolder">
+        /// The date set folder.
+        /// </param>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
+        /// <param name="reportDataSetNames">
+        /// The report data set names.
+        /// </param>
         public ReportDataSet(
             string shareDataSetFilePath, 
             string shareDataSetName, 
             string dateSetFolder, 
-            string dataSource,
-            string[] reportDataSetNames
-            )
+            string dataSource, 
+            string[] reportDataSetNames)
             : this(shareDataSetFilePath, shareDataSetName, dateSetFolder, dataSource)
         {
             this.ReportDataSetNames = reportDataSetNames;
@@ -58,16 +67,23 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// <summary>
         /// Initializes a new instance of the <see cref="ReportDataSet"/> class.
         /// </summary>
-        /// <param name="shareDataSetFilePath">The share data set file path.</param>
-        /// <param name="shareDataSetName">Name of the share data set.</param>
-        /// <param name="dateSetFolder">The date set folder.</param>
-        /// <param name="dataSource">The data source.</param>
+        /// <param name="shareDataSetFilePath">
+        /// The share data set file path.
+        /// </param>
+        /// <param name="shareDataSetName">
+        /// Name of the share data set.
+        /// </param>
+        /// <param name="dateSetFolder">
+        /// The date set folder.
+        /// </param>
+        /// <param name="dataSource">
+        /// The data source.
+        /// </param>
         public ReportDataSet(
             string shareDataSetFilePath, string shareDataSetName, string dateSetFolder, string dataSource)
             : this(shareDataSetFilePath, shareDataSetName, dateSetFolder)
         {
             this.DataSource = dataSource;
-        
         }
 
         /// <summary>

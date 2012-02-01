@@ -1,13 +1,16 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="ReportScheduleWeekDays.cs" company="">
-// TODO: Update copyright text.
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ReportScheduleWeekDays.cs" company="SSRSMSBuildTasks Development Team">
+//   Copyright (c) 2009
 // </copyright>
-// -----------------------------------------------------------------------
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
     /// <summary>
-    ///   TODO: Update summary.
+    /// TODO: Update summary.
     /// </summary>
     public class ReportScheduleWeekDays
     {
@@ -29,7 +32,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 
         #endregion
 
-        #region Public Properties
+        #region Properties
 
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="ReportScheduleWeekDays"/> is fri.

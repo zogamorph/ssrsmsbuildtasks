@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region using directive
+    #region Directives
 
     using System;
 
@@ -52,7 +52,6 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
-
 
         /// <summary>
         /// Gets or sets the share data sets.
