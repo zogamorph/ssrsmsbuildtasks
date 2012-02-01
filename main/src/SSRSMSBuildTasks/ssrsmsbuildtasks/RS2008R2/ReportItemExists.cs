@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region using directive
+    #region Directives
 
     using System;
 

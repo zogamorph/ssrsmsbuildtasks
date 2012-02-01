@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="IReportServerUploadItem.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.DeploymentManger.InterFaces
 {
-    #region using directive
+    #region Directives
 
     using System.Collections.Generic;
 

@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.Integrated
 {
-    #region using directive
+    #region Directives
 
     using System;
     using System.Collections.Generic;

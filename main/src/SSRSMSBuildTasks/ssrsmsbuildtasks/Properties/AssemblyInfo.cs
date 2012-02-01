@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AssemblyInfo.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-#region using directive
+#region Directives
 
 using System.Reflection;
 using System.Runtime.InteropServices;

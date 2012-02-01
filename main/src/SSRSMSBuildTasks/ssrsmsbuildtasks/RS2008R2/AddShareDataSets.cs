@@ -1,4 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="AddShareDataSets.cs" company="SSRSMSBuildTasks Development Team">
 //   Copyright (c) 2009
 // </copyright>
@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.RS2008R2
 {
-    #region using directive
+    #region Directives
 
     using System;
 
@@ -83,12 +83,10 @@ namespace ssrsmsbuildtasks.RS2008R2
                 for (int index = 0; index < this.ShareDataSets.Length; index++)
                 {
                     reportDataSets[index] = new ReportDataSet(
-                        this.ShareDataSets[index].GetMetadata("FullPath"),
+                        this.ShareDataSets[index].GetMetadata("FullPath"), 
                         this.ShareDataSets[index].GetMetadata("Filename"), 
-                        this.ShareDataSets[index].GetMetadata("Folder"),
-                        this.ShareDataSets[index].GetMetadata("DataSource")
-                        );
-
+                        this.ShareDataSets[index].GetMetadata("Folder"), 
+                        this.ShareDataSets[index].GetMetadata("DataSource"));
 
                     string propertiesString = this.ShareDataSets[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))

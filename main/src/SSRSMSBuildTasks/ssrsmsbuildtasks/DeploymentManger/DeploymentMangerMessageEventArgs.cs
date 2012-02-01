@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.DeploymentManger
 {
-    #region using directive
+    #region Directives
 
     using System;
 

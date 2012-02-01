@@ -7,11 +7,11 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-#region using directive
+#region Directives
 
 using System.Reflection;
 
 #endregion
 
-[assembly: AssemblyVersion("0.0.0.0")]
-[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("1.1.15346.000")]
+[assembly: AssemblyVersion("1.1.15346.000")]
