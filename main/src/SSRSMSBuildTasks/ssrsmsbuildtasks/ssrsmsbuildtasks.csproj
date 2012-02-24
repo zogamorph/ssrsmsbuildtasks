@@ -82,16 +82,18 @@
     <Compile Include="..\..\common\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DeploymentManger\DeploymentMangerMessageType.cs" />
     <Compile Include="DeploymentManger\Proxy\R2\MSReportingService2010.cs">
-      <SubType>code</SubType>
     </Compile>
     <Compile Include="DeploymentManger\Proxy\R2\ReportingService2010.cs">
-      <SubType>code</SubType>
     </Compile>
     <Compile Include="DeploymentManger\R2DeploymentManger.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DeploymentManger\ReportItems\DataProviderOprions.cs" />
+    <Compile Include="DeploymentManger\ReportItems\DataSubscriptionQuery.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportDataSet.cs" />
+    <Compile Include="DeploymentManger\ReportItems\ReportDataSubscription.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportFile.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportItemStrings.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportModelFiles.cs" />
@@ -101,14 +103,19 @@
     <Compile Include="DeploymentManger\ReportItems\ReportScheduleWeekDays.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportServerDataSource.cs" />
     <Compile Include="DeploymentManger\ReportItems\ReportServerDataSourceWindowsCredentials.cs" />
+    <Compile Include="DeploymentManger\ReportItems\ReportSubscription.cs" />
+    <Compile Include="DeploymentManger\ReportItems\ScheduleRecurrenceOptions.cs" />
+    <Compile Include="DeploymentManger\ReportItems\SubsrptionDeliveryMethodOptions.cs" />
     <Compile Include="RS2008R2\AddReports.cs" />
     <Compile Include="RS2008R2\AddReportsModel.cs" />
     <Compile Include="RS2008R2\AddReportUser.cs" />
     <Compile Include="RS2008R2\AddResource.cs" />
     <Compile Include="RS2008R2\AddShareDataSets.cs" />
+    <Compile Include="RS2008R2\CreateDataSubscriptions.cs" />
     <Compile Include="RS2008R2\CreateReportFolder.cs" />
     <Compile Include="RS2008R2\CreateReportingDataSource.cs" />
     <Compile Include="RS2008R2\CreateReportSchedule.cs" />
+    <Compile Include="RS2008R2\CreateSubscriptions.cs" />
     <Compile Include="RS2008R2\DataSourceExists.cs" />
     <Compile Include="RS2008R2\DeleteDataSource.cs" />
     <Compile Include="RS2008R2\DeleteReportFolder.cs" />
@@ -124,8 +131,10 @@
     <Compile Include="DeploymentManger\IntegratedDeploymentManager.cs" />
     <Compile Include="DeploymentManger\NativeDeploymentManger.cs" />
     <Compile Include="DeploymentManger\Proxy\Itergrated\ReportingService2006.cs" />
-    <Compile Include="DeploymentManger\Proxy\Native\MSReportingService2005.cs" />
-    <Compile Include="DeploymentManger\Proxy\Itergrated\MSReportingService2006.cs" />
+    <Compile Include="DeploymentManger\Proxy\Native\MSReportingService2005.cs">
+    </Compile>
+    <Compile Include="DeploymentManger\Proxy\Itergrated\MSReportingService2006.cs">
+    </Compile>
     <Compile Include="DeploymentManger\Proxy\Native\ReportingService2005.cs" />
     <Compile Include="DeploymentManger\DeploymentMangerMessageEventArgs.cs" />
     <Compile Include="DeploymentManger\DeploymentMangerHelper.cs" />

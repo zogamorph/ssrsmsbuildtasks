@@ -16,27 +16,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
     #endregion
 
     /// <summary>
-    /// Report Server Messages Types.
-    /// </summary>
-    public enum DeploymentMangerMessageType
-    {
-        /// <summary>
-        ///   Error when any expections happen.
-        /// </summary>
-        Error = 0, 
-
-        /// <summary>
-        ///   Information messages.
-        /// </summary>
-        Information, 
-
-        /// <summary>
-        ///   Warning messages.
-        /// </summary>
-        Warning
-    }
-
-    /// <summary>
     /// Deployment Manger Message Event Args
     /// </summary>
     public class DeploymentMangerMessageEventArgs : EventArgs

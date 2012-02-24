@@ -3,33 +3,17 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   A list of supported Data Provider.
+//   Report Server Data Source Class.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region using directive
+    #region Directives
 
     using System.Collections.Generic;
 
     #endregion
-
-    /// <summary>
-    /// A list of supported Data Provider.
-    /// </summary>
-    public enum DataProviderEnum
-    {
-        /// <summary>
-        ///   SQL Server Provider.
-        /// </summary>
-        SQL = 0, 
-
-        /// <summary>
-        ///   AS Provider.
-        /// </summary>
-        OLEDBMD = 1
-    }
 
     /// <summary>
     /// Report Server Data Source Class.
@@ -82,7 +66,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         public ReportServerDataSource(
             string[] reportDataSourceNames, 
             string name, 
-            DataProviderEnum provider, 
+            DataProviderOprions provider, 
             string connectionString, 
             bool overWrite, 
             string dataSourceFolder, 
@@ -121,7 +105,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         public ReportServerDataSource(
             string[] reportDataSourceNames, 
             string name, 
-            DataProviderEnum provider, 
+            DataProviderOprions provider, 
             string connectionString, 
             bool overWrite, 
             string dataSourceFolder)
@@ -139,17 +123,16 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         #region Properties
 
         /// <summary>
-        /// Gets or sets the prompt displayed to the user when asking for security credentials.
-        /// </summary>
-        /// <value>A string containing the text to use to prompt the user for credentials.</value>
-        public string CredentialsPrompt { get; set; }
-
-
-        /// <summary>
         ///   Gets or sets the connection string.
         /// </summary>
         /// <value>The connection string.</value>
         public string ConnectionString { get; set; }
+
+        /// <summary>
+        /// Gets or sets the prompt displayed to the user when asking for security credentials.
+        /// </summary>
+        /// <value>A string containing the text to use to prompt the user for credentials.</value>
+        public string CredentialsPrompt { get; set; }
 
         /// <summary>
         ///   Gets or sets the data source folder.
@@ -176,7 +159,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         ///   Gets or sets the provider.
         /// </summary>
         /// <value>The data provider.</value>
-        public DataProviderEnum Provider { get; set; }
+        public DataProviderOprions Provider { get; set; }
 
         /// <summary>
         ///   Gets or sets the name of the report.
