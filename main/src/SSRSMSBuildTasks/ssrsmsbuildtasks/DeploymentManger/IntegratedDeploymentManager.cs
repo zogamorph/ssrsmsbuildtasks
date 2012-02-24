@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.DeploymentManger
 {
-    #region using directive
+    #region Directives
 
     using System;
     using System.Collections;
@@ -50,7 +50,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             SharepointSiteURL = DeploymentMangerHelper.AddIntegratedWebServiceToUrl(SharepointSiteURL);
             this.reportingService2006 = new ReportingService2006(SharepointSiteURL)
                 {
-                   Credentials = CredentialCache.DefaultCredentials 
+                    Credentials = CredentialCache.DefaultCredentials 
                 };
         }
 
@@ -621,6 +621,64 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
+        /// Uploads the model.
+        /// </summary>
+        /// <param name="reportModelsFiles">
+        /// The report models files.
+        /// </param>
+        /// <param name="folderName">
+        /// Name of the folder.
+        /// </param>
+        /// <param name="disableWarnings">
+        /// if set to <c>true</c> [disable
+        ///   warnings].
+        /// </param>
+        /// <returns>
+        /// <c>true</c> if exists; otherwise, <c>false</c>./// 
+        /// </returns>
+        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
+        {
+            Warning[] warnings;
+            Property[] properties;
+
+            // Make sure the folder name is formated correctly
+            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            try
+            {
+                // loop through all the models create the properties which
+                // need to be set and display any warnings
+                foreach (ReportModelFiles model in reportModelsFiles)
+                {
+                    properties = this.CreateProperties(model.ReportServerProperties);
+                    this.reportingService2006.CreateModel(
+                        model.ModelName, folderName, model.GetBytes(), properties, out warnings);
+
+                    if (warnings != null && !disableWarnings)
+                    {
+                        if (warnings.Length > 0)
+                        {
+                            this.SendWarningsMessage(model.ModelName, warnings, "UploadModel");
+                        }
+                    }
+
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "UploadModel", 
+                        string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
+                }
+
+                // report true
+                return true;
+            }
+            catch (Exception exception)
+            {
+                // Send message and set report fales
+                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Ups the load reports.
         /// </summary>
         /// <param name="reportFiles">
@@ -677,64 +735,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 // Display any errors
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UpLoadReports", ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Uploads the model.
-        /// </summary>
-        /// <param name="reportModelsFiles">
-        /// The report models files.
-        /// </param>
-        /// <param name="folderName">
-        /// Name of the folder.
-        /// </param>
-        /// <param name="disableWarnings">
-        /// if set to <c>true</c> [disable
-        ///   warnings].
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if exists; otherwise, <c>false</c>./// 
-        /// </returns>
-        public bool UploadModel(ReportModelFiles[] reportModelsFiles, string folderName, bool disableWarnings)
-        {
-            Warning[] warnings;
-            Property[] properties;
-
-            // Make sure the folder name is formated correctly
-            folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
-            try
-            {
-                // loop through all the models create the properties which
-                // need to be set and display any warnings
-                foreach (ReportModelFiles model in reportModelsFiles)
-                {
-                    properties = this.CreateProperties(model.ReportServerProperties);
-                    this.reportingService2006.CreateModel(
-                        model.ModelName, folderName, model.GetBytes(), properties, out warnings);
-
-                    if (warnings != null && !disableWarnings)
-                    {
-                        if (warnings.Length > 0)
-                        {
-                            this.SendWarningsMessage(model.ModelName, warnings, "UploadModel");
-                        }
-                    }
-
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "UploadModel", 
-                        string.Format("Upload Report Model: {0} to folder: {1} ", model.ModelName, folderName));
-                }
-
-                // report true
-                return true;
-            }
-            catch (Exception exception)
-            {
-                // Send message and set report fales
-                this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "UploadModel", exception.Message);
                 return false;
             }
         }
@@ -1169,10 +1169,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // setting the conection string bas up the type
             switch (dataSource.Provider)
             {
-                case DataProviderEnum.SQL:
+                case DataProviderOprions.SQL:
                     definition.Extension = "SQL";
                     break;
-                case DataProviderEnum.OLEDBMD:
+                case DataProviderOprions.OLEDBMD:
                     definition.Extension = "OLEDB-MD";
                     break;
             }
@@ -1184,7 +1184,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 sqlConStringBuilder.InitialCatalog);
 
             // check to if windows security is used or in the provicer is AS
-            if (sqlConStringBuilder.IntegratedSecurity || dataSource.Provider == DataProviderEnum.OLEDBMD)
+            if (sqlConStringBuilder.IntegratedSecurity || dataSource.Provider == DataProviderOprions.OLEDBMD)
             {
                 definition.WindowsCredentials = true;
 

@@ -26,6 +26,19 @@ namespace ssrsmsbuildtasks.RS2008R2
     /// </summary>
     public class AddShareDataSets : Task
     {
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddShareDataSets"/> class. 
+        /// Initializes a new instance of the <see cref="T:Microsoft.Build.Utilities.Task"/> class.
+        /// </summary>
+        public AddShareDataSets()
+        {
+            this.DisableWarnings = false;
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>

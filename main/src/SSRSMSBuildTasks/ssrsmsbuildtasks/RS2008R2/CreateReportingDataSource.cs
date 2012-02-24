@@ -93,9 +93,9 @@ namespace ssrsmsbuildtasks.RS2008R2
                             Name = this.DataSources[index].ItemSpec, 
                             OverWrite = Convert.ToBoolean(this.DataSources[index].GetMetadata("OverWrite")), 
                             Provider =
-                                (DataProviderEnum)
+                                (DataProviderOprions)
                                 Enum.Parse(
-                                    typeof(DataProviderEnum), this.DataSources[index].GetMetadata("Provider"), true)
+                                    typeof(DataProviderOprions), this.DataSources[index].GetMetadata("Provider"), true)
                         };
 
                     if (!String.IsNullOrEmpty(this.DataSources[index].GetMetadata("WindowsUser")) &&

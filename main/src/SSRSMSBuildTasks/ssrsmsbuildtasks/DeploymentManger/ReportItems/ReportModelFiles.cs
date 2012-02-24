@@ -9,7 +9,7 @@
 
 namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
 {
-    #region using directive
+    #region Directives
 
     using System.Collections.Generic;
     using System.IO;

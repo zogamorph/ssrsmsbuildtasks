@@ -158,19 +158,19 @@ namespace ssrsmsbuildtasks.RS2008R2
                     }
 
                     reportSchedules[index].ScheduleRecurrence =
-                        (ScheduleRecurrenceEnum)
+                        (ScheduleRecurrenceOptions)
                         Enum.Parse(
-                            typeof(ScheduleRecurrenceEnum), 
+                            typeof(ScheduleRecurrenceOptions), 
                             this.ReportSchedules[index].GetMetadata("ScheduleRecurrence"), 
                             true);
 
                     switch (reportSchedules[index].ScheduleRecurrence)
                     {
-                        case ScheduleRecurrenceEnum.Min:
-                        case ScheduleRecurrenceEnum.Daily:
+                        case ScheduleRecurrenceOptions.Min:
+                        case ScheduleRecurrenceOptions.Daily:
                             reportSchedules[index].Interval = this.ReportSchedules[index].GetMetadata("Interval");
                             break;
-                        case ScheduleRecurrenceEnum.Weekly:
+                        case ScheduleRecurrenceOptions.Weekly:
                             this.GetDaysOfWeek(
                                 reportSchedules[index].Days, this.ReportSchedules[index].GetMetadata("DaysOfWeek"));
                             if (!string.IsNullOrEmpty(this.ReportSchedules[index].GetMetadata("Interval")))
@@ -179,7 +179,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                             }
 
                             break;
-                        case ScheduleRecurrenceEnum.Monthly:
+                        case ScheduleRecurrenceOptions.Monthly:
                             this.GetMonthsOfYear(
                                 reportSchedules[index].Months, this.ReportSchedules[index].GetMetadata("MonthsOfYear"));
                             if (!string.IsNullOrEmpty(this.ReportSchedules[index].GetMetadata("Interval")))
@@ -188,7 +188,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                             }
 
                             break;
-                        case ScheduleRecurrenceEnum.MonthlyDOW:
+                        case ScheduleRecurrenceOptions.MonthlyDOW:
                             this.GetDaysOfWeek(
                                 reportSchedules[index].Days, this.ReportSchedules[index].GetMetadata("DaysOfWeek"));
                             this.GetMonthsOfYear(

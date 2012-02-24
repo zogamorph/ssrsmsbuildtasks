@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   Schedule Recurrence Enum
+//   TODO: Update summary.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -14,37 +14,6 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
     using System;
 
     #endregion
-
-    /// <summary>
-    /// Schedule Recurrence Enum
-    /// </summary>
-    public enum ScheduleRecurrenceEnum
-    {
-        /// <summary>
-        ///   Minute Recurrence
-        /// </summary>
-        Min = 0, 
-
-        /// <summary>
-        ///   Daily Recurrence
-        /// </summary>
-        Daily = 1, 
-
-        /// <summary>
-        ///   Weekly Recurrence
-        /// </summary>
-        Weekly = 2, 
-
-        /// <summary>
-        ///   Monthly Recurrence
-        /// </summary>
-        Monthly = 3, 
-
-        /// <summary>
-        ///   Monthly DOW Recurrence
-        /// </summary>
-        MonthlyDOW = 4
-    }
 
     /// <summary>
     /// TODO: Update summary.
@@ -102,7 +71,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         ///   Gets or sets the schedule recurrence.
         /// </summary>
         /// <value> The schedule recurrence. </value>
-        public ScheduleRecurrenceEnum ScheduleRecurrence { get; set; }
+        public ScheduleRecurrenceOptions ScheduleRecurrence { get; set; }
 
         /// <summary>
         ///   Gets or sets the start date time.
