@@ -5,9 +5,9 @@
 	<!--ReportServer-->
 	<PropertyGroup>
 		<ServerURL>http://$(COMPUTERNAME)/reportserver</ServerURL>
-    <ProjectReportRoot>/SSRSMSBuildTeaskDemoR2</ProjectReportRoot>
+		<ProjectReportRoot>/SSRSMSBuildTeaskDemoR2</ProjectReportRoot>
 		<ProjectReportFolder>$(ProjectReportRoot)/Reports</ProjectReportFolder>
-    <ProjectDataSetFolder>$(ProjectReportRoot)/DataSet</ProjectDataSetFolder>
+		<ProjectDataSetFolder>$(ProjectReportRoot)/DataSet</ProjectDataSetFolder>
 		<ProjectReportDataSources>$(ProjectReportRoot)/Data Sources</ProjectReportDataSources>
 	</PropertyGroup>
 	
@@ -24,7 +24,7 @@
 	</PropertyGroup>
 	
 	<!--Reports-->
-  <ItemGroup>
+	<ItemGroup>
     <ReportsToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\*.rdl" />
     <DataSetToDeploy Include="$(MSBuildProjectDirectory)\SSRSMSBuildTaskDemoR2\ParametersDefaults.rsd">
       <Folder>$(ProjectDataSetFolder)</Folder>
@@ -37,7 +37,13 @@
 	<ItemGroup>
 		<!--The Include is the Name of the DataSet to create-->
 		<ReportDataSourceToDeploy Include="ReportServer">
-			<ConnectionString>Data Source=$(SQLServer);initial catalog=$(ReportServerdb);Integrated Security=True</ConnectionString>
+			<ConnectionString>Data Source=$(SQLServer);initial catalog=$(ReportServerdb);User Id=ReportUser;Password=Pa55W0rd</ConnectionString>
+			<Folder>$(ProjectReportDataSources)</Folder>
+			<Provider>SQL</Provider>
+			<OverWrite>True</OverWrite>
+		</ReportDataSourceToDeploy>
+		<ReportDataSourceToDeploy Include="SubscriptionConnection">
+			<ConnectionString>Data Source=$(SQLServer);initial catalog=TestDB;User Id=ReportUser;Password=Pa55W0rd</ConnectionString>
 			<Folder>$(ProjectReportDataSources)</Folder>
 			<Provider>SQL</Provider>
 			<OverWrite>True</OverWrite>
@@ -51,63 +57,86 @@
 			<OverWrite>True</OverWrite>
 		</ReportDataSourceToDeploy>
 	</ItemGroup>
-  
-	<ItemGroup>
 
+	<!--Schedules-->
+	<ItemGroup>
 	<!--The Include is the Report Server Schedules-->
 		<ReportServerSchedule Include="MinuteRecurrence">
 			<Interval>02:30</Interval>
 			<StartDateTime>01/02/2012</StartDateTime>
 			<ScheduleRecurrence>Min</ScheduleRecurrence>
-		</ReportServerSchedule >
-		
+		</ReportServerSchedule >		
 		<ReportServerSchedule Include="DailyRecurrence">
 			<Interval>2</Interval>
 			<StartDateTime>01/02/2012</StartDateTime>
 			<ScheduleRecurrence>Daily</ScheduleRecurrence>
-		</ReportServerSchedule >
-		
+		</ReportServerSchedule >		
 		<ReportServerSchedule Include="WeeklyRecurrence">
 			<StartDateTime>01/02/2012</StartDateTime>
 			<ScheduleRecurrence>Weekly</ScheduleRecurrence>
 			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
 		</ReportServerSchedule >
-
 		<ReportServerSchedule Include="MonthlyRecurrence">
 			<Interval>1,10,20</Interval>
 			<StartDateTime>01/02/2012</StartDateTime>
 			<ScheduleRecurrence>Monthly</ScheduleRecurrence>
 			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
-		</ReportServerSchedule >
-		
+		</ReportServerSchedule >		
 		<ReportServerSchedule Include="MonthlyDOWRecurrence">
 			<StartDateTime>01/02/2012</StartDateTime>
 			<ScheduleRecurrence>MonthlyDOW</ScheduleRecurrence>
 			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
 			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
 		</ReportServerSchedule >
-		
 	</ItemGroup>
   
-  <PropertyGroup>
-    <FullDeployDependsOn>
-      GetServerURL;
-      CreateSchedules;
-      DeleteFolders;
-      CreateReportingFolders;
-      CreateConnectionSources;
-      CreateShareDataSet;
-      DeployReports;
-      SetReportDataSet;
-      SetReportsDataSource;
-      UploadResource
-    </FullDeployDependsOn>
-  </PropertyGroup>
+	<!--Subscriptions-->
+	<ItemGroup>
+		<ReportSubscriptions Include="Subscriptions">
+			<SubscriptionDescription>A File Subscription</SubscriptionDescription>
+			<ReportScheduleName>MonthlyRecurrence</ReportScheduleName>
+			<DeliveryMethod>File</DeliveryMethod>
+			<SubscriptionReportParamters>pTimeStart=01/01/2012</SubscriptionReportParamters>
+			<SubscriptionSettings>FILENAME=@ReportName;PATH=\\STUDIO-XPS\Temp;RENDER_FORMAT=XML;USERNAME=.\Reporter;PASSWORD=Pa55W0rd</SubscriptionSettings>
+			<SubscriptionReports>/SSRSMSBuildTeaskDemoR2/Reports/Execution Log Report</SubscriptionReports>
+		</ReportSubscriptions>
+		
+		<ReportDataSubscriptions Include="DataSubscriptions">
+			<SubscriptionDescription>A Data Subscriptions</SubscriptionDescription>
+			<ReportScheduleName>MonthlyRecurrence</ReportScheduleName>
+			<DeliveryMethod>EMAIL</DeliveryMethod>
+			<SubscriptionReportParamters>pTimeStart=01/01/2012</SubscriptionReportParamters>
+			<SubscriptionSettings>Subject=Sub Reports;RenderFormat=XML;IncludeReport=true;ReplyTo=reportserver@test.com</SubscriptionSettings>
+			<SubscriptionReports>/SSRSMSBuildTeaskDemoR2/Reports/Execution Log Report</SubscriptionReports>
+			<QueryText>SELECT [EmployeeID], [EmployeeName], [EmployeeEMail] FROM [dbo].[Employee]</QueryText>
+			<QueryFields>EmployeeID;EmployeeName;EmployeeEMail</QueryFields>
+			<SubscriptionShareConnection>$(ProjectReportRoot)/Data Sources/SubscriptionConnection</SubscriptionShareConnection>
+			<SubscriptioSettingsFieldReferences>TO=EmployeeEMail</SubscriptioSettingsFieldReferences>
+			<SubscriptionReportsFieldReferences></SubscriptionReportsFieldReferences>
+		</ReportDataSubscriptions>
 
-  <Target Name="FullDepoly" DependsOnTargets="$(FullDeployDependsOn)" />
+	</ItemGroup>
+	
+	<PropertyGroup>
+		<FullDeployDependsOn>
+		  GetServerURL;
+		  CreateSchedules;
+		  DeleteFolders;
+		  CreateReportingFolders;
+		  CreateConnectionSources;
+		  CreateShareDataSet;
+		  DeployReports;
+		  SetReportDataSet;
+		  SetReportsDataSource;
+		  CreateReportSubscriptions;
+		  CreateReportDataSubscriptions;
+	  </FullDeployDependsOn>	
+	</PropertyGroup>
 
-  <!--Get Full Server URL-->
-  <Target Name="GetServerURL">
+	<Target Name="FullDepoly" DependsOnTargets="$(FullDeployDependsOn)" />
+
+	<!--Get Full Server URL-->
+	<Target Name="GetServerURL">
     <GetFullURL ServerURL="$(ServerURL)" IsIntergatedMode="False">
       <Output TaskParameter="ReportServerUrl" PropertyName="ReportingServerURL" />
     </GetFullURL>
@@ -129,7 +158,7 @@
 		<!-- Create the Report Folders -->
 		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectReportFolder)" />
 		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectReportDataSources)" />
-    <CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectDataSetFolder)" />
+		<CreateReportFolder ReportServerURL="$(ReportingServerURL)" NewFolderPath="$(ProjectDataSetFolder)" />
 	</Target>
 	
 	<Target Name="CreateConnectionSources">
@@ -137,23 +166,31 @@
 		<CreateReportingDataSource ReportServerURL="$(ReportingServerURL)" DataSources="@(ReportDataSourceToDeploy)" />
 	</Target>
 
-  <Target Name="CreateShareDataSet">
-    <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
-    <AddShareDataSets ReportServerURL="$(ReportingServerURL)" ShareDataSets="@(DataSetToDeploy)" />
-  </Target>
+	<Target Name="CreateShareDataSet">
+		<!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
+		<AddShareDataSets ReportServerURL="$(ReportingServerURL)" ShareDataSets="@(DataSetToDeploy)" />
+	  </Target>
 
-  <Target Name="DeployReports">
+	<Target Name="DeployReports">
 		<!--This will upload the reports to folder name-->
 		<AddReports ReportServerURL="$(ReportingServerURL)" Folder="$(ProjectReportFolder)" ReportFiles="@(ReportsToDeploy)" />
 	</Target>
 
-  <Target Name="SetReportDataSet">
-    <SetReportDataSet ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" ShareDataSets="@(DataSetToDeploy)" UseMatchCase="False" />
-  </Target>
-  
+	<Target Name="SetReportDataSet">
+		<SetReportDataSet ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" ShareDataSets="@(DataSetToDeploy)" UseMatchCase="False" />
+	  </Target>
+	  
 	<Target Name="SetReportsDataSource">
     <!--Loop through the all the reports within the folder (and sub-folder) and assign the location of the named reports data source if it's in the list (which will need to be otherwise the build will fail)-->
 		<SetReportDataSource ReportServerURL="$(ReportingServerURL)" Recursive="true" ReportItem="$(ProjectReportFolder)" DataSources="@(ReportDataSourceToDeploy)" UseMatchCase="False" />
+	</Target>
+
+	<Target Name="CreateReportSubscriptions">
+		<CreateSubscriptions ReportServerURL="$(ReportingServerURL)" Subscriptions="@(ReportSubscriptions)" />
+	</Target>
+	
+	<Target Name="CreateReportDataSubscriptions">
+		<CreateDataSubscriptions ReportServerURL="$(ReportingServerURL)" DataSubscriptions="@(ReportDataSubscriptions)" />
 	</Target>
   
 </Project>
