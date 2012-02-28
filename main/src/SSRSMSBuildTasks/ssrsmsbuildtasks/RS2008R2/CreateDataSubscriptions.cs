@@ -34,40 +34,25 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value>The report schedules.</value>
         /// <remarks>
         /// This will create a Data Subscriptions of the selected report
+        /// <para>
         /// The following meta data is required:
         /// SubscriptionDescription: single string describing the subscription.
         /// ReportScheduleName:  the shared reporting schedule name that the subscription will use
         /// DeliveryMethod: Needs to be set as file or email.
-        /// SubscriptionReportParamters:  A semi-colon list of <report parameter name> = <report parameter value> 
-        /// SubscriptionSettings: A semi-colon list of <subscription setting name> = <subscription setting value> 
+        /// SubscriptionReportParamters:  A semi-colon list of [report parameter name] = [report parameter value] 
+        /// SubscriptionSettings: A semi-colon list of [subscription setting name] = [subscription setting value]
         /// SubscriptionReports: A semi-colon list of the full report server path of the reports for this subscription.
         /// QueryText: the query for the subscription data
         /// QueryFields: A semi-colon list of fields that the query will create
         /// SubscriptionShareConnection: full report server path to the shared data source
-        /// SubscriptioSettingsFieldReferences: A semi-colon list of <subscription setting name> = <Field reference> 
-        /// SubscriptionReportsFieldReferences: A semi-colon list of <report parameter name> = <Field reference>
-        /// 
-        /// Report Server Email
-        ///     TO
-        ///     CC
-        ///     BCC
-        ///     ReplyTo
-        ///     IncludeReport
-        ///     RenderFormat
-        ///     Priority
-        ///     Subject
-        ///     Comment
-        ///     IncludeLink
-        ///     SendEmailToUserAlias
-        /// 
-        /// Report Server FileShare
-        ///     FILENAME
-        ///     PATH
-        ///     RENDER_FORMAT
-        ///     WRITEMODE
-        ///     FILEEXTN
-        ///     USERNAME
-        ///     PASSWORD 
+        /// SubscriptioSettingsFieldReferences: A semi-colon list of [subscription setting name] = [Field reference]
+        /// SubscriptionReportsFieldReferences: A semi-colon list of [report parameter name] = [Field reference]
+        /// </para>
+        /// <para>
+        /// Export Settings: 
+        ///     <para>Email: TO, CC, BCC, ReplyTo, IncludeReport, RenderFormat, Priority, Subject, Comment, IncludeLink, SendEmailToUserAlias</para>
+        ///     <para>FileShare: FILENAME, PATH, RENDER_FORMAT, WRITEMODE, FILEEXTN, USERNAME, PASSWORD</para>
+        /// </para>
         /// </remarks>
         [Required]
         public ITaskItem[] DataSubscriptions { get; set; }
