@@ -22,10 +22,19 @@ namespace ssrsmsbuildtasks.RS2008R2
     #endregion
 
     /// <summary>
-    /// TODO: Update summary.
+    /// Create Subscriptions for the reports on the reportserver
     /// </summary>
     public class CreateSubscriptions : Task
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Microsoft.Build.Utilities.Task"/> class.
+        /// </summary>
+        public CreateSubscriptions()
+        {
+            this.DeleteExistingSubscriptions = false;
+            this.DeployIfExistingSubscriptions = false;
+        }
+
         #region Properties
 
         /// <summary>
@@ -59,6 +68,14 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// SubscriptionReports: A semi-colon list of the full report server path of the reports for this subscription.
         /// </para>
         /// <para>
+        /// For Data Driven Subscription the following extra metadata is required: 
+        /// QueryText: the query for the subscription data
+        /// QueryFields: A semi-colon list of fields that the query will create
+        /// SubscriptionShareConnection: full report server path to the shared data source
+        /// SubscriptioSettingsFieldReferences: A semi-colon list of [subscription setting name] = [Field reference]
+        /// SubscriptionReportsFieldReferences: A semi-colon list of [report parameter name] = [Field reference]
+        /// </para>
+        /// <para>
         /// Export Settings: 
         ///     <para>Email: TO, CC, BCC, ReplyTo, IncludeReport, RenderFormat, Priority, Subject, Comment, IncludeLink, SendEmailToUserAlias</para>
         ///     <para>FileShare: FILENAME, PATH, RENDER_FORMAT, WRITEMODE, FILEEXTN, USERNAME, PASSWORD</para>
@@ -66,6 +83,22 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// </remarks>
         [Required]
         public ITaskItem[] Subscriptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [delete existing subscriptions].
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if [delete existing subscriptions]; otherwise, <c>false</c>.
+        /// </value>
+        public bool DeleteExistingSubscriptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [deploy if existing subscriptions].
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if [deploy if existing subscriptions]; otherwise, <c>false</c>.
+        /// </value>
+        public bool DeployIfExistingSubscriptions { get; set; }
 
         #endregion
 
@@ -87,36 +120,60 @@ namespace ssrsmsbuildtasks.RS2008R2
             {
                 for (int i = 0; i < this.Subscriptions.Length; i++)
                 {
-                    reportSubscriptions[i] = new ReportSubscription();
-                    reportSubscriptions[i].Description = this.Subscriptions[i].GetMetadata("SubscriptionDescription");
-                    reportSubscriptions[i].ScheduleName = this.Subscriptions[i].GetMetadata("ReportScheduleName");
-                    reportSubscriptions[i].DeliveryMethodOptions =
-                        RSBuildHelper.DeliveryMethodOption(this.Subscriptions[i].GetMetadata("DeliveryMethod"));
-                    RSBuildHelper.GetParameters(
-                        reportSubscriptions[i].ReportParameters, 
-                        this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"));
-                    RSBuildHelper.GetParameters(
-                        reportSubscriptions[i].ExtensionSettings, 
-                        this.Subscriptions[i].GetMetadata("SubscriptionSettings"));
-                    reportSubscriptions[i].Reports.AddRange(
-                        this.Subscriptions[i].GetMetadata("SubscriptionReports").Split(new[] { ';' }));
+                    if (!string.IsNullOrEmpty(this.Subscriptions[i].GetMetadata("QueryText")))
+                    {
+                        ReportDataSubscription reportDataSubscription = new ReportDataSubscription();
+                        reportDataSubscription.Description = this.Subscriptions[i].GetMetadata("SubscriptionDescription");
+                        reportDataSubscription.ScheduleName = this.Subscriptions[i].GetMetadata("ReportScheduleName");
+                        reportDataSubscription.DeliveryMethodOptions = RSBuildHelper.DeliveryMethodOption(this.Subscriptions[i].GetMetadata("DeliveryMethod"));
+                        RSBuildHelper.GetParameters(
+                            reportDataSubscription.ReportParameters,
+                            this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"));
+                        RSBuildHelper.GetParameters(
+                            reportDataSubscription.ExtensionSettings,
+                            this.Subscriptions[i].GetMetadata("SubscriptionSettings"));
+                        reportDataSubscription.Reports.AddRange(
+                            this.Subscriptions[i].GetMetadata("SubscriptionReports").Split(new[] { ';' }));
+                        reportDataSubscription.SubscriptionQuery.QueryText = this.Subscriptions[i].GetMetadata("QueryText");
+                        reportDataSubscription.SubscriptionQuery.Fields.AddRange(this.Subscriptions[i].GetMetadata("QueryFields").Split(new[] { ';' }));
+                        reportDataSubscription.SubscriptionQuery.ShareConnection = this.Subscriptions[i].GetMetadata("SubscriptionShareConnection");
+                        RSBuildHelper.GetParameters(reportDataSubscription.ExtensionSettingsFieldReferences, this.Subscriptions[i].GetMetadata("SubscriptioSettingsFieldReferences"));
+                        RSBuildHelper.GetParameters(reportDataSubscription.ReportFieldReferences, this.Subscriptions[i].GetMetadata("SubscriptionReportsFieldReferences"));
+                        reportSubscriptions[i] = reportDataSubscription;
+                    }
+                    else
+                    {
+                        reportSubscriptions[i] = new ReportSubscription();
+                        reportSubscriptions[i].Description = this.Subscriptions[i].GetMetadata("SubscriptionDescription");
+                        reportSubscriptions[i].ScheduleName = this.Subscriptions[i].GetMetadata("ReportScheduleName");
+                        reportSubscriptions[i].DeliveryMethodOptions =
+                            RSBuildHelper.DeliveryMethodOption(this.Subscriptions[i].GetMetadata("DeliveryMethod"));
+                        RSBuildHelper.GetParameters(
+                            reportSubscriptions[i].ReportParameters,
+                            this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"));
+                        RSBuildHelper.GetParameters(
+                            reportSubscriptions[i].ExtensionSettings,
+                            this.Subscriptions[i].GetMetadata("SubscriptionSettings"));
+                        reportSubscriptions[i].Reports.AddRange(
+                            this.Subscriptions[i].GetMetadata("SubscriptionReports").Split(new[] { ';' }));
+                    }
                 }
 
-                return r2DeploymentManger.CreateSubscrptions(reportSubscriptions, this.ReportingSite);
+                return r2DeploymentManger.CreateSubscrptions(reportSubscriptions, this.ReportingSite, this.DeleteExistingSubscriptions, this.DeployIfExistingSubscriptions);
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting", 
-                        "CreateSubscriptions", 
-                        this.BuildEngine.ProjectFileOfTaskNode, 
-                        this.BuildEngine.LineNumberOfTaskNode, 
-                        this.BuildEngine.ColumnNumberOfTaskNode, 
-                        0, 
-                        0, 
-                        ex.Message, 
-                        string.Empty, 
+                        "Reporting",
+                        "CreateSubscriptions",
+                        this.BuildEngine.ProjectFileOfTaskNode,
+                        this.BuildEngine.LineNumberOfTaskNode,
+                        this.BuildEngine.ColumnNumberOfTaskNode,
+                        0,
+                        0,
+                        ex.Message,
+                        string.Empty,
                         this.ToString()));
                 return false;
             }

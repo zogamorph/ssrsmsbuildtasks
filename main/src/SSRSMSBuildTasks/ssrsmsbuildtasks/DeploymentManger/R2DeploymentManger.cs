@@ -223,33 +223,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Creates the data subscrptions.
-        /// </summary>
-        /// <param name="reportSubscriptions">
-        /// The report subscrptions.
-        /// </param>
-        /// <param name="reportingSite">
-        /// The reporting site.
-        /// </param>
-        /// <returns>
-        /// <c>true</c> if successful ; otherwise, <c>false</c> .
-        /// </returns>
-        public bool CreateDataSubscrptions(ReportDataSubscription[] reportSubscriptions, string reportingSite)
-        {
-            bool success = false;
-            foreach (ReportDataSubscription reportDataSubscription in reportSubscriptions)
-            {
-                success = this.CreateDataSubscription(reportDataSubscription, reportingSite);
-                if (!success)
-                {
-                    break;
-                }
-            }
-
-            return success;
-        }
-
-        /// <summary>
         /// Creates the folder.
         /// </summary>
         /// <param name="folderName">
@@ -374,18 +347,66 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <param name="reportingSite">
         /// The reporting site.
         /// </param>
+        /// <param name="deleteExistingSubscriptions">
+        /// if set to <c>true</c> [delete existing subscriptions].
+        /// </param>
+        /// <param name="deployIfExistingSubscriptions">
+        /// if set to <c>true</c> [deploy if existing subscriptions].
+        /// </param>
         /// <returns>
         /// <c>true</c> if successful ; otherwise, <c>false</c> .
         /// </returns>
-        public bool CreateSubscrptions(ReportSubscription[] reportSubscriptions, string reportingSite)
+        public bool CreateSubscrptions(
+            ReportSubscription[] reportSubscriptions, 
+            string reportingSite, 
+            bool deleteExistingSubscriptions, 
+            bool deployIfExistingSubscriptions)
         {
+            Dictionary<string, List<ReportSubscription>> reportserverSubscription =
+                this.CreateReportsSubscriptionList(reportSubscriptions);
+
             bool success = false;
-            foreach (ReportSubscription reportSubscrption in reportSubscriptions)
+
+            foreach (KeyValuePair<string, List<ReportSubscription>> keyValuePair in reportserverSubscription)
             {
-                success = this.CreateSubscription(reportSubscrption, reportingSite);
-                if (!success)
+                Subscription[] existingReportSubscriptions =
+                    this.reportingService2010.ListSubscriptions(keyValuePair.Key);
+
+                if (deleteExistingSubscriptions)
                 {
-                    break;
+                    foreach (Subscription existingReportSubscription in existingReportSubscriptions)
+                    {
+                        this.reportingService2010.DeleteSubscription(existingReportSubscription.SubscriptionID);
+                    }
+                }
+                else if (existingReportSubscriptions.Length > 0 && !deployIfExistingSubscriptions)
+                {
+                    this.OnDeploymentMangerMessage(
+                        DeploymentMangerMessageType.Information, 
+                        "CreateSubscription", 
+                        string.Format(
+                            "Skipped Report {0} Creating Subscription as exists subscripts already existing and deploy if existing subscription set to false", 
+                            keyValuePair.Key));
+                    success = true;
+                    continue;
+                }
+
+                foreach (ReportSubscription reportSubscription in keyValuePair.Value)
+                {
+                    if (reportSubscription is ReportDataSubscription)
+                    {
+                        ReportDataSubscription reportDataSubscription = reportSubscription as ReportDataSubscription;
+                        success = this.CreateDataSubscription(keyValuePair.Key, reportDataSubscription, reportingSite);
+                    }
+                    else
+                    {
+                        success = this.CreateSubscription(keyValuePair.Key, reportSubscription, reportingSite);
+                    }
+
+                    if (!success)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -1603,6 +1624,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Creates the data subscription.
         /// </summary>
+        /// <param name="reportPath">
+        /// The report path.
+        /// </param>
         /// <param name="reportDataSubscription">
         /// The report data subscription.
         /// </param>
@@ -1612,7 +1636,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// true if the report data Subscription created
         /// </returns>
-        private bool CreateDataSubscription(ReportDataSubscription reportDataSubscription, string reportingSite)
+        private bool CreateDataSubscription(
+            string reportPath, ReportDataSubscription reportDataSubscription, string reportingSite)
         {
             string matchData = this.GetReportScheduleID(
                 reportingSite, reportDataSubscription.ScheduleName, "CreateDataSubscription");
@@ -1630,6 +1655,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             ExtensionSettings extSettings = ExtensionSettings(
                 reportDataSubscription.DeliveryMethodOptions, extensionParams);
             DataRetrievalPlan dataRetrievalPlan = this.CreateDataRetrievalPlan(reportDataSubscription.SubscriptionQuery);
+
             if (dataRetrievalPlan == null)
             {
                 this.OnDeploymentMangerMessage(
@@ -1639,22 +1665,20 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             try
             {
-                foreach (string report in reportDataSubscription.Reports.Select(r => DeploymentMangerHelper.FormatItemPath(r)))
-                {
-                    this.reportingService2010.CreateDataDrivenSubscription(
-                        report, 
-                        extSettings, 
-                        dataRetrievalPlan, 
-                        reportDataSubscription.Description, 
-                        EVENTTYPE, 
-                        matchData, 
-                        parameters);
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information,
-                        "CreateDataSubscription",
-                        string.Format(
-                            "Created Report {0} Subscription : {1}", report, reportDataSubscription.Description));
-                }
+                this.reportingService2010.CreateDataDrivenSubscription(
+                    reportPath, 
+                    extSettings, 
+                    dataRetrievalPlan, 
+                    reportDataSubscription.Description, 
+                    EVENTTYPE, 
+                    matchData, 
+                    parameters);
+
+                this.OnDeploymentMangerMessage(
+                    DeploymentMangerMessageType.Information, 
+                    "CreateDataSubscription", 
+                    string.Format(
+                        "Created Report {0} Subscription : {1}", reportPath, reportDataSubscription.Description));
 
                 return true;
             }
@@ -1663,6 +1687,102 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 this.OnDeploymentMangerMessage(DeploymentMangerMessageType.Error, "CreateDataSubscription", ex.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Minutes the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">
+        /// The report schedule.
+        /// </param>
+        /// <returns>
+        /// The Minute Recurrence object
+        /// </returns>
+        /// <exception cref="FormatException">Report Schedule Interval for Minute Recurrence is not a vaild time format: (hh:mm)</exception>
+        private MinuteRecurrence CreateMinuteRecurrence(ReportSchedule reportSchedule)
+        {
+            if (!Regex.IsMatch(reportSchedule.Interval, @"^[0-2][0-9]:[0-5][0-9]$"))
+            {
+                throw new FormatException(
+                    "Report Schedule Interval for Minute Recurrence is not a vaild time format: (hh:mm)");
+            }
+
+            string[] times = reportSchedule.Interval.Split(new[] { ':' });
+            int hours = int.Parse(times[0]);
+            int mins = int.Parse(times[1]);
+
+            return new MinuteRecurrence { MinutesInterval = (hours * 60) + mins };
+        }
+
+        /// <summary>
+        /// Monthlies the DOW recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">
+        /// The report schedule.
+        /// </param>
+        /// <returns>
+        /// THe Monthly Day Off Week Recurrence object
+        /// </returns>
+        private MonthlyDOWRecurrence CreateMonthlyDOWRecurrence(ReportSchedule reportSchedule)
+        {
+            MonthlyDOWRecurrence monthlyDowRecurrence = new MonthlyDOWRecurrence
+                {
+                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days), 
+                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months)
+                };
+
+            if (string.IsNullOrEmpty(reportSchedule.Interval))
+            {
+                monthlyDowRecurrence.WhichWeekSpecified = false;
+            }
+            else
+            {
+                switch (reportSchedule.Interval)
+                {
+                    case "1st":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.FirstWeek;
+                        break;
+                    case "2nd":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.SecondWeek;
+                        break;
+                    case "3rd":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.ThirdWeek;
+                        break;
+                    case "4th":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.FourthWeek;
+                        break;
+                    case "Last":
+                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.LastWeek;
+                        break;
+                }
+
+                monthlyDowRecurrence.WhichWeekSpecified = true;
+            }
+
+            return monthlyDowRecurrence;
+        }
+
+        /// <summary>
+        /// Monthlies the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">
+        /// The report schedule.
+        /// </param>
+        /// <returns>
+        /// The Monthly Recurrence object
+        /// </returns>
+        private MonthlyRecurrence CreateMonthlyRecurrence(ReportSchedule reportSchedule)
+        {
+            MonthlyRecurrence monthlyRecurrence = new MonthlyRecurrence
+                {
+                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months), Days = reportSchedule.Interval 
+                };
+
+            // if (!Regex.IsMatch(reportSchedule.Interval, @"^\d+,?\d-\d?,\d+$"))
+            // {
+            // throw new FormatException("Report Schedule Interval for CreateMonthlyRecurrence is not a vaild time format: (hh:mm)");
+            // }
+            return monthlyRecurrence;
         }
 
         /// <summary>
@@ -1832,6 +1952,40 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
+        /// The create reports subscription list.
+        /// </summary>
+        /// <param name="reportSubscriptions">
+        /// The report subscriptions.
+        /// </param>
+        /// <returns>
+        /// </returns>
+        private Dictionary<string, List<ReportSubscription>> CreateReportsSubscriptionList(
+            ReportSubscription[] reportSubscriptions)
+        {
+            Dictionary<string, List<ReportSubscription>> reportserverSubscription =
+                new Dictionary<string, List<ReportSubscription>>();
+
+            foreach (ReportSubscription reportSubscription in reportSubscriptions)
+            {
+                foreach (string report in reportSubscription.Reports)
+                {
+                    string reportPath = DeploymentMangerHelper.FormatItemPath(report);
+
+                    if (reportserverSubscription.ContainsKey(reportPath))
+                    {
+                        reportserverSubscription[report].Add(reportSubscription);
+                    }
+                    else
+                    {
+                        reportserverSubscription.Add(reportPath, new List<ReportSubscription>() { reportSubscription });
+                    }
+                }
+            }
+
+            return reportserverSubscription;
+        }
+
+        /// <summary>
         /// Creates the schedule.
         /// </summary>
         /// <param name="reportSchedule">
@@ -1862,19 +2016,19 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 switch (reportSchedule.ScheduleRecurrence)
                 {
                     case ScheduleRecurrenceOptions.Min:
-                        scheduleDefinition.Item = this.MinuteRecurrence(reportSchedule);
+                        scheduleDefinition.Item = this.CreateMinuteRecurrence(reportSchedule);
                         break;
                     case ScheduleRecurrenceOptions.Daily:
                         scheduleDefinition.Item = this.DailyRecurrence(reportSchedule);
                         break;
                     case ScheduleRecurrenceOptions.Weekly:
-                        scheduleDefinition.Item = this.WeeklyRecurrence(reportSchedule);
+                        scheduleDefinition.Item = this.CreateWeeklyRecurrence(reportSchedule);
                         break;
                     case ScheduleRecurrenceOptions.Monthly:
-                        scheduleDefinition.Item = this.MonthlyRecurrence(reportSchedule);
+                        scheduleDefinition.Item = this.CreateMonthlyRecurrence(reportSchedule);
                         break;
                     case ScheduleRecurrenceOptions.MonthlyDOW:
-                        scheduleDefinition.Item = this.MonthlyDOWRecurrence(reportSchedule);
+                        scheduleDefinition.Item = this.CreateMonthlyDOWRecurrence(reportSchedule);
                         break;
                     default:
                         throw new NotSupportedException("Report Schedule Recurrence");
@@ -1913,6 +2067,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <summary>
         /// Creates the subscription.
         /// </summary>
+        /// <param name="reportPath">
+        /// The report path.
+        /// </param>
         /// <param name="reportSubscription">
         /// The report subscrption.
         /// </param>
@@ -1922,10 +2079,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// true if the report Subscription created
         /// </returns>
-        private bool CreateSubscription(ReportSubscription reportSubscription, string reportingSite)
+        private bool CreateSubscription(string reportPath, ReportSubscription reportSubscription, string reportingSite)
         {
             string matchData = this.GetReportScheduleID(
-                reportingSite, reportSubscription.ScheduleName, "CreateDataSubscription");
+                reportingSite, reportSubscription.ScheduleName, "CreateSubscription");
+
             if (matchData == null)
             {
                 return false;
@@ -1935,17 +2093,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 this.CreateParameterValueOrFieldReferences(reportSubscription.ExtensionSettings, null);
             ParameterValue[] parameters = this.CreateParameterValues(reportSubscription.ReportParameters);
             ExtensionSettings extSettings = ExtensionSettings(reportSubscription.DeliveryMethodOptions, extensionParams);
+
             try
             {
-                foreach (string report in reportSubscription.Reports.Select(r => DeploymentMangerHelper.FormatItemPath(r)))
-                {
-                    this.reportingService2010.CreateSubscription(
-                        report, extSettings, reportSubscription.Description, EVENTTYPE, matchData, parameters);
-                    this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "CreateSubscription", 
-                        string.Format("Created Report {0} Subscription : {1}", report, reportSubscription.Description));
-                }
+                this.reportingService2010.CreateSubscription(
+                    reportPath, extSettings, reportSubscription.Description, EVENTTYPE, matchData, parameters);
+
+                this.OnDeploymentMangerMessage(
+                    DeploymentMangerMessageType.Information, 
+                    "CreateSubscription", 
+                    string.Format("Created Report {0} Subscription : {1}", reportPath, reportSubscription.Description));
 
                 return true;
             }
@@ -1957,6 +2114,41 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
+        /// Weeklies the recurrence.
+        /// </summary>
+        /// <param name="reportSchedule">
+        /// The report schedule.
+        /// </param>
+        /// <returns>
+        /// The Weekly Recurrence object
+        /// </returns>
+        private WeeklyRecurrence CreateWeeklyRecurrence(ReportSchedule reportSchedule)
+        {
+            WeeklyRecurrence weeklyRecurrence = new WeeklyRecurrence
+                {
+                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days) 
+                };
+
+            if (!string.IsNullOrEmpty(reportSchedule.Interval))
+            {
+                int weekInterval;
+                if (!int.TryParse(reportSchedule.Interval, out weekInterval))
+                {
+                    throw new FormatException("Report Schedule Interval for Weekly Recurrence is not a vaild number");
+                }
+
+                weeklyRecurrence.WeeksIntervalSpecified = true;
+                weeklyRecurrence.WeeksInterval = weekInterval;
+            }
+            else
+            {
+                weeklyRecurrence.WeeksIntervalSpecified = false;
+            }
+
+            return weeklyRecurrence;
+        }
+
+        /// <summary>
         /// Dailies the recurrence.
         /// </summary>
         /// <param name="reportSchedule">
@@ -1965,7 +2157,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// The Daily Recurrence object
         /// </returns>
-        /// <exception cref="FormatException">Report Schedule Interval for Daily Recurrence is not a vaild number</exception>
+        /// <exception cref="FormatException">
+        /// Report Schedule Interval for Daily Recurrence is not a vaild number
+        /// </exception>
         private DailyRecurrence DailyRecurrence(ReportSchedule reportSchedule)
         {
             int daysInterval;
@@ -2185,101 +2379,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
-        /// Minutes the recurrence.
-        /// </summary>
-        /// <param name="reportSchedule">
-        /// The report schedule.
-        /// </param>
-        /// <returns>
-        /// The Minute Recurrence object
-        /// </returns>
-        private MinuteRecurrence MinuteRecurrence(ReportSchedule reportSchedule)
-        {
-            if (!Regex.IsMatch(reportSchedule.Interval, @"^[0-2][0-9]:[0-5][0-9]$"))
-            {
-                throw new FormatException(
-                    "Report Schedule Interval for Minute Recurrence is not a vaild time format: (hh:mm)");
-            }
-
-            string[] times = reportSchedule.Interval.Split(new[] { ':' });
-            int hours = int.Parse(times[0]);
-            int mins = int.Parse(times[1]);
-
-            return new MinuteRecurrence { MinutesInterval = (hours * 60) + mins };
-        }
-
-        /// <summary>
-        /// Monthlies the DOW recurrence.
-        /// </summary>
-        /// <param name="reportSchedule">
-        /// The report schedule.
-        /// </param>
-        /// <returns>
-        /// THe Monthly Day Off Week Recurrence object
-        /// </returns>
-        private MonthlyDOWRecurrence MonthlyDOWRecurrence(ReportSchedule reportSchedule)
-        {
-            MonthlyDOWRecurrence monthlyDowRecurrence = new MonthlyDOWRecurrence
-                {
-                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days), 
-                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months)
-                };
-
-            if (string.IsNullOrEmpty(reportSchedule.Interval))
-            {
-                monthlyDowRecurrence.WhichWeekSpecified = false;
-            }
-            else
-            {
-                switch (reportSchedule.Interval)
-                {
-                    case "1st":
-                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.FirstWeek;
-                        break;
-                    case "2nd":
-                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.SecondWeek;
-                        break;
-                    case "3rd":
-                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.ThirdWeek;
-                        break;
-                    case "4th":
-                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.FourthWeek;
-                        break;
-                    case "Last":
-                        monthlyDowRecurrence.WhichWeek = WeekNumberEnum.LastWeek;
-                        break;
-                }
-
-                monthlyDowRecurrence.WhichWeekSpecified = true;
-            }
-
-            return monthlyDowRecurrence;
-        }
-
-        /// <summary>
-        /// Monthlies the recurrence.
-        /// </summary>
-        /// <param name="reportSchedule">
-        /// The report schedule.
-        /// </param>
-        /// <returns>
-        /// The Monthly Recurrence object
-        /// </returns>
-        private MonthlyRecurrence MonthlyRecurrence(ReportSchedule reportSchedule)
-        {
-            MonthlyRecurrence monthlyRecurrence = new MonthlyRecurrence
-                {
-                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months), Days = reportSchedule.Interval 
-                };
-
-            // if (!Regex.IsMatch(reportSchedule.Interval, @"^\d+,?\d-\d?,\d+$"))
-            // {
-            // throw new FormatException("Report Schedule Interval for MonthlyRecurrence is not a vaild time format: (hh:mm)");
-            // }
-            return monthlyRecurrence;
-        }
-
-        /// <summary>
         /// The reporting services message.
         /// </summary>
         /// <param name="reportMessageType">
@@ -2445,41 +2544,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 string.Format("Upload {0}: {1} to folder: {2}", UploadItemType, uploadItem.UploadItemName, folderName));
 
             return catalogItem;
-        }
-
-        /// <summary>
-        /// Weeklies the recurrence.
-        /// </summary>
-        /// <param name="reportSchedule">
-        /// The report schedule.
-        /// </param>
-        /// <returns>
-        /// The Weekly Recurrence object
-        /// </returns>
-        private WeeklyRecurrence WeeklyRecurrence(ReportSchedule reportSchedule)
-        {
-            WeeklyRecurrence weeklyRecurrence = new WeeklyRecurrence
-                {
-                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days) 
-                };
-
-            if (!string.IsNullOrEmpty(reportSchedule.Interval))
-            {
-                int weekInterval;
-                if (!int.TryParse(reportSchedule.Interval, out weekInterval))
-                {
-                    throw new FormatException("Report Schedule Interval for Weekly Recurrence is not a vaild number");
-                }
-
-                weeklyRecurrence.WeeksIntervalSpecified = true;
-                weeklyRecurrence.WeeksInterval = weekInterval;
-            }
-            else
-            {
-                weeklyRecurrence.WeeksIntervalSpecified = false;
-            }
-
-            return weeklyRecurrence;
         }
 
         #endregion
