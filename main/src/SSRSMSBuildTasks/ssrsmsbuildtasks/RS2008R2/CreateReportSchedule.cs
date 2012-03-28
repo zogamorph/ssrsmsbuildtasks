@@ -25,7 +25,7 @@ namespace ssrsmsbuildtasks.RS2008R2
     #endregion
 
     /// <summary>
-    /// TODO: Update summary.
+    /// Creates Report Server Shared Schedule 
     /// </summary>
     public class CreateReportSchedule : Task
     {
