@@ -63,27 +63,27 @@
 	<!--The Include is the Report Server Schedules-->
 		<ReportServerSchedule Include="MinuteRecurrence">
 			<Interval>02:30</Interval>
-			<StartDateTime>01/02/2012</StartDateTime>
+			<StartDateTime>01/04/2012 09:00:00</StartDateTime>
 			<ScheduleRecurrence>Min</ScheduleRecurrence>
 		</ReportServerSchedule >		
 		<ReportServerSchedule Include="DailyRecurrence">
 			<Interval>2</Interval>
-			<StartDateTime>01/02/2012</StartDateTime>
+			<StartDateTime>01/04/2012 09:30:00</StartDateTime>
 			<ScheduleRecurrence>Daily</ScheduleRecurrence>
 		</ReportServerSchedule >		
 		<ReportServerSchedule Include="WeeklyRecurrence">
-			<StartDateTime>01/02/2012</StartDateTime>
+			<StartDateTime>01/04/2012 10:00:00</StartDateTime>
 			<ScheduleRecurrence>Weekly</ScheduleRecurrence>
 			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
 		</ReportServerSchedule >
 		<ReportServerSchedule Include="MonthlyRecurrence">
 			<Interval>1,10,20</Interval>
-			<StartDateTime>01/02/2012</StartDateTime>
+			<StartDateTime>01/02/2012 10:30:00</StartDateTime>
 			<ScheduleRecurrence>Monthly</ScheduleRecurrence>
 			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
 		</ReportServerSchedule >		
 		<ReportServerSchedule Include="MonthlyDOWRecurrence">
-			<StartDateTime>01/02/2012</StartDateTime>
+			<StartDateTime>01/04/2012 13:35:00</StartDateTime>
 			<ScheduleRecurrence>MonthlyDOW</ScheduleRecurrence>
 			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
 			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
@@ -92,6 +92,7 @@
   
 	<!--Subscriptions-->
 	<ItemGroup>
+		
 		<ReportSubscriptions Include="Subscriptions">
 			<SubscriptionDescription>A File Subscription</SubscriptionDescription>
 			<ReportScheduleName>MonthlyRecurrence</ReportScheduleName>
@@ -104,7 +105,7 @@
 		<ReportDataSubscriptions Include="DataSubscriptions">
 			<SubscriptionDescription>A Data Subscriptions</SubscriptionDescription>
 			<ReportScheduleName>MonthlyRecurrence</ReportScheduleName>
-			<DeliveryMethod>EMAIL</DeliveryMethod>
+			<DeliveryMethod>EMail</DeliveryMethod>
 			<SubscriptionReportParamters>pTimeStart=01/01/2012</SubscriptionReportParamters>
 			<SubscriptionSettings>Subject=Sub Reports;RenderFormat=XML;IncludeReport=true;ReplyTo=reportserver@test.com</SubscriptionSettings>
 			<SubscriptionReports>/SSRSMSBuildTeaskDemoR2/Reports/Execution Log Report</SubscriptionReports>
@@ -128,8 +129,7 @@
 		  DeployReports;
 		  SetReportDataSet;
 		  SetReportsDataSource;
-		  CreateReportSubscriptions;
-		  CreateReportDataSubscriptions;
+		  CreateReportSubscriptions;	
 	  </FullDeployDependsOn>	
 	</PropertyGroup>
 
@@ -186,11 +186,7 @@
 	</Target>
 
 	<Target Name="CreateReportSubscriptions">
-		<CreateSubscriptions ReportServerURL="$(ReportingServerURL)" Subscriptions="@(ReportSubscriptions)" />
+		<CreateSubscriptions ReportServerURL="$(ReportingServerURL)" Subscriptions="@(ReportSubscriptions);@(ReportDataSubscriptions)" DeleteExistingSubscriptions="true" DeployIfExistingSubscriptions="false" />
 	</Target>
-	
-	<Target Name="CreateReportDataSubscriptions">
-		<CreateDataSubscriptions ReportServerURL="$(ReportingServerURL)" DataSubscriptions="@(ReportDataSubscriptions)" />
-	</Target>
-  
+	  
 </Project>

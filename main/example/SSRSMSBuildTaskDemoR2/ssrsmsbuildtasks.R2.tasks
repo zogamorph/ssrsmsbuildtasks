@@ -23,6 +23,5 @@
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.AddShareDataSets" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.SetReportDataSet" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.CreateReportSchedule" AssemblyFile="$(SSRSMSBuildTasksPath)" />
-  <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.CreateDataSubscriptions" AssemblyFile="$(SSRSMSBuildTasksPath)" />
   <UsingTask TaskName="ssrsmsbuildtasks.RS2008R2.CreateSubscriptions" AssemblyFile="$(SSRSMSBuildTasksPath)" />
 </Project>

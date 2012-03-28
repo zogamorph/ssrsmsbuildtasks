@@ -111,7 +111,6 @@
     <Compile Include="RS2008R2\AddReportUser.cs" />
     <Compile Include="RS2008R2\AddResource.cs" />
     <Compile Include="RS2008R2\AddShareDataSets.cs" />
-    <Compile Include="RS2008R2\CreateDataSubscriptions.cs" />
     <Compile Include="RS2008R2\CreateReportFolder.cs" />
     <Compile Include="RS2008R2\CreateReportingDataSource.cs" />
     <Compile Include="RS2008R2\CreateReportSchedule.cs" />
