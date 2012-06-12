@@ -6,15 +6,16 @@
 //   Static class with reuseable functions for reporting services
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-
-using System;
-using System.Collections.Generic;
-using ssrsmsbuildtasks.DeploymentManger.ReportItems;
-
 namespace ssrsmsbuildtasks
 {
     #region Directives
 
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using ssrsmsbuildtasks.DeploymentManger.ReportItems;
+    
     using Microsoft.Build.Framework;
 
     using ssrsmsbuildtasks.DeploymentManger;
@@ -86,14 +87,31 @@ namespace ssrsmsbuildtasks
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="paramtersString">The paramters string.</param>
-        public static void GetParameters(Dictionary<string, string> dictionary, string paramtersString)
+        public static void GetParameters(Dictionary<string, string> dictionary, string paramtersString, SubsrptionDeliveryMethodOptions subsrptionDeliveryMethodOptions)
         {
+            List<string> toList = new List<string>();
             if (!string.IsNullOrEmpty(paramtersString))
             {
                 foreach (string paramterString in paramtersString.Split(new[] { ';' }))
                 {
                     string[] paramter = paramterString.Split(new[] { '=' });
+
+                    if (subsrptionDeliveryMethodOptions == SubsrptionDeliveryMethodOptions.EMail)
+                    {
+                        if (paramter[0].ToUpper() == "TO" || (paramter.Length== 1 && toList.Count > 0))
+                        {
+                            toList.Add(paramter[paramter.Length-1]);
+                            continue;
+                        }
+
+                    }
+
                     dictionary.Add(paramter[0], paramter[1]);
+                }
+
+                if (subsrptionDeliveryMethodOptions == SubsrptionDeliveryMethodOptions.EMail && toList.Count > 0)
+                {
+                    dictionary.Add("TO", toList.Aggregate((s1, s2) => s1 + ";" + s2));
                 }
             }
         }

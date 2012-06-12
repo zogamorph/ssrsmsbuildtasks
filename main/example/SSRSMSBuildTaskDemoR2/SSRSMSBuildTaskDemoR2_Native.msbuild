@@ -101,8 +101,18 @@
 			<SubscriptionSettings>FILENAME=@ReportName;PATH=\\STUDIO-XPS\Temp;RENDER_FORMAT=XML;USERNAME=.\Reporter;PASSWORD=Pa55W0rd</SubscriptionSettings>
 			<SubscriptionReports>/SSRSMSBuildTeaskDemoR2/Reports/Execution Log Report</SubscriptionReports>
 		</ReportSubscriptions>
-		
-		<ReportDataSubscriptions Include="DataSubscriptions">
+
+    <ReportSubscriptions Include="EmailSubscriptions">
+      <SubscriptionDescription>A File Subscription</SubscriptionDescription>
+      <ReportScheduleName>MonthlyRecurrence</ReportScheduleName>
+      <DeliveryMethod>Email</DeliveryMethod>
+      <SubscriptionReportParamters>pTimeStart=01/01/2012</SubscriptionReportParamters>
+      <SubscriptionSettings>TO=Swright@costar.co.uk;zogamorph@gmail.com;zog_x@hotmail.com;Subject=@ReportName was executed at @ExecutionTime;RenderFormat=Excel;IncludeReport=true</SubscriptionSettings>
+      <SubscriptionReports>/SSRSMSBuildTeaskDemoR2/Reports/Execution Log Report</SubscriptionReports>
+    </ReportSubscriptions>
+
+
+    <ReportDataSubscriptions Include="DataSubscriptions">
 			<SubscriptionDescription>A Data Subscriptions</SubscriptionDescription>
 			<ReportScheduleName>MonthlyRecurrence</ReportScheduleName>
 			<DeliveryMethod>EMail</DeliveryMethod>
@@ -114,7 +124,7 @@
 			<SubscriptionShareConnection>$(ProjectReportRoot)/Data Sources/SubscriptionConnection</SubscriptionShareConnection>
 			<SubscriptioSettingsFieldReferences>TO=EmployeeEMail</SubscriptioSettingsFieldReferences>
 			<SubscriptionReportsFieldReferences></SubscriptionReportsFieldReferences>
-		</ReportDataSubscriptions>
+	</ReportDataSubscriptions>
 
 	</ItemGroup>
 	
