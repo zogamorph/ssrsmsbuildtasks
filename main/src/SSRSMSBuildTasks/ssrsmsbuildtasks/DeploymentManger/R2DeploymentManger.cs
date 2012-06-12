@@ -1262,7 +1262,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         // assgin the matched data source reference to the report.
                         itemReference = new ItemReference
                             {
-                                Name = reportDataSets[index].Name, 
+                                Name = reportDataSets[index].Name,
                                 Reference =
                                     dataSets[
                                         useMatchCase ? reportDataSets[index].Name : reportDataSets[index].Name.ToLower()]

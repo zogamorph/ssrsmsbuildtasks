@@ -128,17 +128,17 @@ namespace ssrsmsbuildtasks.RS2008R2
                         reportDataSubscription.DeliveryMethodOptions = RSBuildHelper.DeliveryMethodOption(this.Subscriptions[i].GetMetadata("DeliveryMethod"));
                         RSBuildHelper.GetParameters(
                             reportDataSubscription.ReportParameters,
-                            this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"));
+                            this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"), reportDataSubscription.DeliveryMethodOptions);
                         RSBuildHelper.GetParameters(
                             reportDataSubscription.ExtensionSettings,
-                            this.Subscriptions[i].GetMetadata("SubscriptionSettings"));
+                            this.Subscriptions[i].GetMetadata("SubscriptionSettings"), reportDataSubscription.DeliveryMethodOptions);
                         reportDataSubscription.Reports.AddRange(
                             this.Subscriptions[i].GetMetadata("SubscriptionReports").Split(new[] { ';' }));
                         reportDataSubscription.SubscriptionQuery.QueryText = this.Subscriptions[i].GetMetadata("QueryText");
                         reportDataSubscription.SubscriptionQuery.Fields.AddRange(this.Subscriptions[i].GetMetadata("QueryFields").Split(new[] { ';' }));
                         reportDataSubscription.SubscriptionQuery.ShareConnection = this.Subscriptions[i].GetMetadata("SubscriptionShareConnection");
-                        RSBuildHelper.GetParameters(reportDataSubscription.ExtensionSettingsFieldReferences, this.Subscriptions[i].GetMetadata("SubscriptioSettingsFieldReferences"));
-                        RSBuildHelper.GetParameters(reportDataSubscription.ReportFieldReferences, this.Subscriptions[i].GetMetadata("SubscriptionReportsFieldReferences"));
+                        RSBuildHelper.GetParameters(reportDataSubscription.ExtensionSettingsFieldReferences, this.Subscriptions[i].GetMetadata("SubscriptioSettingsFieldReferences"), reportDataSubscription.DeliveryMethodOptions);
+                        RSBuildHelper.GetParameters(reportDataSubscription.ReportFieldReferences, this.Subscriptions[i].GetMetadata("SubscriptionReportsFieldReferences"), reportDataSubscription.DeliveryMethodOptions);
                         reportSubscriptions[i] = reportDataSubscription;
                     }
                     else
@@ -150,10 +150,10 @@ namespace ssrsmsbuildtasks.RS2008R2
                             RSBuildHelper.DeliveryMethodOption(this.Subscriptions[i].GetMetadata("DeliveryMethod"));
                         RSBuildHelper.GetParameters(
                             reportSubscriptions[i].ReportParameters,
-                            this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"));
+                            this.Subscriptions[i].GetMetadata("SubscriptionReportParamters"), reportSubscriptions[i].DeliveryMethodOptions);
                         RSBuildHelper.GetParameters(
                             reportSubscriptions[i].ExtensionSettings,
-                            this.Subscriptions[i].GetMetadata("SubscriptionSettings"));
+                            this.Subscriptions[i].GetMetadata("SubscriptionSettings"), reportSubscriptions[i].DeliveryMethodOptions);
                         reportSubscriptions[i].Reports.AddRange(
                             this.Subscriptions[i].GetMetadata("SubscriptionReports").Split(new[] { ';' }));
                     }
