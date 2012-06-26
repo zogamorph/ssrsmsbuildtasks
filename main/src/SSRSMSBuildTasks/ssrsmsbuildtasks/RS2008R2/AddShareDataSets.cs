@@ -95,11 +95,15 @@ namespace ssrsmsbuildtasks.RS2008R2
                 // loop through the array of reports.
                 for (int index = 0; index < this.ShareDataSets.Length; index++)
                 {
-                    reportDataSets[index] = new ReportDataSet(
-                        this.ShareDataSets[index].GetMetadata("FullPath"), 
-                        this.ShareDataSets[index].GetMetadata("Filename"), 
-                        this.ShareDataSets[index].GetMetadata("Folder"), 
-                        this.ShareDataSets[index].GetMetadata("DataSource"));
+                    reportDataSets[index] = new ReportDataSet()
+                        {   
+                            ShareDataSetName = this.ShareDataSets[index].GetMetadata("Filename"),
+                            ShareDataSetFilePath = this.ShareDataSets[index].GetMetadata("FullPath"),
+                            DataSource = this.ShareDataSets[index].GetMetadata("DataSource"),
+                            DateSetFolder = this.ShareDataSets[index].GetMetadata("Folder"), 
+                            DocumentLibraryURL = string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("ReportDataSetNames"))? 
+                                null : this.ShareDataSets[index].GetMetadata("DocumentLibraryURL")
+                        };
 
                     string propertiesString = this.ShareDataSets[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))

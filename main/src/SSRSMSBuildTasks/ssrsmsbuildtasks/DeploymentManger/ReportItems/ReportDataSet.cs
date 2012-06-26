@@ -181,6 +181,9 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// </summary>
         public string ShareDataSetName { get; set; }
 
+
+        public string DocumentLibraryURL { get; set; }
+
         /// <summary>
         ///   Gets the name of the upload item.
         /// </summary>
@@ -189,7 +192,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         {
             get
             {
-                return this.ShareDataSetName;
+                return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.ShareDataSetName : string.Concat(this.ShareDataSetName, ".rsd");
             }
         }
 
@@ -219,5 +222,14 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         #endregion
 
         #endregion
+
+
+        public string GetDataSetFolder()
+        {
+            this.DateSetFolder = DeploymentMangerHelper.FormatFolderPath(this.DateSetFolder);
+            this.DocumentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(this.DocumentLibraryURL);
+            return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.DateSetFolder : string.Concat(this.DocumentLibraryURL, this.DateSetFolder);
+        }
+
     }
 }

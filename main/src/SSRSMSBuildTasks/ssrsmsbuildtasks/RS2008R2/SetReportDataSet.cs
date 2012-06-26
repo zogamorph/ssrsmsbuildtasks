@@ -72,6 +72,8 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value><c>true</c> if [use match case]; otherwise, <c>false</c>.</value>
         public bool UseMatchCase { get; set; }
 
+        public string DocumentLibraryURL { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -99,12 +101,15 @@ namespace ssrsmsbuildtasks.RS2008R2
                             ReportDataSetNames =
                                 string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("ReportDataSetNames"))
                                     ? null
-                                    : this.ShareDataSets[index].GetMetadata("ReportDataSetNames").Split(new[] { ';' })
+                                    : this.ShareDataSets[index].GetMetadata("ReportDataSetNames").Split(new[] { ';' }),
+                             DocumentLibraryURL =
+                                string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("DocumentLibraryURL"))
+                                    ? string.Empty : this.ShareDataSets[index].GetMetadata("DocumentLibraryURL")
                         };
                 }
 
                 return r2DeploymentManger.SetReportDataSet(
-                    this.ReportItem, this.Recursive, reportDataSets, this.UseMatchCase);
+                    this.ReportItem, this.DocumentLibraryURL, this.Recursive, reportDataSets, this.UseMatchCase);
             }
             catch (Exception ex)
             {
