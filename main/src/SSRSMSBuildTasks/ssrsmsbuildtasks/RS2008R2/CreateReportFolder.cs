@@ -45,6 +45,14 @@ namespace ssrsmsbuildtasks.RS2008R2
         public string NewFolderPath { get; set; }
 
         /// <summary>
+        /// Gets or sets the document library URL.
+        /// </summary>
+        /// <value>
+        /// The document library URL.
+        /// </value>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   The url of the report server.
         /// </summary>
         [Required]
@@ -67,21 +75,21 @@ namespace ssrsmsbuildtasks.RS2008R2
             try
             {
                 return r2DeploymentManger.CreateFolder(
-                    this.NewFolderPath, this.CreateReportFolderProperties(this.FolderReportProperties));
+                    this.NewFolderPath, this.DocumentLibraryURL, this.CreateReportFolderProperties(this.FolderReportProperties));
             }
             catch (Exception ex)
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting", 
-                        "CreateReportFolder", 
-                        this.BuildEngine.ProjectFileOfTaskNode, 
-                        this.BuildEngine.LineNumberOfTaskNode, 
-                        this.BuildEngine.ColumnNumberOfTaskNode, 
-                        0, 
-                        0, 
-                        ex.Message, 
-                        string.Empty, 
+                        "Reporting",
+                        "CreateReportFolder",
+                        this.BuildEngine.ProjectFileOfTaskNode,
+                        this.BuildEngine.LineNumberOfTaskNode,
+                        this.BuildEngine.ColumnNumberOfTaskNode,
+                        0,
+                        0,
+                        ex.Message,
+                        string.Empty,
                         this.ToString()));
                 return false;
             }

@@ -50,6 +50,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// </summary>
         public ReportFile()
         {
+            this.IncludeExtensionOnUpload = false;
             this.reportServerProperties = new Dictionary<string, string>();
         }
 
@@ -121,7 +122,7 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         {
             get
             {
-                return this.reportName ?? this.reportFileInfo.Name.Replace(this.reportFileInfo.Extension, string.Empty);
+                return this.reportName ?? (this.IncludeExtensionOnUpload ? this.reportFileInfo.Name : this.reportFileInfo.Name.Replace(this.reportFileInfo.Extension, string.Empty));
             }
 
             set
@@ -141,6 +142,8 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
                 return this.reportServerProperties;
             }
         }
+
+        public bool IncludeExtensionOnUpload { get; set; }
 
         /// <summary>
         ///   Gets UploadItemName.

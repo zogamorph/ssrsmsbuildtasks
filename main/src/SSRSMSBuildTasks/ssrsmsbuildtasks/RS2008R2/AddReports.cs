@@ -72,6 +72,8 @@ namespace ssrsmsbuildtasks.RS2008R2
         [Required]
         public string ReportServerURL { get; set; }
 
+        public string DocumentLibraryURL { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -89,13 +91,14 @@ namespace ssrsmsbuildtasks.RS2008R2
             R2DeploymentManger r2DeploymentManger = new R2DeploymentManger(this.ReportServerURL);
             ReportFile[] reportFiles = new ReportFile[this.ReportFiles.Length];
             r2DeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
-
+            bool includeExtensionOnUpload = !string.IsNullOrEmpty(this.DocumentLibraryURL);
             try
             {
                 // loop through the array of reports.
                 for (int index = 0; index < this.ReportFiles.Length; index++)
                 {
                     reportFiles[index] = new ReportFile(this.ReportFiles[index].GetMetadata("FullPath"));
+                    reportFiles[index].IncludeExtensionOnUpload = includeExtensionOnUpload;
                     string propertiesString = this.ReportFiles[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {
@@ -103,7 +106,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                     }
                 }
 
-                return r2DeploymentManger.UpLoadReports(reportFiles, this.Folder, this.DisableWarnings);
+                return r2DeploymentManger.UpLoadReports(reportFiles, this.Folder, this.DocumentLibraryURL, this.DisableWarnings);
             }
             catch (Exception ex)
             {

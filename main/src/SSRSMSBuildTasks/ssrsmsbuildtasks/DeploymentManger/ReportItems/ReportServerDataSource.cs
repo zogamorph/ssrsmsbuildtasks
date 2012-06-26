@@ -167,6 +167,8 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// <value>The name of the report.</value>
         public string[] ReportDataSourceNames { get; set; }
 
+        public string DocumentLibraryURL { get; set; }
+
         /// <summary>
         ///   Gets the report properties.
         /// </summary>
@@ -197,6 +199,18 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
             this.reportServerProperties.Clear();
             this.reportServerProperties.Add("Description", string.Empty);
             this.reportServerProperties.Add("Hidden", "False");
+        }
+
+        public string GetDataSourceFolder() 
+        {
+            this.DataSourceFolder = DeploymentMangerHelper.FormatFolderPath(this.DataSourceFolder);
+            this.DocumentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(this.DocumentLibraryURL);
+            return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.DataSourceFolder : string.Concat(this.DocumentLibraryURL, this.DataSourceFolder);
+        }
+
+        public string GetDataSourceName()
+        {
+            return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.Name : string.Concat(this.Name, ".rsds");
         }
 
         #endregion

@@ -72,6 +72,8 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value><c>true</c> if [use match case]; otherwise, <c>false</c>.</value>
         public bool UseMatchCase { get; set; }
 
+        public string DocumentLibraryURL { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -94,7 +96,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                 {
                     reportServerDataSources[index] = new ReportServerDataSource
                         {
-                            DataSourceFolder = this.DataSources[index].GetMetadata("Folder"), 
+                            DataSourceFolder = this.DataSources[index].GetMetadata("Folder"),
+                            DocumentLibraryURL = string.IsNullOrEmpty(this.DataSources[index].GetMetadata("DocumentLibraryURL")) ? string.Empty : this.DataSources[index].GetMetadata("DocumentLibraryURL"),
                             Name = this.DataSources[index].ItemSpec, 
                             ReportDataSourceNames =
                                 string.IsNullOrEmpty(this.DataSources[index].GetMetadata("ReportDataSourceNames"))
@@ -104,7 +107,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                 }
 
                 return r2DeploymentManger.SetReportDataSource(
-                    this.ReportItem, this.Recursive, reportServerDataSources, this.UseMatchCase);
+                    this.ReportItem, this.DocumentLibraryURL, this.Recursive, reportServerDataSources, this.UseMatchCase);
             }
             catch (Exception ex)
             {

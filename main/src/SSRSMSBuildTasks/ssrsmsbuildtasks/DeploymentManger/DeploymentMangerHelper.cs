@@ -201,6 +201,18 @@ namespace ssrsmsbuildtasks.DeploymentManger
             return newItemPath.Replace("//", "/");
         }
 
+        public static string FormatDocumentLibraryURL(string urlPath)
+        {
+            if (!string.IsNullOrEmpty(urlPath) && urlPath.EndsWith("/"))
+            {
+                return urlPath.Substring(0, urlPath.Length - 1);
+            }
+            else
+            {
+                return urlPath;
+            }
+        }
+
         #endregion
     }
 }

@@ -107,6 +107,11 @@ namespace ssrsmsbuildtasks.RS2008R2
                                 this.DataSources[index].GetMetadata("WindowsUserPassWord"));
                     }
 
+                    if (!string.IsNullOrEmpty(this.DataSources[index].GetMetadata("DocumentLibraryURL")))
+                    {
+                        reportServerDataSources[index].DocumentLibraryURL = this.DataSources[index].GetMetadata("DocumentLibraryURL");
+                    }
+
                     string propertiesString = this.DataSources[index].GetMetadata("ReportServerProperties");
                     if (!string.IsNullOrEmpty(propertiesString))
                     {

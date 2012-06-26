@@ -67,7 +67,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             this.reportingService2010 = new ReportingService2010(reportServerURL)
                 {
-                    Credentials = CredentialCache.DefaultCredentials 
+                    Credentials = CredentialCache.DefaultCredentials
                 };
         }
 
@@ -186,8 +186,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // Updating the policies of the folder.
                 this.reportingService2010.SetPolicies(reportFolder, newPolicy);
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "AddReportUser", 
+                    DeploymentMangerMessageType.Information,
+                    "AddReportUser",
                     this.CreateCompleteMessage(reportUserName, reportingRoles, reportFolder));
                 return true;
             }
@@ -234,41 +234,49 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if successful ; otherwise, <c>false</c> . 
         /// </returns>
-        public bool CreateFolder(string folderName, Dictionary<string, string> reportFolderProperites)
+        public bool CreateFolder(string folderName, string DocumentLibraryURL, Dictionary<string, string> reportFolderProperites)
         {
             CatalogItem[] items;
-            SearchCondition[] conditions = new SearchCondition[1];
-            Property[] findProperites = new Property[1];
             Property[] folderProperites = new Property[0];
 
             // Connecting to the reporting server
 
             try
             {
-                findProperites[0] = new Property { Name = "Resursive", Value = "False" };
-
+         
                 // Remove the root path
                 folderName = folderName.StartsWith("/") ? folderName.Substring(1) : folderName;
 
                 // split the folder path into units
                 string[] folderNames = folderName.Split(new[] { '/' });
-                string folderPath = "/";
+                string folderPath = string.IsNullOrEmpty(DocumentLibraryURL) ? "/" : DocumentLibraryURL;
 
                 // loop the units of the path to see if exists.
                 for (int index = 0; index < folderNames.Length; index++)
                 {
-                    // Create the search condition
-                    conditions[0] = new SearchCondition
+
+                    if (string.IsNullOrEmpty(DocumentLibraryURL))
+                    {
+                        SearchCondition[] conditions = new SearchCondition[1];
+                        Property[] findProperites = new Property[1] { new Property { Name = "Resursive", Value = "False" }};
+                        
+                        // Create the search condition
+                        conditions[0] = new SearchCondition
                         {
-                            Condition = ConditionEnum.Equals, 
-                            ConditionSpecified = true, 
-                            Name = "Name", 
+                            Condition = ConditionEnum.Equals,
+                            ConditionSpecified = true,
+                            Name = "Name",
                             Values = new[] { folderNames[index] }
                         };
 
-                    // Find Items in current folder
-                    items = this.reportingService2010.FindItems(
-                        folderPath, BooleanOperatorEnum.And, findProperites, conditions);
+                        // Find Items in current folder
+                        items = this.reportingService2010.FindItems(
+                            folderPath, BooleanOperatorEnum.And, findProperites, conditions);
+                    }
+                    else
+                    {
+                        items = this.reportingService2010.ListChildren(folderPath, false);
+                    }
 
                     // if the folder name is not found then create the folder.
                     if (!DeploymentMangerHelper.FindItemType(items, folderNames[index], ReportItemStrings.Folder))
@@ -281,7 +289,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                             {
                                 folderProperites[folderProperiteIndex] = new Property
                                     {
-                                        Name = folderProperite.Key, Value = folderProperite.Value 
+                                        Name = folderProperite.Key,
+                                        Value = folderProperite.Value
                                     };
                                 folderProperiteIndex++;
                             }
@@ -289,11 +298,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                         this.reportingService2010.CreateFolder(folderNames[index], folderPath, folderProperites);
                         this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Information, 
-                            "CreateFolder", 
+                            DeploymentMangerMessageType.Information,
+                            "CreateFolder",
                             string.Format(
-                                "Created Report Folder: {0}/{1}", 
-                                folderPath != "/" ? folderPath : string.Empty, 
+                                "Created Report Folder: {0}/{1}",
+                                folderPath != "/" ? folderPath : string.Empty,
                                 folderNames[index]));
                     }
 
@@ -357,9 +366,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <c>true</c> if successful ; otherwise, <c>false</c> .
         /// </returns>
         public bool CreateSubscrptions(
-            ReportSubscription[] reportSubscriptions, 
-            string reportingSite, 
-            bool deleteExistingSubscriptions, 
+            ReportSubscription[] reportSubscriptions,
+            string reportingSite,
+            bool deleteExistingSubscriptions,
             bool deployIfExistingSubscriptions)
         {
             Dictionary<string, List<ReportSubscription>> reportserverSubscription =
@@ -382,10 +391,10 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 else if (existingReportSubscriptions.Length > 0 && !deployIfExistingSubscriptions)
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "CreateSubscription", 
+                        DeploymentMangerMessageType.Information,
+                        "CreateSubscription",
                         string.Format(
-                            "Skipped Report {0} Creating Subscription as exists subscripts already existing and deploy if existing subscription set to false", 
+                            "Skipped Report {0} Creating Subscription as exists subscripts already existing and deploy if existing subscription set to false",
                             keyValuePair.Key));
                     success = true;
                     continue;
@@ -436,16 +445,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(modelName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteModel", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteModel",
                         string.Format("Deleted Report Item Source: {0}", modelName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteModel", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteModel",
                     string.Format("Item not a Report: {0}", modelName));
                 return false;
             }
@@ -479,16 +488,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(reportName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteReport", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteReport",
                         string.Format("Deleted Report Item Source: {0}", reportName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteReport", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteReport",
                     string.Format("Item not a Report: {0}", reportName));
                 return false;
             }
@@ -527,8 +536,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 if (currentItemType != ReportItemStrings.DataSource)
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Warning, 
-                        "DeleteReportDataSource", 
+                        DeploymentMangerMessageType.Warning,
+                        "DeleteReportDataSource",
                         string.Format("Report Item is not a data source:{0}/{1}", dataSourceFolder, dataSourceName));
                     return false;
                 }
@@ -536,8 +545,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // else Delete the data source
                 this.reportingService2010.DeleteItem(string.Format("{0}/{1}", dataSourceFolder, dataSourceName));
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "DeleteReportDataSource", 
+                    DeploymentMangerMessageType.Information,
+                    "DeleteReportDataSource",
                     string.Format("Deleted Data Source {1}/{0}", dataSourceName, dataSourceFolder));
                 return true;
             }
@@ -571,16 +580,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(folderName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteReportFolder", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteReportFolder",
                         string.Format("Deleted Report Folder Source: {0}", folderName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteReportFolder", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteReportFolder",
                     string.Format("Item not a folder: {0}", folderName));
                 return false;
             }
@@ -624,15 +633,15 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     this.RemovePolicy(reportUserName, oldPolicy, newPolicy);
                     this.reportingService2010.SetPolicies(reportFolder, newPolicy);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteReportUser", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteReportUser",
                         string.Format("Deleted User:{0} from folder:{1}", reportUserName, reportFolder));
                 }
                 else
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "DeleteReportUser", 
+                        DeploymentMangerMessageType.Error,
+                        "DeleteReportUser",
                         string.Format("User:{0} not found for folder:{1}", reportUserName, reportFolder));
                     scusess = false;
                 }
@@ -669,16 +678,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // Delete the folder
                     this.reportingService2010.DeleteItem(resourceName);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "DeleteResource", 
+                        DeploymentMangerMessageType.Information,
+                        "DeleteResource",
                         string.Format("Deleted Report Item Source: {0}", resourceName));
                     return true;
                 }
 
                 // raise a error because the item was not a folder.
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    "DeleteResource", 
+                    DeploymentMangerMessageType.Warning,
+                    "DeleteResource",
                     string.Format("Item not a Resource: {0}", resourceName));
                 return false;
             }
@@ -712,8 +721,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // Call the move item method 
                 this.reportingService2010.MoveItem(reportItem, destinationItem);
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "MoveReportItem", 
+                    DeploymentMangerMessageType.Information,
+                    "MoveReportItem",
                     string.Format("Moved {0} to {1}", reportItem, destinationItem));
                 return true;
             }
@@ -832,7 +841,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if successful ; otherwise, <c>false</c> . 
         /// </returns>
-        public bool SetReportDataSet(string reportItem, bool recursive, ReportDataSet[] dataSets, bool useMatchCase)
+        public bool SetReportDataSet(string reportItem, string documentLibraryURL, bool recursive, ReportDataSet[] dataSets, bool useMatchCase)
         {
             try
             {
@@ -841,7 +850,11 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // format the Item path and get the item type
                 reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
-                string currentItemType = this.reportingService2010.GetItemType(reportItem);
+                documentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(documentLibraryURL);
+
+                string reportItemFullPath = string.IsNullOrEmpty(documentLibraryURL) ? reportItem : string.Concat(documentLibraryURL, reportItem);
+
+                string currentItemType = this.reportingService2010.GetItemType(reportItemFullPath);
 
                 // build table if there was error then stop
                 if (!this.BuildReportDataSetTable(dataSets, reportDataSets, useMatchCase))
@@ -852,21 +865,21 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // depending on the type call the correct assgin function
                 switch (currentItemType)
                 {
-                        // if folder then loop through the items to assgin the data source.
+                    // if folder then loop through the items to assgin the data source.
                     case ReportItemStrings.Folder:
-                        this.AssginDataSetToReports(reportItem, recursive, reportDataSets, useMatchCase);
+                        this.AssginDataSetToReports(reportItemFullPath, recursive, reportDataSets, useMatchCase);
                         break;
 
-                        // assgin the data source item to the report it self.
+                    // assgin the data source item to the report it self.
                     case ReportItemStrings.Report:
-                        this.AssginDataSetToReports(reportItem, reportDataSets, useMatchCase);
+                        this.AssginDataSetToReports(reportItemFullPath, reportDataSets, useMatchCase);
                         break;
 
                     default:
                         this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Warning, 
-                            "SetReportDataSource", 
-                            string.Format("Report Item:{0} is not support for the method", reportItem));
+                            DeploymentMangerMessageType.Warning,
+                            "SetReportDataSource",
+                            string.Format("Report Item:{0} is not support for the method", reportItemFullPath));
                         break;
                 }
 
@@ -898,7 +911,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <c>true</c> if successful ; otherwise, <c>false</c> . 
         /// </returns>
         public bool SetReportDataSource(
-            string reportItem, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
+            string reportItem, string documentLibraryURL, bool recursive, ReportServerDataSource[] dataSources, bool useMatchCase)
         {
             try
             {
@@ -907,7 +920,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
                 // format the Item path and get the item type
                 reportItem = DeploymentMangerHelper.FormatItemPath(reportItem);
-                string currentItemType = this.reportingService2010.GetItemType(reportItem);
+                documentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(documentLibraryURL);
+
+                string reportItemFullPath = string.IsNullOrEmpty(documentLibraryURL) ? reportItem : string.Concat(documentLibraryURL, reportItem);
+
+                string currentItemType = this.reportingService2010.GetItemType(reportItemFullPath);
+
 
                 // build table if there was error then stop
                 if (!this.BuildReportDataSourceTable(dataSources, reportDataSources, useMatchCase))
@@ -918,20 +936,20 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // depending on the type call the correct assgin function
                 switch (currentItemType)
                 {
-                        // if folder then loop through the items to assgin the data source.
+                    // if folder then loop through the items to assgin the data source.
                     case ReportItemStrings.Folder:
-                        this.AssginDataSourceToReports(reportItem, recursive, reportDataSources, useMatchCase);
+                        this.AssginDataSourceToReports(reportItemFullPath, recursive, reportDataSources, useMatchCase);
                         break;
 
-                        // assgin the data source item to the report it self.
+                    // assgin the data source item to the report it self.
                     case ReportItemStrings.Report:
-                        this.AssignReportDataSource(reportItem, reportDataSources, useMatchCase);
+                        this.AssignReportDataSource(reportItemFullPath, reportDataSources, useMatchCase);
                         break;
 
                     default:
                         this.OnDeploymentMangerMessage(
-                            DeploymentMangerMessageType.Warning, 
-                            "SetReportDataSource", 
+                            DeploymentMangerMessageType.Warning,
+                            "SetReportDataSource",
                             string.Format("Report Item:{0} is not support for the method", reportItem));
                         break;
                 }
@@ -999,17 +1017,22 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// Ture if the reports are uploaded. 
         /// </returns>
-        public bool UpLoadReports(ReportFile[] reportFiles, string folderName, bool disableWarnings)
+        public bool UpLoadReports(ReportFile[] reportFiles, string folderName, string documentLibraryURL, bool disableWarnings)
         {
             // make sure the folder the name correct.
             folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            documentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(documentLibraryURL);
+            
+
+            string uploadFolder = string.IsNullOrEmpty(documentLibraryURL) ? folderName : string.Concat(documentLibraryURL, folderName);
+            
             try
             {
                 // loop through the array of reports.
                 foreach (ReportFile reportFile in reportFiles)
                 {
                     // Create any reports properties that need to be set.
-                    this.UploadToReportServer(folderName, reportFile, ReportItemStrings.Report, disableWarnings);
+                    this.UploadToReportServer(uploadFolder, reportFile, ReportItemStrings.Report, disableWarnings);
                 }
 
                 return true;
@@ -1081,7 +1104,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 foreach (ReportDataSet reportDataSet in reportDataSets)
                 {
                     // make sure the folder the name correct.
-                    string folderName = DeploymentMangerHelper.FormatFolderPath(reportDataSet.DateSetFolder);
+                    string folderName = reportDataSet.GetDataSetFolder();
                     catalogItem = this.UploadToReportServer(
                         folderName, reportDataSet, ReportItemStrings.DataSet, disableWarnings);
                     dataSetSources = this.reportingService2010.GetItemReferences(
@@ -1089,8 +1112,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     itemReferences = new ItemReference[1];
                     itemReference = new ItemReference
                         {
-                            Name = dataSetSources[0].Name, 
-                            Reference = DeploymentMangerHelper.FormatItemPath(reportDataSet.DataSource)
+                            Name = dataSetSources[0].Name,
+                            Reference = string.IsNullOrEmpty(reportDataSet.DocumentLibraryURL) ? DeploymentMangerHelper.FormatItemPath(reportDataSet.DataSource) : reportDataSet.DataSource
                         };
 
                     itemReferences[0] = itemReference;
@@ -1155,12 +1178,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             return new DaysOfWeekSelector
                 {
-                    Monday = scheduleWeekDays.Mon, 
-                    Tuesday = scheduleWeekDays.Tue, 
-                    Wednesday = scheduleWeekDays.Wed, 
-                    Thursday = scheduleWeekDays.Thu, 
-                    Friday = scheduleWeekDays.Fri, 
-                    Saturday = scheduleWeekDays.Sat, 
+                    Monday = scheduleWeekDays.Mon,
+                    Tuesday = scheduleWeekDays.Tue,
+                    Wednesday = scheduleWeekDays.Wed,
+                    Thursday = scheduleWeekDays.Thu,
+                    Friday = scheduleWeekDays.Fri,
+                    Saturday = scheduleWeekDays.Sat,
                     Sunday = scheduleWeekDays.Sun
                 };
         }
@@ -1184,7 +1207,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 newPolicy[index].Roles[roleIndex] = new Role
                     {
-                        Name = reportingRoles[roleIndex], 
+                        Name = reportingRoles[roleIndex],
                         Description = string.Format("Reporting {0} User / Group", reportingRoles[roleIndex])
                     };
             }
@@ -1279,8 +1302,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     // update the report with the new data sources.
                     this.reportingService2010.SetItemReferences(report, itemReferences);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Warning, 
-                        "SetReportDataSource", 
+                        DeploymentMangerMessageType.Warning,
+                        "SetReportDataSource",
                         string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
                 }
             }
@@ -1365,8 +1388,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
             // update the report with the new data sources.
             this.reportingService2010.SetItemDataSources(report, reportDataSources);
             this.OnDeploymentMangerMessage(
-                DeploymentMangerMessageType.Warning, 
-                "SetReportDataSource", 
+                DeploymentMangerMessageType.Warning,
+                "SetReportDataSource",
                 string.Format("Updated report: {0} data source(s):{1}", report, dataSourceUpdates));
         }
 
@@ -1397,17 +1420,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         if (reportDataSets.ContainsKey(reportDataSetName))
                         {
                             this.OnDeploymentMangerMessage(
-                                DeploymentMangerMessageType.Error, 
-                                "SetReportDataSource", 
+                                DeploymentMangerMessageType.Error,
+                                "SetReportDataSource",
                                 string.Format("Duplicate Data Source Name: {0}", dataSet.ReportDataSetNames));
                             sucess = false;
                             break;
                         }
 
                         reportDataSets.Add(
-                            useMatchCase ? reportDataSetName : reportDataSetName.ToLower(), 
-                            DeploymentMangerHelper.FormatItemPath(
-                                string.Format("{0}/{1}", dataSet.DateSetFolder, dataSet.ShareDataSetName)));
+                            useMatchCase ? reportDataSetName : reportDataSetName.ToLower(),                                                     
+                                string.Format("{0}/{1}", dataSet.GetDataSetFolder(), dataSet.UploadItemName));
                     }
                 }
 
@@ -1415,17 +1437,16 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 if (reportDataSets.ContainsKey(dataSet.ShareDataSetName))
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetDataSetDataSource", 
+                        DeploymentMangerMessageType.Error,
+                        "SetDataSetDataSource",
                         string.Format("Duplicate Data Source Name: {0}", dataSet.ShareDataSetName));
                     sucess = false;
                 }
                 else
                 {
                     reportDataSets.Add(
-                        useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower(), 
-                        DeploymentMangerHelper.FormatItemPath(
-                            string.Format("{0}/{1}", dataSet.DateSetFolder, dataSet.ShareDataSetName)));
+                        useMatchCase ? dataSet.ShareDataSetName : dataSet.ShareDataSetName.ToLower(),
+                            string.Format("{0}/{1}", dataSet.GetDataSetFolder(), dataSet.UploadItemName));
                 }
 
                 if (!sucess)
@@ -1466,34 +1487,32 @@ namespace ssrsmsbuildtasks.DeploymentManger
                         if (reportDataSources.ContainsKey(reportDataSourceName))
                         {
                             this.OnDeploymentMangerMessage(
-                                DeploymentMangerMessageType.Error, 
-                                "SetReportDataSource", 
+                                DeploymentMangerMessageType.Error,
+                                "SetReportDataSource",
                                 string.Format("Duplicate Data Source Name: {0}", dataSource.ReportDataSourceNames));
                             sucess = false;
                             break;
                         }
 
                         reportDataSources.Add(
-                            useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(), 
-                            DeploymentMangerHelper.FormatItemPath(
-                                string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
+                            useMatchCase ? reportDataSourceName : reportDataSourceName.ToLower(),
+                                string.Format("{0}/{1}", dataSource.GetDataSourceFolder(), dataSource.GetDataSourceName()));
                     }
                 }
 
                 if (reportDataSources.ContainsKey(dataSource.Name))
                 {
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Error, 
-                        "SetReportDataSource", 
+                        DeploymentMangerMessageType.Error,
+                        "SetReportDataSource",
                         string.Format("Duplicate Data Source Name: {0}", dataSource.Name));
                     sucess = false;
                 }
                 else
                 {
                     reportDataSources.Add(
-                        useMatchCase ? dataSource.Name : dataSource.Name.ToLower(), 
-                        DeploymentMangerHelper.FormatItemPath(
-                            string.Format("{0}/{1}", dataSource.DataSourceFolder, dataSource.Name)));
+                        useMatchCase ? dataSource.Name : dataSource.Name.ToLower(),
+                            string.Format("{0}/{1}", dataSource.GetDataSourceFolder(), dataSource.GetDataSourceName()));
                 }
 
                 if (!sucess)
@@ -1582,27 +1601,27 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             DataSourceReference dataSourceReference = new DataSourceReference
                 {
-                    Reference = DeploymentMangerHelper.FormatItemPath(dataSubscriptionQuery.ShareConnection) 
+                    Reference = DeploymentMangerHelper.FormatItemPath(dataSubscriptionQuery.ShareConnection)
                 };
 
             DataSource dataSource = new DataSource { Name = string.Empty, Item = dataSourceReference };
 
             QueryDefinition queryDefinition = new QueryDefinition
                 {
-                    CommandText = dataSubscriptionQuery.QueryText, 
-                    CommandType = "Text", 
-                    Timeout = 45, 
+                    CommandText = dataSubscriptionQuery.QueryText,
+                    CommandType = "Text",
+                    Timeout = 45,
                     TimeoutSpecified = true
                 };
 
             // Create the data set for the delivery query.
             DataSetDefinition dataSetDefinition = new DataSetDefinition
                 {
-                    AccentSensitivitySpecified = false, 
-                    CaseSensitivitySpecified = false, 
-                    KanatypeSensitivitySpecified = false, 
-                    WidthSensitivitySpecified = false, 
-                    Fields = this.FieldsList(dataSubscriptionQuery.Fields), 
+                    AccentSensitivitySpecified = false,
+                    CaseSensitivitySpecified = false,
+                    KanatypeSensitivitySpecified = false,
+                    WidthSensitivitySpecified = false,
+                    Fields = this.FieldsList(dataSubscriptionQuery.Fields),
                     Query = queryDefinition
                 };
 
@@ -1666,17 +1685,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
             try
             {
                 this.reportingService2010.CreateDataDrivenSubscription(
-                    reportPath, 
-                    extSettings, 
-                    dataRetrievalPlan, 
-                    reportDataSubscription.Description, 
-                    EVENTTYPE, 
-                    matchData, 
+                    reportPath,
+                    extSettings,
+                    dataRetrievalPlan,
+                    reportDataSubscription.Description,
+                    EVENTTYPE,
+                    matchData,
                     parameters);
 
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "CreateDataSubscription", 
+                    DeploymentMangerMessageType.Information,
+                    "CreateDataSubscription",
                     string.Format(
                         "Created Report {0} Subscription : {1}", reportPath, reportDataSubscription.Description));
 
@@ -1727,7 +1746,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             MonthlyDOWRecurrence monthlyDowRecurrence = new MonthlyDOWRecurrence
                 {
-                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days), 
+                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days),
                     MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months)
                 };
 
@@ -1775,7 +1794,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             MonthlyRecurrence monthlyRecurrence = new MonthlyRecurrence
                 {
-                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months), Days = reportSchedule.Interval 
+                    MonthsOfYear = this.GeMonthsOfYearSelector(reportSchedule.Months),
+                    Days = reportSchedule.Interval
                 };
 
             // if (!Regex.IsMatch(reportSchedule.Interval, @"^\d+,?\d-\d?,\d+$"))
@@ -1815,7 +1835,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
             {
                 ParameterValue parameter = new ParameterValue
                     {
-                        Name = parameterValue.Key, Value = parameterValue.Value 
+                        Name = parameterValue.Key,
+                        Value = parameterValue.Value
                     };
                 parameterValueOrFieldReferences[i] = parameter;
                 i++;
@@ -1827,7 +1848,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     ParameterFieldReference parameterFieldReference = new ParameterFieldReference
                         {
-                            ParameterName = fieldReference.Key, FieldAlias = fieldReference.Value 
+                            ParameterName = fieldReference.Key,
+                            FieldAlias = fieldReference.Value
                         };
                     parameterValueOrFieldReferences[i] = parameterFieldReference;
                     i++;
@@ -1909,8 +1931,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             try
             {
-                // formating the data source folder.
-                dataSource.DataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSource.DataSourceFolder);
 
                 // check to see if the properties are define if then create the default which are needed
                 if (dataSource.ReportServerProperties.Count == 0)
@@ -1927,16 +1947,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 // create the objects.
                 DataSourceDefinition definition = this.GetDataSourceDefinition(dataSource, sqlConStringBuilder);
 
+                
                 // create the data source
                 this.reportingService2010.CreateDataSource(
-                    dataSource.Name, dataSource.DataSourceFolder, dataSource.OverWrite, definition, properties);
+                    dataSource.GetDataSourceName(), dataSource.GetDataSourceFolder(), dataSource.OverWrite, definition, properties);
 
                 // message the data source was created
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "CreateDataSource", 
+                    DeploymentMangerMessageType.Information,
+                    "CreateDataSource",
                     string.Format(
-                        "Created Data Source {0}/{1} Connecting to Server:{2}, Database:{3}", 
+                        "Created Data Source {0}/{1} Connecting to Server:{2}, Database:{3}",
                         new[]
                             {
                                 dataSource.DataSourceFolder, dataSource.Name, sqlConStringBuilder.DataSource, 
@@ -2040,8 +2061,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                 {
                     this.reportingService2010.CreateSchedule(reportSchedule.Name, scheduleDefinition, reportingSite);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "CreateSchedule", 
+                        DeploymentMangerMessageType.Information,
+                        "CreateSchedule",
                         string.Format("Created Report Schedule: {0}", reportSchedule.Name));
                 }
                 else
@@ -2049,8 +2070,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     this.reportingService2010.SetScheduleProperties(
                         schedule.Name, schedule.ScheduleID, scheduleDefinition);
                     this.OnDeploymentMangerMessage(
-                        DeploymentMangerMessageType.Information, 
-                        "CreateSchedule", 
+                        DeploymentMangerMessageType.Information,
+                        "CreateSchedule",
                         string.Format("Updated Report Schedule: {0}", reportSchedule.Name));
                 }
 
@@ -2100,8 +2121,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
                     reportPath, extSettings, reportSubscription.Description, EVENTTYPE, matchData, parameters);
 
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Information, 
-                    "CreateSubscription", 
+                    DeploymentMangerMessageType.Information,
+                    "CreateSubscription",
                     string.Format("Created Report {0} Subscription : {1}", reportPath, reportSubscription.Description));
 
                 return true;
@@ -2126,7 +2147,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             WeeklyRecurrence weeklyRecurrence = new WeeklyRecurrence
                 {
-                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days) 
+                    DaysOfWeek = GetDaysOfWeekSelector(reportSchedule.Days)
                 };
 
             if (!string.IsNullOrEmpty(reportSchedule.Interval))
@@ -2250,17 +2271,17 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             return new MonthsOfYearSelector
                 {
-                    January = reportScheduleMonths.Jan, 
-                    February = reportScheduleMonths.Feb, 
-                    March = reportScheduleMonths.Mar, 
-                    April = reportScheduleMonths.Apr, 
-                    May = reportScheduleMonths.May, 
-                    June = reportScheduleMonths.Jun, 
-                    July = reportScheduleMonths.Jul, 
-                    August = reportScheduleMonths.Aug, 
-                    September = reportScheduleMonths.Sep, 
-                    October = reportScheduleMonths.Oct, 
-                    November = reportScheduleMonths.Nov, 
+                    January = reportScheduleMonths.Jan,
+                    February = reportScheduleMonths.Feb,
+                    March = reportScheduleMonths.Mar,
+                    April = reportScheduleMonths.Apr,
+                    May = reportScheduleMonths.May,
+                    June = reportScheduleMonths.Jun,
+                    July = reportScheduleMonths.Jul,
+                    August = reportScheduleMonths.Aug,
+                    September = reportScheduleMonths.Sep,
+                    October = reportScheduleMonths.Oct,
+                    November = reportScheduleMonths.Nov,
                     December = reportScheduleMonths.Dec
                 };
         }
@@ -2297,8 +2318,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // get the Data Source and Catalogs 
             definition.ConnectString = string.Format(
-                "Data Source={0};Initial Catalog={1}", 
-                sqlConStringBuilder.DataSource, 
+                "Data Source={0};Initial Catalog={1}",
+                sqlConStringBuilder.DataSource,
                 sqlConStringBuilder.InitialCatalog);
 
             // check to if windows security is used or in the provicer is AS
@@ -2369,8 +2390,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
             if (schedule == null)
             {
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Error, 
-                    methodCaller, 
+                    DeploymentMangerMessageType.Error,
+                    methodCaller,
                     string.Format("Could not find Schedule Name: {0}", scheduleName));
                 return null;
             }
@@ -2472,8 +2493,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
             foreach (Warning warning in warnings)
             {
                 this.OnDeploymentMangerMessage(
-                    DeploymentMangerMessageType.Warning, 
-                    sender, 
+                    DeploymentMangerMessageType.Warning,
+                    sender,
                     string.Format("{0}:Warning:{1} ", reportItem, warning.Message));
             }
         }
@@ -2522,12 +2543,12 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // uploads reports then outputs that reports was uploaded.
             CatalogItem catalogItem = this.reportingService2010.CreateCatalogItem(
-                UploadItemType, 
-                uploadItem.UploadItemName, 
-                folderName, 
-                true, 
-                uploadItem.GetBytes(), 
-                properties, 
+                UploadItemType,
+                uploadItem.UploadItemName,
+                folderName,
+                true,
+                uploadItem.GetBytes(),
+                properties,
                 out warnings);
 
             if (warnings != null && !disableWarnings)
@@ -2539,8 +2560,8 @@ namespace ssrsmsbuildtasks.DeploymentManger
             }
 
             this.OnDeploymentMangerMessage(
-                DeploymentMangerMessageType.Information, 
-                "UploadToReportServer", 
+                DeploymentMangerMessageType.Information,
+                "UploadToReportServer",
                 string.Format("Upload {0}: {1} to folder: {2}", UploadItemType, uploadItem.UploadItemName, folderName));
 
             return catalogItem;
