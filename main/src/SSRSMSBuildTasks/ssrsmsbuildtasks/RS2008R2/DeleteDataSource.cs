@@ -48,6 +48,9 @@ namespace ssrsmsbuildtasks.RS2008R2
         [Required]
         public string ReportServerURL { get; set; }
 
+
+        public string DocumentLibraryURL { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -64,7 +67,7 @@ namespace ssrsmsbuildtasks.RS2008R2
             r2DeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                return r2DeploymentManger.DeleteReportDataSource(this.DataSourceName, this.Folder);
+                return r2DeploymentManger.DeleteReportDataSource(this.DataSourceName, this.Folder, this.DocumentLibraryURL);
             }
             catch (Exception ex)
             {
