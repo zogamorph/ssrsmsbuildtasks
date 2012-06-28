@@ -5,7 +5,8 @@
 	<!--ReportServer-->
 	<PropertyGroup>
 		<ServerURL>http://$(COMPUTERNAME)</ServerURL>
-		<SPDocumentLibraryURL>http://$(COMPUTERNAME)/sites/ReportPortal/Reports</SPDocumentLibraryURL>
+		<SPReportingSite>http://$(COMPUTERNAME)/sites/ReportPortal</SPReportingSite>
+		<SPDocumentLibraryURL>$(SPReportingSite)/Reports</SPDocumentLibraryURL>
 		<ProjectReportRoot>SSRSMSBuildTaskDemo</ProjectReportRoot>
 		<ProjectReportFolder>$(ProjectReportRoot)/Reports</ProjectReportFolder>
 		<ProjectDataSetFolder>$(ProjectReportRoot)/DataSet</ProjectDataSetFolder>
@@ -88,12 +89,13 @@
 			<ScheduleRecurrence>Monthly</ScheduleRecurrence>
 			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
 		</ReportServerSchedule >
+		<!-- This not Supported for Integrated Site!
 		<ReportServerSchedule Include="MonthlyDOWRecurrence">
 			<StartDateTime>01/04/2012 13:35:00</StartDateTime>
 			<ScheduleRecurrence>MonthlyDOW</ScheduleRecurrence>
 			<MonthsOfYear>Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec</MonthsOfYear>
 			<DaysOfWeek>Mon;Tue;Wed;Thu;Fri</DaysOfWeek>
-		</ReportServerSchedule >
+		</ReportServerSchedule >-->
 	</ItemGroup>
 
 	<!--Subscriptions-->
@@ -127,17 +129,18 @@
 	<PropertyGroup>
 		<FullDeployDependsOn>
 			GetServerURL;
+			DeleteFolders;
 			CreateReportingFolders;
 			CreateConnectionSources;
 			CreateShareDataSet;
 			DeployReports;
 			SetReportDataSet;
 			SetReportsDataSource;
+			CreateSchedules;
 		</FullDeployDependsOn>
 	</PropertyGroup>
 
-	<!--	CreateSchedules;
-			DeleteFolders;
+	<!--	
 			CreateReportSubscriptions;		
 	-->
 	<Target Name="FullDepoly" DependsOnTargets="$(FullDeployDependsOn)" />
@@ -150,15 +153,15 @@
 	</Target>
 
 	<Target Name="CreateSchedules">
-		<CreateReportSchedule ReportServerURL="$(ReportingServerURL)" ReportSchedules="@(ReportServerSchedule)" />
+		<CreateReportSchedule ReportServerURL="$(ReportingServerURL)" ReportingSite="$(SPReportingSite)" ReportSchedules="@(ReportServerSchedule)" />
 	</Target>
 
 	<Target Name="DeleteFolders">
 		<!--Checking and deleteing Project Report Folder-->
-		<!--<ReportFolderExists ReportServerURL="$(ReportingServerURL)" Folder="/" FolderName="SSRSMSBuildTeaskDemo">
+		<ReportFolderExists ReportServerURL="$(ReportingServerURL)" Folder="/" FolderName="SSRSMSBuildTeaskDemo" DocumentLibraryURL="$(SPDocumentLibraryURL)" >
 			<Output TaskParameter="Exists" PropertyName="ReportItemExists" />
 		</ReportFolderExists>
-		<DeleteReportFolder ReportServerURL="$(ReportingServerURL)" Folder="/SSRSMSBuildTeaskDemo" Condition="$(ReportItemExists) == True"/>-->
+		<DeleteReportFolder ReportServerURL="$(ReportingServerURL)" Folder="/SSRSMSBuildTeaskDemo" DocumentLibraryURL="$(SPDocumentLibraryURL)" Condition="$(ReportItemExists) == True"/>
 	</Target>
 
 	<Target Name="CreateReportingFolders">
@@ -193,7 +196,7 @@
 	</Target>
 
 	<Target Name="CreateReportSubscriptions">
-		<CreateSubscriptions ReportServerURL="$(ReportingServerURL)" Subscriptions="@(ReportSubscriptions);@(ReportDataSubscriptions)" DeleteExistingSubscriptions="true" DeployIfExistingSubscriptions="false" />
+		<CreateSubscriptions ReportServerURL="$(ReportingServerURL)" ReportingSite="$(SPReportingSite)" Subscriptions="@(ReportSubscriptions);@(ReportDataSubscriptions)" DeleteExistingSubscriptions="true" DeployIfExistingSubscriptions="false" />
 	</Target>
 
 </Project>

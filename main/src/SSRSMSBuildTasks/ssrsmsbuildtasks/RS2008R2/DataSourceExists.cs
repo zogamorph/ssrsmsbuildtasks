@@ -55,6 +55,8 @@ namespace ssrsmsbuildtasks.RS2008R2
         [Required]
         public string ReportServerURL { get; set; }
 
+        public string DocumentLibraryURL { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -77,7 +79,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                 }
 
                 this.Exists = r2DeploymentManger.ReportItemExists(
-                    this.DataSourceName, ReportItemStrings.DataSource, this.Folder);
+                    this.DataSourceName, ReportItemStrings.DataSource, this.Folder, this.DocumentLibraryURL);
                 return true;
             }
             catch (Exception exception)

@@ -520,12 +520,13 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if successful ; otherwise, <c>false</c> . 
         /// </returns>
-        public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder)
+        public bool DeleteReportDataSource(string dataSourceName, string dataSourceFolder, string documentLibraryURL)
         {
             string currentItemType;
 
             // make sure the item path is formated.
             dataSourceFolder = DeploymentMangerHelper.FormatFolderPath(dataSourceFolder);
+            
             try
             {
                 // get the item type of the item check if datasource
@@ -566,19 +567,24 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if successful ; otherwise, <c>false</c> . 
         /// </returns>
-        public bool DeleteReportFolder(string folderName)
+        public bool DeleteReportFolder(string folderName, string documentLibraryURL)
         {
             // Create the item and format the items
             string currentItemType;
+            
             folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            documentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(documentLibraryURL);
+
+            string deleteFolderFullPath = string.IsNullOrEmpty(documentLibraryURL) ? folderName : string.Concat(documentLibraryURL, folderName);
+            
             try
             {
                 // get the item type.
-                currentItemType = this.reportingService2010.GetItemType(folderName);
+                currentItemType = this.reportingService2010.GetItemType(deleteFolderFullPath);
                 if (currentItemType == ReportItemStrings.Folder)
                 {
                     // Delete the folder
-                    this.reportingService2010.DeleteItem(folderName);
+                    this.reportingService2010.DeleteItem(deleteFolderFullPath);
                     this.OnDeploymentMangerMessage(
                         DeploymentMangerMessageType.Information,
                         "DeleteReportFolder",
@@ -745,9 +751,9 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// True if the item of that type exists. 
         /// </returns>
-        public bool ReportItemExists(string reportItemName, string reportItemType)
+        public bool ReportItemExists(string reportItemName, string reportItemType, string documentLibraryURL)
         {
-            return this.ReportItemExists(reportItemName, reportItemType, string.Empty);
+            return this.ReportItemExists(reportItemName, reportItemType, string.Empty, documentLibraryURL);
         }
 
         /// <summary>
@@ -765,7 +771,7 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// True if the item of that type exists. 
         /// </returns>
-        public bool ReportItemExists(string reportItemName, string reportItemType, string folderName)
+        public bool ReportItemExists(string reportItemName, string reportItemType, string folderName, string documentLibraryURL)
         {
             Property[] searchProperties = new[] { new Property { Name = "Resursive", Value = "False" } };
 
@@ -774,18 +780,30 @@ namespace ssrsmsbuildtasks.DeploymentManger
 
             // Get formats the folder name
             folderName = string.IsNullOrEmpty(folderName) ? "/" : DeploymentMangerHelper.FormatFolderPath(folderName);
+            documentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(documentLibraryURL);
 
+
+            string searchFolderFullPath = string.IsNullOrEmpty(documentLibraryURL) ? folderName : string.Concat(documentLibraryURL, folderName);
+            
             try
             {
-                // Set the search paramter
-                conditions[0].Condition = ConditionEnum.Equals;
-                conditions[0].ConditionSpecified = true;
-                conditions[0].Name = "Name";
-                conditions[0].Values = new[] { reportItemName };
+                CatalogItem[] items;
+                if (string.IsNullOrEmpty(documentLibraryURL))
+                {
+                    // Set the search paramter
+                    conditions[0].Condition = ConditionEnum.Equals;
+                    conditions[0].ConditionSpecified = true;
+                    conditions[0].Name = "Name";
+                    conditions[0].Values = new[] { reportItemName };
 
-                // all the items that equal to the search parameter
-                CatalogItem[] items = this.reportingService2010.FindItems(
-                    folderName, BooleanOperatorEnum.And, searchProperties, conditions);
+                    // all the items that equal to the search parameter
+                    items = this.reportingService2010.FindItems(
+                        searchFolderFullPath, BooleanOperatorEnum.And, searchProperties, conditions);
+                }
+                else
+                {
+                    items = this.reportingService2010.ListChildren(searchFolderFullPath, false);
+                }
 
                 // Find the item of the that type
                 return DeploymentMangerHelper.FindItemType(items, reportItemName, reportItemType);
@@ -1057,16 +1075,20 @@ namespace ssrsmsbuildtasks.DeploymentManger
         /// <returns>
         /// <c>true</c> if successful ; otherwise, <c>false</c> . 
         /// </returns>
-        public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName)
+        public bool UploadResource(ReportResourceFile[] resourceFileFiles, string folderName, string documentLibraryURL)
         {
             // make sure the folder the name correct.
             folderName = DeploymentMangerHelper.FormatFolderPath(folderName);
+            documentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(documentLibraryURL);
+
+            string upLoadFullPath = string.IsNullOrEmpty(documentLibraryURL) ? folderName : string.Concat(documentLibraryURL, folderName);
+
             try
             {
                 // Upload each of the reportServerResoucre
                 foreach (ReportResourceFile reportServerResoucre in resourceFileFiles)
                 {
-                    this.UploadToReportServer(folderName, reportServerResoucre, ReportItemStrings.Resource, true);
+                    this.UploadToReportServer(upLoadFullPath, reportServerResoucre, ReportItemStrings.Resource, true);
                 }
 
                 return true;

@@ -56,6 +56,8 @@ namespace ssrsmsbuildtasks.RS2008R2
         [Required]
         public string ReportServerURL { get; set; }
 
+        public string DocumentLibraryURL { get; set; }
+
         #endregion
 
         #region Public Methods
@@ -90,7 +92,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                     }
                 }
 
-                return r2DeploymentManger.UploadResource(reportResourcesFile, this.Folder);
+                return r2DeploymentManger.UploadResource(reportResourcesFile, this.Folder, this.DocumentLibraryURL);
             }
             catch (Exception ex)
             {
