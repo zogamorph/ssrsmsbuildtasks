@@ -96,13 +96,15 @@ namespace ssrsmsbuildtasks.RS2008R2
                 for (int index = 0; index < this.ShareDataSets.Length; index++)
                 {
                     reportDataSets[index] = new ReportDataSet()
-                        {   
-                            ShareDataSetName = this.ShareDataSets[index].GetMetadata("Filename"),
-                            ShareDataSetFilePath = this.ShareDataSets[index].GetMetadata("FullPath"),
-                            DataSource = this.ShareDataSets[index].GetMetadata("DataSource"),
+                        {
+                            ShareDataSetName = this.ShareDataSets[index].GetMetadata("Filename"), 
+                            ShareDataSetFilePath = this.ShareDataSets[index].GetMetadata("FullPath"), 
+                            DataSource = this.ShareDataSets[index].GetMetadata("DataSource"), 
                             DateSetFolder = this.ShareDataSets[index].GetMetadata("Folder"), 
-                            DocumentLibraryURL = string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("ReportDataSetNames"))? 
-                                null : this.ShareDataSets[index].GetMetadata("DocumentLibraryURL")
+                            DocumentLibraryURL =
+                                string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("ReportDataSetNames"))
+                                    ? null
+                                    : this.ShareDataSets[index].GetMetadata("DocumentLibraryURL")
                         };
 
                     string propertiesString = this.ShareDataSets[index].GetMetadata("ReportServerProperties");

@@ -155,6 +155,11 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         public string DateSetFolder { get; set; }
 
         /// <summary>
+        /// Gets or sets DocumentLibraryURL.
+        /// </summary>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   Gets or sets the report data set names.
         /// </summary>
         /// <value>The report data set names.</value>
@@ -181,9 +186,6 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// </summary>
         public string ShareDataSetName { get; set; }
 
-
-        public string DocumentLibraryURL { get; set; }
-
         /// <summary>
         ///   Gets the name of the upload item.
         /// </summary>
@@ -192,8 +194,29 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         {
             get
             {
-                return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.ShareDataSetName : string.Concat(this.ShareDataSetName, ".rsd");
+                return string.IsNullOrEmpty(this.DocumentLibraryURL)
+                           ? this.ShareDataSetName
+                           : string.Concat(this.ShareDataSetName, ".rsd");
             }
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// The get data set folder.
+        /// </summary>
+        /// <returns>
+        /// The get data set folder.
+        /// </returns>
+        public string GetDataSetFolder()
+        {
+            this.DateSetFolder = DeploymentMangerHelper.FormatFolderPath(this.DateSetFolder);
+            this.DocumentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(this.DocumentLibraryURL);
+            return string.IsNullOrEmpty(this.DocumentLibraryURL)
+                       ? this.DateSetFolder
+                       : string.Concat(this.DocumentLibraryURL, this.DateSetFolder);
         }
 
         #endregion
@@ -222,14 +245,5 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         #endregion
 
         #endregion
-
-
-        public string GetDataSetFolder()
-        {
-            this.DateSetFolder = DeploymentMangerHelper.FormatFolderPath(this.DateSetFolder);
-            this.DocumentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(this.DocumentLibraryURL);
-            return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.DateSetFolder : string.Concat(this.DocumentLibraryURL, this.DateSetFolder);
-        }
-
     }
 }

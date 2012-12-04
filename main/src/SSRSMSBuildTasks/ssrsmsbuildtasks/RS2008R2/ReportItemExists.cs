@@ -28,6 +28,11 @@ namespace ssrsmsbuildtasks.RS2008R2
         #region Properties
 
         /// <summary>
+        /// Gets or sets DocumentLibraryURL.
+        /// </summary>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   Gets or sets a value indicating whether this <see cref = "ReportItemExists" /> is exists.
         /// </summary>
         /// <value><c>true</c> if exists; otherwise, <c>false</c>.</value>
@@ -64,8 +69,6 @@ namespace ssrsmsbuildtasks.RS2008R2
         [Required]
         public string ReportServerURL { get; set; }
 
-        public string DocumentLibraryURL { get; set; }
-
         #endregion
 
         #region Public Methods
@@ -88,7 +91,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                 }
 
                 this.Exists = r2DeploymentManger.ReportItemExists(
-                    this.ReportItemName, this.ReportItemTypeName, this.Folder,this.DocumentLibraryURL);
+                    this.ReportItemName, this.ReportItemTypeName, this.Folder, this.DocumentLibraryURL);
                 return true;
             }
             catch (Exception exception)

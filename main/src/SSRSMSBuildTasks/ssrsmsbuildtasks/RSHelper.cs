@@ -87,6 +87,7 @@ namespace ssrsmsbuildtasks
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="paramtersString">The paramters string.</param>
+        /// <param name="subsrptionDeliveryMethodOptions">The subsrption delivery method options.</param>
         public static void GetParameters(Dictionary<string, string> dictionary, string paramtersString, SubsrptionDeliveryMethodOptions subsrptionDeliveryMethodOptions)
         {
             List<string> toList = new List<string>();

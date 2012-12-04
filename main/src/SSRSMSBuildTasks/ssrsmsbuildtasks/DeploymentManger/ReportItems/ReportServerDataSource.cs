@@ -141,6 +141,11 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         public string DataSourceFolder { get; set; }
 
         /// <summary>
+        /// Gets or sets DocumentLibraryURL.
+        /// </summary>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   Gets or sets the Data Source name.
         /// </summary>
         /// <value>The Data Source name.</value>
@@ -166,8 +171,6 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         /// </summary>
         /// <value>The name of the report.</value>
         public string[] ReportDataSourceNames { get; set; }
-
-        public string DocumentLibraryURL { get; set; }
 
         /// <summary>
         ///   Gets the report properties.
@@ -201,13 +204,27 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
             this.reportServerProperties.Add("Hidden", "False");
         }
 
-        public string GetDataSourceFolder() 
+        /// <summary>
+        /// The get data source folder.
+        /// </summary>
+        /// <returns>
+        /// The get data source folder.
+        /// </returns>
+        public string GetDataSourceFolder()
         {
             this.DataSourceFolder = DeploymentMangerHelper.FormatFolderPath(this.DataSourceFolder);
             this.DocumentLibraryURL = DeploymentMangerHelper.FormatDocumentLibraryURL(this.DocumentLibraryURL);
-            return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.DataSourceFolder : string.Concat(this.DocumentLibraryURL, this.DataSourceFolder);
+            return string.IsNullOrEmpty(this.DocumentLibraryURL)
+                       ? this.DataSourceFolder
+                       : string.Concat(this.DocumentLibraryURL, this.DataSourceFolder);
         }
 
+        /// <summary>
+        /// The get data source name.
+        /// </summary>
+        /// <returns>
+        /// The get data source name.
+        /// </returns>
         public string GetDataSourceName()
         {
             return string.IsNullOrEmpty(this.DocumentLibraryURL) ? this.Name : string.Concat(this.Name, ".rsds");

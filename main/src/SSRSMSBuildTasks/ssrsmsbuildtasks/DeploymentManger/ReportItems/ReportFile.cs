@@ -86,6 +86,11 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         #region Properties
 
         /// <summary>
+        /// Gets or sets a value indicating whether IncludeExtensionOnUpload.
+        /// </summary>
+        public bool IncludeExtensionOnUpload { get; set; }
+
+        /// <summary>
         ///   Gets the report file info.
         /// </summary>
         /// <value>The report file info.</value>
@@ -122,7 +127,10 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
         {
             get
             {
-                return this.reportName ?? (this.IncludeExtensionOnUpload ? this.reportFileInfo.Name : this.reportFileInfo.Name.Replace(this.reportFileInfo.Extension, string.Empty));
+                return this.reportName ??
+                       (this.IncludeExtensionOnUpload
+                            ? this.reportFileInfo.Name
+                            : this.reportFileInfo.Name.Replace(this.reportFileInfo.Extension, string.Empty));
             }
 
             set
@@ -142,8 +150,6 @@ namespace ssrsmsbuildtasks.DeploymentManger.ReportItems
                 return this.reportServerProperties;
             }
         }
-
-        public bool IncludeExtensionOnUpload { get; set; }
 
         /// <summary>
         ///   Gets UploadItemName.

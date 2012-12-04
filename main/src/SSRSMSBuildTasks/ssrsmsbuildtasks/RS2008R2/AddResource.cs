@@ -29,6 +29,11 @@ namespace ssrsmsbuildtasks.RS2008R2
         #region Properties
 
         /// <summary>
+        /// Gets or sets DocumentLibraryURL.
+        /// </summary>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   Gets or sets the files.
         /// </summary>
         /// <value>The files.</value>
@@ -55,8 +60,6 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
-
-        public string DocumentLibraryURL { get; set; }
 
         #endregion
 

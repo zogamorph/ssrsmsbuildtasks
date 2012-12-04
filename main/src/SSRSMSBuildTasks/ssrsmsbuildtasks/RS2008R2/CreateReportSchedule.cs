@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   TODO: Update summary.
+//   Creates Report Server Shared Schedule
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -144,7 +144,6 @@ namespace ssrsmsbuildtasks.RS2008R2
 
                     reportSchedules[index].StartDateTime = reportScheduleDateTime;
 
-
                     if (!string.IsNullOrEmpty(this.ReportSchedules[index].GetMetadata("EndDateTime")))
                     {
                         if (
@@ -153,7 +152,7 @@ namespace ssrsmsbuildtasks.RS2008R2
                         {
                             throw new FormatException(
                                 string.Format(
-                                    "Report Schedule {0} EndDateTime is not vaild ",
+                                    "Report Schedule {0} EndDateTime is not vaild ", 
                                     this.ReportSchedules[index].ItemSpec));
                         }
 
@@ -163,8 +162,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                     reportSchedules[index].ScheduleRecurrence =
                         (ScheduleRecurrenceOptions)
                         Enum.Parse(
-                            typeof(ScheduleRecurrenceOptions),
-                            this.ReportSchedules[index].GetMetadata("ScheduleRecurrence"),
+                            typeof(ScheduleRecurrenceOptions), 
+                            this.ReportSchedules[index].GetMetadata("ScheduleRecurrence"), 
                             true);
 
                     switch (reportSchedules[index].ScheduleRecurrence)
@@ -211,15 +210,15 @@ namespace ssrsmsbuildtasks.RS2008R2
             {
                 this.BuildEngine.LogErrorEvent(
                     new BuildErrorEventArgs(
-                        "Reporting",
-                        "CreateReportSchedule",
-                        this.BuildEngine.ProjectFileOfTaskNode,
-                        this.BuildEngine.LineNumberOfTaskNode,
-                        this.BuildEngine.ColumnNumberOfTaskNode,
-                        0,
-                        0,
-                        ex.Message,
-                        string.Empty,
+                        "Reporting", 
+                        "CreateReportSchedule", 
+                        this.BuildEngine.ProjectFileOfTaskNode, 
+                        this.BuildEngine.LineNumberOfTaskNode, 
+                        this.BuildEngine.ColumnNumberOfTaskNode, 
+                        0, 
+                        0, 
+                        ex.Message, 
+                        string.Empty, 
                         this.ToString()));
                 return false;
             }
@@ -401,8 +400,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                     isVaild = false;
                     invalidReportScheduleMessageStringBuilder.AppendLine(
                         string.Format(
-                            "{0}:ScheduleRecurrence is not vaild (vaild values are: {1} )",
-                            reportSchedule.ItemSpec,
+                            "{0}:ScheduleRecurrence is not vaild (vaild values are: {1} )", 
+                            reportSchedule.ItemSpec, 
                             vaildDaysOfWeekToString));
                 }
             }
@@ -448,8 +447,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                     isVaild = false;
                     invalidReportScheduleMessageStringBuilder.AppendLine(
                         string.Format(
-                            "{0}:ScheduleRecurrence is not vaild (vaild values are: {1} )",
-                            reportSchedule.ItemSpec,
+                            "{0}:ScheduleRecurrence is not vaild (vaild values are: {1} )", 
+                            reportSchedule.ItemSpec, 
                             vaildMonthsOfYearToString));
                 }
             }
@@ -498,8 +497,8 @@ namespace ssrsmsbuildtasks.RS2008R2
                     isVaild = false;
                     invalidReportScheduleMessageStringBuilder.AppendLine(
                         string.Format(
-                            "{0}:ScheduleRecurrence is not vaild (vaild values are: {1} )",
-                            reportSchedule.ItemSpec,
+                            "{0}:ScheduleRecurrence is not vaild (vaild values are: {1} )", 
+                            reportSchedule.ItemSpec, 
                             vaildScheduleRecurrenceToString));
                 }
 
