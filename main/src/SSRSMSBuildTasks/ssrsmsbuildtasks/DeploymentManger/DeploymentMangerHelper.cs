@@ -173,6 +173,27 @@ namespace ssrsmsbuildtasks.DeploymentManger
         }
 
         /// <summary>
+        /// The format document library url.
+        /// </summary>
+        /// <param name="urlPath">
+        /// The url path.
+        /// </param>
+        /// <returns>
+        /// The format document library url.
+        /// </returns>
+        public static string FormatDocumentLibraryURL(string urlPath)
+        {
+            if (!string.IsNullOrEmpty(urlPath) && urlPath.EndsWith("/"))
+            {
+                return urlPath.Substring(0, urlPath.Length - 1);
+            }
+            else
+            {
+                return urlPath;
+            }
+        }
+
+        /// <summary>
         /// Formats the folder path.
         /// </summary>
         /// <param name="folderPath">
@@ -199,18 +220,6 @@ namespace ssrsmsbuildtasks.DeploymentManger
         {
             string newItemPath = itemPath.StartsWith("/") ? itemPath : string.Concat("/", itemPath);
             return newItemPath.Replace("//", "/");
-        }
-
-        public static string FormatDocumentLibraryURL(string urlPath)
-        {
-            if (!string.IsNullOrEmpty(urlPath) && urlPath.EndsWith("/"))
-            {
-                return urlPath.Substring(0, urlPath.Length - 1);
-            }
-            else
-            {
-                return urlPath;
-            }
         }
 
         #endregion

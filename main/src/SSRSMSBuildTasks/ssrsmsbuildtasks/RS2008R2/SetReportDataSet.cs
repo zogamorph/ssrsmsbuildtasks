@@ -29,6 +29,11 @@ namespace ssrsmsbuildtasks.RS2008R2
         #region Properties
 
         /// <summary>
+        /// Gets or sets DocumentLibraryURL.
+        /// </summary>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   Gets or sets a value indicating whether function is recursive within the folders.
         /// </summary>
         /// <value><c>true</c> if recursive; otherwise, <c>false</c>.</value>
@@ -72,8 +77,6 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value><c>true</c> if [use match case]; otherwise, <c>false</c>.</value>
         public bool UseMatchCase { get; set; }
 
-        public string DocumentLibraryURL { get; set; }
-
         #endregion
 
         #region Public Methods
@@ -101,10 +104,11 @@ namespace ssrsmsbuildtasks.RS2008R2
                             ReportDataSetNames =
                                 string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("ReportDataSetNames"))
                                     ? null
-                                    : this.ShareDataSets[index].GetMetadata("ReportDataSetNames").Split(new[] { ';' }),
-                             DocumentLibraryURL =
+                                    : this.ShareDataSets[index].GetMetadata("ReportDataSetNames").Split(new[] { ';' }), 
+                            DocumentLibraryURL =
                                 string.IsNullOrEmpty(this.ShareDataSets[index].GetMetadata("DocumentLibraryURL"))
-                                    ? string.Empty : this.ShareDataSets[index].GetMetadata("DocumentLibraryURL")
+                                    ? string.Empty
+                                    : this.ShareDataSets[index].GetMetadata("DocumentLibraryURL")
                         };
                 }
 

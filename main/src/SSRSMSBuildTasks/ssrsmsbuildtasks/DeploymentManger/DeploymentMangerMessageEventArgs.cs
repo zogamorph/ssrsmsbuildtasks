@@ -3,7 +3,7 @@
 //   Copyright (c) 2009
 // </copyright>
 // <summary>
-//   Report Server Messages Types.
+//   Deployment Manger Message Event Args
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 

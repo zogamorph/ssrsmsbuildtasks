@@ -35,6 +35,11 @@ namespace ssrsmsbuildtasks.RS2008R2
         public string DataSourceName { get; set; }
 
         /// <summary>
+        /// Gets or sets DocumentLibraryURL.
+        /// </summary>
+        public string DocumentLibraryURL { get; set; }
+
+        /// <summary>
         ///   Gets or sets report folder path.
         /// </summary>
         /// <value>The report folder path.</value>
@@ -47,9 +52,6 @@ namespace ssrsmsbuildtasks.RS2008R2
         /// <value>The report server URL.</value>
         [Required]
         public string ReportServerURL { get; set; }
-
-
-        public string DocumentLibraryURL { get; set; }
 
         #endregion
 
@@ -67,7 +69,8 @@ namespace ssrsmsbuildtasks.RS2008R2
             r2DeploymentManger.DeploymentMangerMessages += this.deploymentMangerMessages;
             try
             {
-                return r2DeploymentManger.DeleteReportDataSource(this.DataSourceName, this.Folder, this.DocumentLibraryURL);
+                return r2DeploymentManger.DeleteReportDataSource(
+                    this.DataSourceName, this.Folder, this.DocumentLibraryURL);
             }
             catch (Exception ex)
             {
