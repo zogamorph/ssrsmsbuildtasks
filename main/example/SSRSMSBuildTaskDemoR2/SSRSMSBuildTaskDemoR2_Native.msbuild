@@ -1,11 +1,24 @@
 <Project InitialTargets="FullDepoly" DefaultTargets="FullDepoly" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- Import the Natvie  mode tasks for deploying the reports-->
 	<Import Project="$(MSBuildProjectDirectory)\ssrsmsbuildtasks.R2.tasks" />
-	
-	<!--ReportServer-->
+
+  <!--ReportServer-->
+  <Choose>
+    <When Condition="'$(USERNAME)' == ''">
+      <PropertyGroup>
+        <!-- Use NTLM authentication (default). -->
+        <ServerURL>http://$(COMPUTERNAME)/reportserver</ServerURL>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <!-- Use forms authentication. Embed the username and password in the URL. -->
+        <ServerURL>http://$(USERNAME):$(PASSWORD)@$(COMPUTERNAME)/reportserver</ServerURL>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>  
 	<PropertyGroup>
-		<ServerURL>http://$(COMPUTERNAME)/reportserver</ServerURL>
-		<ProjectReportRoot>/SSRSMSBuildTeaskDemoR2</ProjectReportRoot>
+    <ProjectReportRoot>/SSRSMSBuildTeaskDemoR2</ProjectReportRoot>
 		<ProjectReportFolder>$(ProjectReportRoot)/Reports</ProjectReportFolder>
 		<ProjectDataSetFolder>$(ProjectReportRoot)/DataSet</ProjectDataSetFolder>
 		<ProjectReportDataSources>$(ProjectReportRoot)/Data Sources</ProjectReportDataSources>
